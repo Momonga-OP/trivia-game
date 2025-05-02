@@ -1,0 +1,116 @@
+/* Discord compatibility styles */
+/* This file contains styles to ensure proper display in Discord activity */
+
+/* Fix for icons not displaying in Discord */
+.fa,
+.fas,
+.far,
+.fab,
+.fa-discord,
+.fa-youtube,
+.fa-times,
+.fa-cog,
+.fa-arrow-right,
+.fa-star,
+.fa-clock,
+.fa-trophy,
+.fa-users,
+.fa-info-circle,
+.fa-play,
+.fa-question {
+  font-family: 'Font Awesome 5 Free', 'Font Awesome 5 Brands' !important;
+  font-weight: 900;
+  display: inline-block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Specific icon fixes */
+.fa-discord:before {
+  content: "\f392";
+}
+
+.fa-youtube:before {
+  content: "\f167";
+}
+
+.fa-times:before {
+  content: "\f00d";
+}
+
+.fa-cog:before {
+  content: "\f013";
+}
+
+/* Ensure social icons are visible */
+.social-icon i,
+.close-button i {
+  display: inline-block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  font-size: 1.2em;
+}
+
+/* Discord mode specific styles */
+@media (max-width: 600px) {
+  .social-icon,
+  .close-button {
+    /* Increase size for better visibility */
+    font-size: 120%;
+    width: 40px;
+    height: 40px;
+  }
+  
+  /* Add background color to make icons more visible */
+  .social-icon.discord {
+    background-color: rgba(88, 101, 242, 0.3);
+  }
+  
+  .social-icon.youtube {
+    background-color: rgba(255, 0, 0, 0.3);
+  }
+  
+  .close-button {
+    background-color: rgba(255, 77, 77, 0.2);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* Fallback text for icons that fail to load */
+.social-icon.discord:after {
+  content: attr(data-fallback);
+  display: none;
+}
+
+.social-icon.youtube:after {
+  content: attr(data-fallback);
+  display: none;
+}
+
+.social-icon.discord[data-failed="true"]:after,
+.social-icon.youtube[data-failed="true"]:after {
+  display: block;
+  font-family: Arial, sans-serif;
+  font-size: 10px;
+}
+
+/* Ensure icon font is loaded */
+@font-face {
+  font-family: 'Font Awesome 5 Free';
+  font-display: block;
+  font-weight: 900;
+  font-style: normal;
+  src: url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/webfonts/fa-solid-900.woff2') format('woff2'),
+       url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/webfonts/fa-solid-900.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Font Awesome 5 Brands';
+  font-display: block;
+  font-weight: 400;
+  font-style: normal;
+  src: url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/webfonts/fa-brands-400.woff2') format('woff2'),
+       url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/webfonts/fa-brands-400.woff') format('woff');
+}

@@ -12,6 +12,11 @@
   padding: clamp(60px, 10vh, 80px) clamp(10px, 3vw, 20px) clamp(20px, 5vh, 30px);
   width: 100%;
   max-width: 100vw;
+  /* Performance optimizations */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  /* Improve scrolling performance */
+  -webkit-overflow-scrolling: touch;
 }
 
 .game-container {
@@ -129,17 +134,22 @@
   padding: clamp(10px, 3vw, 15px);
   font-size: clamp(var(--font-sm), 2.5vw, var(--font-md));
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform 0.2s cubic-bezier(0.4, 0.0, 0.2, 1), 
+              background-color 0.2s ease, 
+              border-color 0.2s ease;
   text-align: left;
   position: relative;
   overflow: hidden;
   width: 100%;
+  /* Performance optimizations */
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 .option-button:hover:not(:disabled) {
   background-color: rgba(52, 152, 219, 0.3);
   border-color: rgba(255, 255, 255, 0.3);
-  transform: translateY(-2px);
+  transform: translate3d(0, -2px, 0);
 }
 
 .option-button.selected {
@@ -195,7 +205,7 @@
 
 .next-button:hover {
   background-color: #2980b9;
-  transform: translateY(-2px);
+  transform: translate3d(0, -2px, 0);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
 }
 
@@ -237,11 +247,11 @@
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translate3d(0, 10px, 0);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 

@@ -1,11 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './components/styles/App.css';
+import './components/styles/discord-compatibility.css';
+import { SoundProvider } from './contexts/SoundContext.jsx';
 import BackgroundAnimation from './components/BackgroundAnimation';
 import discordService from './services/DiscordService';
 import playerDataService from './services/PlayerDataService';
 import soundService from './services/SoundService';
-import { SoundProvider } from './contexts/SoundContext';
 import LoadingScreen from './components/LoadingScreen';
 
 // Import components
@@ -81,8 +82,8 @@ function App() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Navigation handler
-  const navigateTo = (page) => {
+  // Navigation handler - optimized with useCallback
+  const navigateTo = useCallback((page) => {
     // If player is in game and trying to navigate away
     if (isInGame && page !== 'game') {
       setPendingNavigation(page);
@@ -126,10 +127,10 @@ function App() {
     
     // Scroll to top when changing pages
     window.scrollTo(0, 0);
-  };
+  }, [isInGame]);
   
-  // Handle confirmation response
-  const handleConfirmNavigation = (confirmed) => {
+  // Handle confirmation response - optimized with useCallback
+  const handleConfirmNavigation = useCallback((confirmed) => {
     setShowExitConfirmation(false);
     
     // Play sound based on user choice
@@ -145,124 +146,123 @@ function App() {
     }
     
     setPendingNavigation(null);
-  };
+  }, [pendingNavigation]);
 
-  // Handle volume change for sound effects
-  const handleVolumeChange = (type, value) => {
+  // Handle volume change for sound effects - optimized with useCallback
+  const handleVolumeChange = useCallback((type, value) => {
     if (type === 'volume') {
       soundService.setVolume(value / 100);
     } else if (type === 'mute') {
       soundService.setMuted(value);
     }
-  };
+  }, []);
 
   // Render the appropriate page based on state
   return (
-    <Router>
-      <SoundProvider>
+    <SoundProvider>
+      <Router>
         {isLoading ? (
           <LoadingScreen onLoadingComplete={() => setIsLoading(false)} />
         ) : (
           <div className="app-container">
-        {/* Background Animation */}
-        <BackgroundAnimation />
-        
-        {/* Routes */}
-        <Routes>
-          {/* Discord OAuth Callback Route */}
-          <Route path="/auth/discord/callback" element={<DiscordCallback />} />
-          
-          {/* Main App Routes */}
-          <Route path="/*" element={
-            <>
-              {/* Header with navigation */}
-              <Header 
-                navigateTo={navigateTo} 
-                currentPage={currentPage} 
-                isInGame={isInGame}
-                playerData={playerData}
-              />
+            {/* Background Animation */}
+            <BackgroundAnimation />
+            
+            {/* Routes */}
+            <Routes>
+              {/* Discord OAuth Callback Route */}
+              <Route path="/auth/discord/callback" element={<DiscordCallback />} />
               
-
-              
-              {/* Exit confirmation dialog */}
-              {showExitConfirmation && (
-                <div className="confirmation-overlay">
-                  <div className="confirmation-dialog">
-                    <h3>Exit Game?</h3>
-                    <p>You will lose your current progress if you leave the game.</p>
-                    <div className="confirmation-buttons">
-                      <button 
-                        className="cancel-button" 
-                        onClick={() => handleConfirmNavigation(false)}
-                      >
-                        Cancel
-                      </button>
-                      <button 
-                        className="confirm-button" 
-                        onClick={() => handleConfirmNavigation(true)}
-                      >
-                        Exit Anyway
-                      </button>
+              {/* Main App Routes */}
+              <Route path="/*" element={
+                <>
+                  {/* Header with navigation */}
+                  <Header 
+                    navigateTo={navigateTo} 
+                    currentPage={currentPage} 
+                    isInGame={isInGame}
+                    playerData={playerData}
+                  />
+                  
+                  {/* Exit confirmation dialog */}
+                  {showExitConfirmation && (
+                    <div className="confirmation-overlay">
+                      <div className="confirmation-dialog">
+                        <h3>Exit Game?</h3>
+                        <p>You will lose your current progress if you leave the game.</p>
+                        <div className="confirmation-buttons">
+                          <button 
+                            className="cancel-button" 
+                            onClick={() => handleConfirmNavigation(false)}
+                          >
+                            Cancel
+                          </button>
+                          <button 
+                            className="confirm-button" 
+                            onClick={() => handleConfirmNavigation(true)}
+                          >
+                            Exit Anyway
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              )}
-              
-              {/* Main content area */}
-              <main className="main-content">
-                {currentPage === 'home' && (
-                  <HomePage 
-                    navigateTo={navigateTo} 
-                    windowSize={windowSize} 
-                    playerData={playerData}
-                  />
-                )}
-                {currentPage === 'game' && (
-                  <GameScreen 
-                    navigateTo={navigateTo} 
-                    score={score} 
-                    setScore={setScore}
-                    totalAnswered={totalAnswered}
-                    setTotalAnswered={setTotalAnswered}
-                    windowSize={windowSize}
-                    playerData={playerData}
-                  />
-                )}
-                {currentPage === 'dashboard' && (
-                  <Dashboard 
-                    navigateTo={navigateTo} 
-                    score={score} 
-                    totalAnswered={totalAnswered}
-                    windowSize={windowSize}
-                    playerData={playerData}
-                  />
-                )}
-                {currentPage === 'about' && (
-                  <About navigateTo={navigateTo} windowSize={windowSize} />
-                )}
-                {currentPage === 'credits' && (
-                  <Credits navigateTo={navigateTo} windowSize={windowSize} />
-                )}
-                {currentPage === 'howtoplay' && (
-                  <HowToPlay navigateTo={navigateTo} windowSize={windowSize} />
-                )}
-              </main>
-              
-              {/* Discord connection badge */}
-              {discordStatus === 'connected' && (
-                <div className="discord-badge">
-                  <i className="fab fa-discord"></i> Connected
-                </div>
-              )}
-            </>
-          } />
-        </Routes>
+                  )}
+                  
+                  {/* Main content area */}
+                  <main className="main-content">
+                    {currentPage === 'home' && (
+                      <HomePage 
+                        navigateTo={navigateTo} 
+                        windowSize={windowSize} 
+                        playerData={playerData}
+                      />
+                    )}
+                    {currentPage === 'game' && (
+                      <GameScreen 
+                        navigateTo={navigateTo} 
+                        score={score} 
+                        setScore={setScore}
+                        totalAnswered={totalAnswered}
+                        setTotalAnswered={setTotalAnswered}
+                        windowSize={windowSize}
+                        playerData={playerData}
+                      />
+                    )}
+                    {currentPage === 'dashboard' && (
+                      <Dashboard 
+                        navigateTo={navigateTo} 
+                        score={score} 
+                        totalAnswered={totalAnswered}
+                        windowSize={windowSize}
+                        playerData={playerData}
+                      />
+                    )}
+                    {currentPage === 'about' && (
+                      <About navigateTo={navigateTo} windowSize={windowSize} />
+                    )}
+                    {currentPage === 'credits' && (
+                      <Credits navigateTo={navigateTo} windowSize={windowSize} />
+                    )}
+                    {currentPage === 'howtoplay' && (
+                      <HowToPlay navigateTo={navigateTo} windowSize={windowSize} />
+                    )}
+                  </main>
+                  
+                  {/* Discord connection badge */}
+                  {discordStatus === 'connected' && (
+                    <div className="discord-badge">
+                      <i className="fab fa-discord"></i> Connected
+                    </div>
+                  )}
+                </>
+              } />
+            </Routes>
           </div>
         )}
-      </SoundProvider>
-    </Router>
+      </Router>
+    </SoundProvider>
   );
 }
 
+// Export App component
 export default App;

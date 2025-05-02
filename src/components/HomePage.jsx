@@ -7,7 +7,7 @@ import { faDiscord, faTwitter, faGithub } from '@fortawesome/free-brands-svg-ico
 import { faPlay, faInfoCircle, faTrophy, faQuestion, faUsers } from '@fortawesome/free-solid-svg-icons';
 import discordService from '../services/DiscordService';
 import playerDataService from '../services/PlayerDataService';
-import { useSound } from '../contexts/SoundContext';
+import { useSound } from '../contexts/SoundContext.jsx';
 
 function HomePage({ navigateTo, windowSize, playerData: propPlayerData }) {
   const [showSettings, setShowSettings] = useState(false);
@@ -127,11 +127,27 @@ function HomePage({ navigateTo, windowSize, playerData: propPlayerData }) {
       </div>
       
       <div className="social-links">
-        <a href="https://discord.gg/rKb3Zp7AQ2" target="_blank" rel="noopener noreferrer" className="social-icon discord">
+        <a 
+          href="https://discord.gg/rKb3Zp7AQ2" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          className="social-icon discord"
+          data-fallback="DC"
+          onClick={() => playSound('socialButton')}
+          onMouseEnter={() => playSound('buttonHover')}
+        >
           <i className="fab fa-discord"></i>
           <span className="tooltip">Join Discord</span>
         </a>
-        <a href="https://www.youtube.com/@Spartadfosutouch1827" target="_blank" rel="noopener noreferrer" className="social-icon youtube">
+        <a 
+          href="https://www.youtube.com/@Spartadfosutouch1827" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          className="social-icon youtube"
+          data-fallback="YT"
+          onClick={() => playSound('socialButton')}
+          onMouseEnter={() => playSound('buttonHover')}
+        >
           <i className="fab fa-youtube"></i>
           <span className="tooltip">YouTube Channel</span>
         </a>

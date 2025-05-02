@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, memo, useCallback } from 'react';
 import './styles/QuestionOverlay.css';
 
-function QuestionOverlay({ question, timeLeft, questionId }) {
+// Memoized QuestionOverlay component to prevent unnecessary re-renders
+const QuestionOverlay = memo(function QuestionOverlay({ question, timeLeft, questionId }) {
   const [animationClass, setAnimationClass] = useState('');
   const [displayedQuestion, setDisplayedQuestion] = useState(question);
   const timerBarRef = useRef(null);
@@ -81,6 +82,6 @@ function QuestionOverlay({ question, timeLeft, questionId }) {
       </div>
     </div>
   );
-}
+});
 
 export default QuestionOverlay;

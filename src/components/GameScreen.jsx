@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, memo } from 'react';
 import { questions } from '../questionsData.js';
 import CountdownAnimation from './CountdownAnimation';
 import QuestionOverlay from './QuestionOverlay';
 import AnimatedOptions from './AnimatedOptions';
+import soundService from '../services/SoundService';
 import './styles/GameScreen.css';
 
-function GameScreen({ navigateTo, score, setScore, totalAnswered, setTotalAnswered }) {
+// Memoized GameScreen component to prevent unnecessary re-renders
+const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, totalAnswered, setTotalAnswered }) {
   // Create shuffled questions array on game start
   const [shuffledQuestions, setShuffledQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -25,12 +27,12 @@ function GameScreen({ navigateTo, score, setScore, totalAnswered, setTotalAnswer
     setShuffledQuestions(shuffled);
   }, []);
   
-  // Handle countdown completion
-  const handleCountdownComplete = () => {
+  // Handle countdown completion - optimized with useCallback
+  const handleCountdownComplete = useCallback(() => {
     setShowCountdown(false);
     setShowQuestion(true);
     setGameStarted(true);
-  };
+  }, []);
   
   const currentQuestion = shuffledQuestions[currentQuestionIndex];
 
@@ -39,18 +41,22 @@ function GameScreen({ navigateTo, score, setScore, totalAnswered, setTotalAnswer
     setBgIndex(Math.floor(Math.random() * 5) + 1);
   }, [currentQuestionIndex]);
 
-  // Check answer function
-  const checkAnswer = () => {
+  // Check answer function - optimized with useCallback
+  const checkAnswer = useCallback(() => {
     setIsTimerActive(false);
     if (currentQuestion && selectedOption === currentQuestion.correctAnswer) {
+      // Play success sound for correct answer
+      soundService.play('success');
       setFeedback("Correct! 🎉");
       setScore(score + 1);
     } else if (currentQuestion) {
+      // Play error sound for wrong answer
+      soundService.play('error');
       setFeedback(`Wrong! ❌ The correct answer is ${currentQuestion.correctAnswer}.`);
     }
     setTotalAnswered(totalAnswered + 1);
     setShowNextButton(true);
-  };
+  }, [currentQuestion, selectedOption, score, totalAnswered, setScore, setTotalAnswered]);
 
   // Timer effect
   useEffect(() => {
@@ -72,8 +78,11 @@ function GameScreen({ navigateTo, score, setScore, totalAnswered, setTotalAnswer
     return () => clearTimeout(timer);
   }, [timeLeft, isTimerActive, gameStarted]);
 
-  // Handle next question
-  const handleNextQuestion = () => {
+  // Handle next question - optimized with useCallback
+  const handleNextQuestion = useCallback(() => {
+    // Play button click sound when clicking next question
+    soundService.play('primaryButton');
+    
     if (currentQuestionIndex < shuffledQuestions.length - 1) {
       // Update to next question immediately without animation
       setCurrentQuestionIndex(currentQuestionIndex + 1);
@@ -86,24 +95,31 @@ function GameScreen({ navigateTo, score, setScore, totalAnswered, setTotalAnswer
       // End of questions, go to dashboard
       navigateTo('dashboard');
     }
-  };
+  }, [currentQuestionIndex, shuffledQuestions.length, navigateTo]);
 
-  // Handle option selection and auto-submit
-  const handleOptionSelect = (option) => {
+  // Handle option selection and auto-submit - optimized with useCallback
+  const handleOptionSelect = useCallback((option) => {
     if (!showNextButton) {
+      // Play button click sound when selecting an option
+      soundService.play('buttonClick');
+      
       setSelectedOption(option);
       // Auto-submit the answer when an option is selected
       setIsTimerActive(false);
       if (currentQuestion && option === currentQuestion.correctAnswer) {
+        // Play success sound for correct answer
+        soundService.play('success');
         setFeedback("Correct! 🎉");
         setScore(score + 1);
       } else if (currentQuestion) {
+        // Play error sound for wrong answer
+        soundService.play('error');
         setFeedback(`Wrong! ❌ The correct answer is ${currentQuestion.correctAnswer}.`);
       }
       setTotalAnswered(totalAnswered + 1);
       setShowNextButton(true);
     }
-  };
+  }, [currentQuestion, showNextButton, score, totalAnswered, setScore, setTotalAnswered]);
 
   // If questions aren't loaded yet
   if (!currentQuestion) {
@@ -158,6 +174,6 @@ function GameScreen({ navigateTo, score, setScore, totalAnswered, setTotalAnswer
       </button>
     </div>
   );
-}
+});
 
 export default GameScreen;
