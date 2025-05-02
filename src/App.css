@@ -12,6 +12,29 @@ body {
   line-height: 1.6;
 }
 
+.mute-button {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(44, 62, 80, 0.7);
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+}
+
+.mute-button:hover {
+  background-color: rgba(52, 152, 219, 0.8);
+  transform: scale(1.1);
+}
 
 .app-container {
   background-color: #1e1e2f;
