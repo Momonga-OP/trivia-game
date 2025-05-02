@@ -2,6 +2,10 @@ import { StrictMode, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App.jsx';
+// Import Font Awesome library setup
+import './utils/fontAwesome';
+// Import Font Awesome CSS
+import '@fortawesome/fontawesome-svg-core/styles.css';
 
 // Try to import the Discord SDK - this won't crash if the package isn't installed
 let DiscordSDK;

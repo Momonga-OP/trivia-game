@@ -77,22 +77,22 @@ function HomePage({ navigateTo, windowSize, playerData: propPlayerData }) {
           <div className="card-content">
             <div className="game-mode-card-header">
               <div className="mode-icon">
-                <i className="fas fa-user"></i>
+                <FontAwesomeIcon icon="users" />
               </div>
               <h2 className="game-mode-title">Solo Challenge</h2>
             </div>
             
             <div className="game-mode-details">
               <div className="detail-item">
-                <i className="fas fa-star"></i>
+                <FontAwesomeIcon icon="star" />
                 <span>Test your Dofus knowledge</span>
               </div>
               <div className="detail-item">
-                <i className="fas fa-clock"></i>
+                <FontAwesomeIcon icon="clock" />
                 <span>15 seconds per question</span>
               </div>
               <div className="detail-item">
-                <i className="fas fa-trophy"></i>
+                <FontAwesomeIcon icon="trophy" />
                 <span>Earn high scores</span>
               </div>
             </div>
@@ -100,10 +100,10 @@ function HomePage({ navigateTo, windowSize, playerData: propPlayerData }) {
             <div className="game-mode-action">
               <button className="play-button" onClick={() => navigateTo('game')}>
                 <span className="button-text">Play Now</span>
-                <i className="fas fa-arrow-right"></i>
+                <FontAwesomeIcon icon="arrow-right" />
               </button>
               <button className="settings-button" onClick={() => setShowSettings(true)}>
-                <i className="fas fa-cog"></i>
+                <FontAwesomeIcon icon="cog" />
               </button>
             </div>
           </div>

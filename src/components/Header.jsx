@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './styles/Header.css';
 import './styles/Logo.css';
 
@@ -55,7 +56,7 @@ function Header({ navigateTo, currentPage, onVolumeChange, isInGame }) {
           className={`tab-item ${currentPage === 'home' ? 'active' : ''}`}
           onClick={() => navigateTo('home')}
         >
-          <i className="fas fa-home"></i>
+          <FontAwesomeIcon icon="home" />
           <span>Home</span>
         </div>
         
@@ -63,7 +64,7 @@ function Header({ navigateTo, currentPage, onVolumeChange, isInGame }) {
           className={`tab-item ${currentPage === 'howtoplay' ? 'active' : ''}`}
           onClick={() => navigateTo('howtoplay')}
         >
-          <i className="fas fa-question-circle"></i>
+          <FontAwesomeIcon icon="question-circle" />
           <span>How to Play</span>
         </div>
         
@@ -71,7 +72,7 @@ function Header({ navigateTo, currentPage, onVolumeChange, isInGame }) {
           className="tab-item"
           onClick={() => setShowSettings(true)}
         >
-          <i className="fas fa-cog"></i>
+          <FontAwesomeIcon icon="cog" />
           <span>Settings</span>
         </div>
       </div>
@@ -132,7 +133,7 @@ function Header({ navigateTo, currentPage, onVolumeChange, isInGame }) {
               }}
               onClick={() => window.open('https://discord.gg/rKb3Zp7AQ2', '_blank')}
             >
-              <i className="fab fa-discord"></i>
+              <FontAwesomeIcon icon={['fab', 'discord']} />
               Join
             </button>
           </div>
@@ -150,7 +151,7 @@ function Header({ navigateTo, currentPage, onVolumeChange, isInGame }) {
             }}
             onClick={() => setShowSettings(false)}
           >
-            <i className="fas fa-times"></i>
+            <FontAwesomeIcon icon="times" />
           </button>
         </div>
       )}
