@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@discord/embedded-app-sdk": "^2.0.0",
+    "@discord/embedded-app-sdk": "^0.0.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
