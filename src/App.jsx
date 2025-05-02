@@ -1,12 +1,69 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './App.css';
 import { questions } from './questionsData.js';
+import backgroundMusic from './sounds/background.mp3'; // Add your music file
 
-// Main App component that handles routing
-function App() {
+// Main App component that handles routing and viewport adjustments
+function App({ discordStatus }) {
   const [currentPage, setCurrentPage] = useState('home');
   const [score, setScore] = useState(0);
   const [totalAnswered, setTotalAnswered] = useState(0);
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight
+  });
+  const [isMuted, setIsMuted] = useState(false);
+  const audioRef = useRef(null);
+
+  // Initialize audio
+  useEffect(() => {
+    audioRef.current = new Audio(backgroundMusic);
+    audioRef.current.loop = true;
+    
+    // Try to play audio (may require user interaction on some browsers)
+    const handleFirstInteraction = () => {
+      if (audioRef.current && !isMuted) {
+        audioRef.current.play().catch(e => console.log('Audio play failed:', e));
+      }
+      document.removeEventListener('click', handleFirstInteraction);
+    };
+    
+    document.addEventListener('click', handleFirstInteraction);
+    
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+      document.removeEventListener('click', handleFirstInteraction);
+    };
+  }, []);
+
+  // Handle mute toggle
+  useEffect(() => {
+    if (!audioRef.current) return;
+    
+    if (isMuted) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play().catch(e => console.log('Audio play failed:', e));
+    }
+  }, [isMuted]);
+
+  // Track viewport size changes
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
+    };
+    
+    window.addEventListener('resize', handleResize);
+    
+    // Clean up
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Navigation handler
   const navigateTo = (page) => {
@@ -17,13 +74,25 @@ function App() {
       setScore(0);
       setTotalAnswered(0);
     }
+    
+    // Scroll to top when changing pages
+    window.scrollTo(0, 0);
   };
 
   // Render the appropriate page based on state
   return (
     <div className="app-container">
+      {/* Mute button in the top right corner */}
+      <button 
+        className="mute-button"
+        onClick={() => setIsMuted(!isMuted)}
+        aria-label={isMuted ? 'Unmute' : 'Mute'}
+      >
+        <i className={`fas ${isMuted ? 'fa-volume-mute' : 'fa-volume-up'}`}></i>
+      </button>
+      
       {currentPage === 'home' && (
-        <HomePage navigateTo={navigateTo} />
+        <HomePage navigateTo={navigateTo} windowSize={windowSize} />
       )}
       {currentPage === 'game' && (
         <GameScreen 
@@ -32,6 +101,7 @@ function App() {
           setScore={setScore}
           totalAnswered={totalAnswered}
           setTotalAnswered={setTotalAnswered}
+          windowSize={windowSize}
         />
       )}
       {currentPage === 'dashboard' && (
@@ -39,13 +109,20 @@ function App() {
           navigateTo={navigateTo} 
           score={score} 
           totalAnswered={totalAnswered}
+          windowSize={windowSize}
         />
       )}
       {currentPage === 'about' && (
-        <About navigateTo={navigateTo} />
+        <About navigateTo={navigateTo} windowSize={windowSize} />
       )}
       {currentPage === 'credits' && (
-        <Credits navigateTo={navigateTo} />
+        <Credits navigateTo={navigateTo} windowSize={windowSize} />
+      )}
+      
+      {discordStatus === 'connected' && (
+        <div className="discord-badge">
+          <i className="fab fa-discord"></i> Connected
+        </div>
       )}
     </div>
   );
