@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import './styles/HomePage.css';
 import BackgroundAnimation from './BackgroundAnimation';
 import PlayerProfile from './PlayerProfile';
@@ -7,14 +7,16 @@ import { faDiscord, faTwitter, faGithub } from '@fortawesome/free-brands-svg-ico
 import { faPlay, faInfoCircle, faTrophy, faQuestion, faUsers } from '@fortawesome/free-solid-svg-icons';
 import discordService from '../services/DiscordService';
 import playerDataService from '../services/PlayerDataService';
+import { useSound } from '../contexts/SoundContext';
 
 function HomePage({ navigateTo, windowSize, playerData: propPlayerData }) {
   const [showSettings, setShowSettings] = useState(false);
-  const [musicVolume, setMusicVolume] = useState(70);
-  const [soundVolume, setSoundVolume] = useState(80);
   const [hoverCard, setHoverCard] = useState(false);
   const [playerData, setPlayerData] = useState(null);
-  const audioRef = useRef(null);
+  
+  // Get sound functions from context
+  const { playSound } = useSound();
+
   
   // Load player data on component mount
   useEffect(() => {
@@ -26,21 +28,21 @@ function HomePage({ navigateTo, windowSize, playerData: propPlayerData }) {
     }
   }, [propPlayerData]);
   
-  // Handle volume changes
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = musicVolume / 100;
-    }
-  }, [musicVolume]);
+
   
   // Handle Discord login
   const handleDiscordLogin = () => {
     try {
+      // Play button click sound
+      playSound('primaryButton');
+      
       // Show a loading indicator or message if needed
       console.log('Initiating Discord login...');
       discordService.login();
     } catch (error) {
       console.error('Error initiating Discord login:', error);
+      // Play error sound
+      playSound('error');
       // You could show an error message to the user here
     }
   };
@@ -70,7 +72,10 @@ function HomePage({ navigateTo, windowSize, playerData: propPlayerData }) {
       <div className="game-section">
         <div 
           className={`game-mode-card ${hoverCard ? 'hover' : ''}`}
-          onMouseEnter={() => setHoverCard(true)}
+          onMouseEnter={() => {
+            setHoverCard(true);
+            playSound('cardFlip');
+          }}
           onMouseLeave={() => setHoverCard(false)}
         >
           <div className="card-glow"></div>
@@ -98,11 +103,22 @@ function HomePage({ navigateTo, windowSize, playerData: propPlayerData }) {
             </div>
             
             <div className="game-mode-action">
-              <button className="play-button" onClick={() => navigateTo('game')}>
+              <button 
+                className="play-button" 
+                onClick={() => navigateTo('game')}
+                onMouseEnter={() => playSound('primaryButton')}
+              >
                 <span className="button-text">Play Now</span>
                 <FontAwesomeIcon icon="arrow-right" />
               </button>
-              <button className="settings-button" onClick={() => setShowSettings(true)}>
+              <button 
+                className="settings-button" 
+                onClick={() => {
+                  setShowSettings(true);
+                  playSound('secondaryButton');
+                }}
+                onMouseEnter={() => playSound('buttonHover')}
+              >
                 <FontAwesomeIcon icon="cog" />
               </button>
             </div>
@@ -138,31 +154,7 @@ function HomePage({ navigateTo, windowSize, playerData: propPlayerData }) {
         <div className="settings-panel">
           <h2>Settings</h2>
           
-          <div className="settings-row">
-            <label>Music</label>
-            <div className="slider-container">
-              <input 
-                type="range" 
-                min="0" 
-                max="100" 
-                value={musicVolume}
-                onChange={(e) => setMusicVolume(parseInt(e.target.value))}
-              />
-            </div>
-          </div>
-          
-          <div className="settings-row">
-            <label>Sound</label>
-            <div className="slider-container">
-              <input 
-                type="range" 
-                min="0" 
-                max="100" 
-                value={soundVolume}
-                onChange={(e) => setSoundVolume(parseInt(e.target.value))}
-              />
-            </div>
-          </div>
+
           
           <div style={{ textAlign: 'center', marginTop: '20px' }}>
             <p>Have feedback or found a bug?</p>
@@ -170,7 +162,11 @@ function HomePage({ navigateTo, windowSize, playerData: propPlayerData }) {
             
             <button 
               className="discord-button"
-              onClick={() => window.open('https://discord.gg/rKb3Zp7AQ2', '_blank')}
+              onClick={() => {
+                playSound('socialButton');
+                window.open('https://discord.gg/rKb3Zp7AQ2', '_blank');
+              }}
+              onMouseEnter={() => playSound('buttonHover')}
             >
               <i className="fab fa-discord"></i>
               Join
@@ -179,7 +175,11 @@ function HomePage({ navigateTo, windowSize, playerData: propPlayerData }) {
           
           <button 
             className="close-button"
-            onClick={() => setShowSettings(false)}
+            onClick={() => {
+              setShowSettings(false);
+              playSound('closeButton');
+            }}
+            onMouseEnter={() => playSound('buttonHover')}
           >
             <i className="fas fa-times"></i>
           </button>

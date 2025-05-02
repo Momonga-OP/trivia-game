@@ -1,39 +1,76 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './styles/QuestionOverlay.css';
 
 function QuestionOverlay({ question, timeLeft, questionId }) {
   const [animationClass, setAnimationClass] = useState('');
   const [displayedQuestion, setDisplayedQuestion] = useState(question);
-  
+  const timerBarRef = useRef(null);
+  const prevTimeLeftRef = useRef(timeLeft);
+  const prevQuestionIdRef = useRef(questionId);
+
+  // Calculate if time is running low (less than 5 seconds)
+  const isTimeLow = timeLeft <= 5;
+
   // Handle question changes with slide animation
   useEffect(() => {
     if (question.text !== displayedQuestion.text) {
       // Slide out current question
       setAnimationClass('slide-out');
-      
+
       // After slide out animation, update question and slide in
       const timer = setTimeout(() => {
         setDisplayedQuestion(question);
         setAnimationClass('slide-in');
-        
+
         // Reset animation class after slide in completes
         const resetTimer = setTimeout(() => {
           setAnimationClass('');
         }, 500);
-        
+
         return () => clearTimeout(resetTimer);
       }, 300);
-      
+
       return () => clearTimeout(timer);
     }
   }, [question, displayedQuestion]);
-  
+
+  // Reset and restart timer animation when timeLeft or questionId changes
+  useEffect(() => {
+    // If this is a new question, reset the animation
+    if (questionId !== prevQuestionIdRef.current) {
+      if (timerBarRef.current) {
+        // Reset animation
+        timerBarRef.current.style.animation = 'none';
+        // Force reflow
+        void timerBarRef.current.offsetWidth;
+        // Restart animation
+        timerBarRef.current.style.animation = `timerAnimation ${timeLeft}s linear forwards`;
+      }
+      prevQuestionIdRef.current = questionId;
+    } 
+    // If timeLeft changed but not because of a new question
+    else if (timeLeft !== prevTimeLeftRef.current) {
+      if (timerBarRef.current) {
+        // Update animation duration
+        timerBarRef.current.style.animationDuration = `${timeLeft}s`;
+      }
+    }
+
+    prevTimeLeftRef.current = timeLeft;
+  }, [timeLeft, questionId]);
+
   return (
     <div className="question-overlay">
       <div className={`question-card ${animationClass}`}>
         <div className="question-header">
-          <div className="timer-container">
-            <div className="timer-bar" style={{ width: `${(timeLeft / 15) * 100}%` }}></div>
+          <div className={`timer-container ${isTimeLow ? 'low-time' : ''}`}>
+            <div 
+              ref={timerBarRef}
+              className="timer-bar" 
+              style={{
+                animationDuration: `${timeLeft}s`
+              }}
+            ></div>
             <span className="timer-text">{timeLeft}s</span>
           </div>
         </div>

@@ -17,14 +17,14 @@
 }
 
 .player-avatar {
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background-color: rgba(30, 30, 47, 0.8);
   overflow: hidden;
   border: 2px solid rgba(140, 82, 255, 0.5);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3), 
-              0 0 15px rgba(140, 82, 255, 0.5);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3), 
+              0 0 10px rgba(140, 82, 255, 0.5);
   position: relative;
   display: flex;
   align-items: center;
@@ -39,29 +39,29 @@
 
 .player-level {
   position: absolute;
-  bottom: -5px;
-  right: -5px;
+  bottom: -3px;
+  right: -3px;
   background: linear-gradient(135deg, #8c52ff, #5c35a4);
   color: white;
-  font-size: 10px;
+  font-size: 8px;
   font-weight: bold;
-  padding: 2px 5px;
-  border-radius: 10px;
-  border: 2px solid rgba(30, 30, 47, 0.8);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  padding: 1px 4px;
+  border-radius: 8px;
+  border: 1px solid rgba(30, 30, 47, 0.8);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 /* Profile card styling */
 .player-profile-card {
   position: absolute;
-  top: 60px;
+  top: 45px;
   right: 0;
-  width: 300px;
+  width: 250px;
   background-color: rgba(30, 30, 47, 0.95);
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
   border: 1px solid rgba(140, 82, 255, 0.3);
-  padding: 20px;
+  padding: 12px;
   z-index: 1000;
   backdrop-filter: blur(10px);
   animation: fadeIn 0.3s ease;

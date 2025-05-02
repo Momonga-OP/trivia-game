@@ -1,10 +1,12 @@
-import { useState, useEffect, useRef } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './components/styles/App.css';
-import backgroundMusic from './sounds/background.mp3';
 import BackgroundAnimation from './components/BackgroundAnimation';
 import discordService from './services/DiscordService';
 import playerDataService from './services/PlayerDataService';
+import soundService from './services/SoundService';
+import { SoundProvider } from './contexts/SoundContext';
+import LoadingScreen from './components/LoadingScreen';
 
 // Import components
 import HomePage from './components/HomePage';
@@ -25,15 +27,16 @@ function App() {
     width: window.innerWidth,
     height: window.innerHeight
   });
-  const [isMuted, setIsMuted] = useState(false);
+
   const [isInGame, setIsInGame] = useState(false);
   const [showExitConfirmation, setShowExitConfirmation] = useState(false);
   const [pendingNavigation, setPendingNavigation] = useState(null);
   const [playerData, setPlayerData] = useState(null);
   const [discordStatus, setDiscordStatus] = useState('disconnected');
-  const audioRef = useRef(null);
+  const [isLoading, setIsLoading] = useState(true);
+
   
-  // Initialize player data and check Discord login status
+  // Initialize player data, check Discord login status, and initialize sounds
   useEffect(() => {
     // Load player data
     const player = playerDataService.getCurrentPlayer();
@@ -43,42 +46,25 @@ function App() {
     if (discordService.isLoggedIn()) {
       setDiscordStatus('connected');
     }
+    
+    // Initialize sound service
+    soundService.initialize().then(() => {
+      console.log('Sound service initialized in App component');
+    }).catch(error => {
+      console.error('Failed to initialize sound service:', error);
+    });
+    
+    // Safety timeout to ensure loading screen doesn't get stuck
+    const safetyTimeout = setTimeout(() => {
+      setIsLoading(false);
+    }, 8000); // Force exit loading after 8 seconds max
+    
+    return () => clearTimeout(safetyTimeout);
   }, []);
 
-  // Initialize audio
-  useEffect(() => {
-    audioRef.current = new Audio(backgroundMusic);
-    audioRef.current.loop = true;
-    
-    // Try to play audio (may require user interaction on some browsers)
-    const handleFirstInteraction = () => {
-      if (audioRef.current && !isMuted) {
-        audioRef.current.play().catch(e => console.log('Audio play failed:', e));
-      }
-      document.removeEventListener('click', handleFirstInteraction);
-    };
-    
-    document.addEventListener('click', handleFirstInteraction);
-    
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
-      }
-      document.removeEventListener('click', handleFirstInteraction);
-    };
-  }, []);
 
-  // Handle mute toggle
-  useEffect(() => {
-    if (!audioRef.current) return;
-    
-    if (isMuted) {
-      audioRef.current.pause();
-    } else {
-      audioRef.current.play().catch(e => console.log('Audio play failed:', e));
-    }
-  }, [isMuted]);
+
+
 
   // Track viewport size changes
   useEffect(() => {
@@ -104,6 +90,26 @@ function App() {
       return;
     }
     
+    // Play navigation sound - different sound for each page
+    switch(page) {
+      case 'game':
+        soundService.play('primaryButton');
+        break;
+      case 'home':
+        soundService.play('primaryButton');
+        break;
+      case 'dashboard':
+        soundService.play('secondaryButton');
+        break;
+      case 'about':
+      case 'credits':
+      case 'howtoplay':
+        soundService.play('buttonClick');
+        break;
+      default:
+        soundService.play('buttonClick');
+    }
+    
     // If not in game or confirmed navigation
     setCurrentPage(page);
     
@@ -112,6 +118,8 @@ function App() {
       setIsInGame(true);
       setScore(0);
       setTotalAnswered(0);
+      // Play game start sound
+      soundService.play('gameStart');
     } else if (page !== 'game') {
       setIsInGame(false);
     }
@@ -124,25 +132,38 @@ function App() {
   const handleConfirmNavigation = (confirmed) => {
     setShowExitConfirmation(false);
     
-    if (confirmed && pendingNavigation) {
-      setCurrentPage(pendingNavigation);
-      setIsInGame(false);
+    // Play sound based on user choice
+    if (confirmed) {
+      soundService.play('buttonClick');
+      if (pendingNavigation) {
+        setCurrentPage(pendingNavigation);
+        setIsInGame(false);
+        soundService.play('gameEnd');
+      }
+    } else {
+      soundService.play('buttonHover');
     }
     
     setPendingNavigation(null);
   };
 
-  // Handle music volume change
-  const handleVolumeChange = (volume) => {
-    if (audioRef.current) {
-      audioRef.current.volume = volume / 100;
+  // Handle volume change for sound effects
+  const handleVolumeChange = (type, value) => {
+    if (type === 'volume') {
+      soundService.setVolume(value / 100);
+    } else if (type === 'mute') {
+      soundService.setMuted(value);
     }
   };
 
   // Render the appropriate page based on state
   return (
     <Router>
-      <div className="app-container">
+      <SoundProvider>
+        {isLoading ? (
+          <LoadingScreen onLoadingComplete={() => setIsLoading(false)} />
+        ) : (
+          <div className="app-container">
         {/* Background Animation */}
         <BackgroundAnimation />
         
@@ -158,19 +179,11 @@ function App() {
               <Header 
                 navigateTo={navigateTo} 
                 currentPage={currentPage} 
-                onVolumeChange={handleVolumeChange}
                 isInGame={isInGame}
                 playerData={playerData}
               />
               
-              {/* Mute button in the top right corner */}
-              <button 
-                className="mute-button"
-                onClick={() => setIsMuted(!isMuted)}
-                aria-label={isMuted ? 'Unmute' : 'Mute'}
-              >
-                <i className={`fas ${isMuted ? 'fa-volume-mute' : 'fa-volume-up'}`}></i>
-              </button>
+
               
               {/* Exit confirmation dialog */}
               {showExitConfirmation && (
@@ -245,7 +258,9 @@ function App() {
             </>
           } />
         </Routes>
-      </div>
+          </div>
+        )}
+      </SoundProvider>
     </Router>
   );
 }

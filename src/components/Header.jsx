@@ -3,10 +3,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './styles/Header.css';
 import './styles/Logo.css';
 
-function Header({ navigateTo, currentPage, onVolumeChange, isInGame }) {
+function Header({ navigateTo, currentPage, isInGame }) {
   const [showSettings, setShowSettings] = useState(false);
-  const [musicVolume, setMusicVolume] = useState(70);
-  const [soundVolume, setSoundVolume] = useState(80);
+
   
   // Handle navigation with game lock
   const handleNavigation = (page) => {
@@ -82,35 +81,7 @@ function Header({ navigateTo, currentPage, onVolumeChange, isInGame }) {
         <div className="settings-panel">
           <h2>Settings</h2>
           
-          <div className="settings-row">
-            <label>Music</label>
-            <div className="slider-container">
-              <input 
-                type="range" 
-                min="0" 
-                max="100" 
-                value={musicVolume}
-                onChange={(e) => {
-                  const value = parseInt(e.target.value);
-                  setMusicVolume(value);
-                  if (onVolumeChange) onVolumeChange(value);
-                }}
-              />
-            </div>
-          </div>
-          
-          <div className="settings-row">
-            <label>Sound</label>
-            <div className="slider-container">
-              <input 
-                type="range" 
-                min="0" 
-                max="100" 
-                value={soundVolume}
-                onChange={(e) => setSoundVolume(parseInt(e.target.value))}
-              />
-            </div>
-          </div>
+
           
           <div style={{ textAlign: 'center', marginTop: '20px' }}>
             <p>Have feedback or found a bug?</p>

@@ -5,19 +5,21 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: var(--bg-dark);
+  background-color: var(--primary-bg);
   position: relative;
   overflow-x: hidden;
   overflow-y: auto;
-  padding: 80px 20px 30px 20px;
+  padding: clamp(60px, 10vh, 80px) clamp(10px, 3vw, 20px) clamp(20px, 5vh, 30px);
+  width: 100%;
+  max-width: 100vw;
 }
 
 .game-container {
   position: relative;
   width: 100%;
   height: auto;
-  max-height: 30vh;
-  max-width: 800px;
+  max-height: clamp(200px, 30vh, 300px);
+  max-width: min(95vw, 800px);
   margin: 0 auto;
   overflow: hidden; /* Prevent scrolling */
   display: flex;
@@ -29,28 +31,55 @@
   display: flex;
   justify-content: flex-end;
   width: 100%;
-  max-width: 800px;
-  margin-bottom: 20px;
+  max-width: min(95vw, 800px);
+  margin-bottom: clamp(10px, 3vh, 20px);
   position: relative;
   z-index: 10;
 }
 
 .score-display {
   background-color: rgba(30, 30, 47, 0.8);
-  padding: 10px 15px;
+  padding: clamp(8px, 2vw, 10px) clamp(10px, 3vw, 15px);
   border-radius: var(--radius-md);
-  font-size: var(--font-md);
+  font-size: clamp(var(--font-sm), 2.5vw, var(--font-md));
   color: var(--text-light);
   box-shadow: var(--shadow-sm);
   border: 1px solid rgba(140, 82, 255, 0.3);
+  display: flex;
+  align-items: center;
+}
+
+/* Icon styling for score display */
+.score-display img,
+.score-display svg,
+.game-screen img,
+.game-screen svg {
+  width: 20px;
+  height: 20px;
+  margin-right: 6px;
+  filter: drop-shadow(0 0 2px rgba(140, 82, 255, 0.5));
+}
+
+/* Optimize icons for Discord */
+@media (max-width: 600px) {
+  .score-display img,
+  .score-display svg,
+  .game-screen img,
+  .game-screen svg {
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
+    /* Simpler shadow for better performance */
+    filter: drop-shadow(0 0 1px rgba(140, 82, 255, 0.5));
+  }
 }
 
 .question-container {
   width: 100%;
-  max-width: 800px;
+  max-width: min(95vw, 800px);
   margin: 0 auto;
-  margin-top: 10px;
-  padding: 15px;
+  margin-top: clamp(5px, 2vh, 10px);
+  padding: clamp(8px, 3vw, 15px);
   position: relative;
   z-index: 1;
   display: flex;
@@ -61,14 +90,14 @@
 }
 
 .options-section {
-  margin-top: 10px;
+  margin-top: clamp(5px, 2vh, 10px);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: clamp(8px, 2vh, 10px);
   width: 100%;
-  max-width: 500px;
+  max-width: min(90vw, 500px);
   margin: 0 auto;
-  padding: 15px;
+  padding: clamp(10px, 3vw, 15px);
   background-color: rgba(30, 30, 47, 0.8);
   border-radius: var(--radius-lg);
   border: 1px solid rgba(140, 82, 255, 0.3);
@@ -78,9 +107,9 @@
 }
 
 .options-title {
-  font-size: var(--font-lg);
+  font-size: clamp(var(--font-md), 3vw, var(--font-lg));
   color: var(--text-light);
-  margin-bottom: 10px;
+  margin-bottom: clamp(5px, 2vh, 10px);
   text-align: center;
   font-weight: 500;
 }
@@ -97,13 +126,14 @@
   color: white;
   border: 2px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-md);
-  padding: 15px;
-  font-size: var(--font-md);
+  padding: clamp(10px, 3vw, 15px);
+  font-size: clamp(var(--font-sm), 2.5vw, var(--font-md));
   cursor: pointer;
   transition: all 0.2s ease;
   text-align: left;
   position: relative;
   overflow: hidden;
+  width: 100%;
 }
 
 .option-button:hover:not(:disabled) {
@@ -138,14 +168,14 @@
 }
 
 .next-button {
-  margin-top: 15px;
-  margin-bottom: 10px;
-  padding: 15px 24px;
+  margin-top: clamp(10px, 3vh, 15px);
+  margin-bottom: clamp(5px, 2vh, 10px);
+  padding: clamp(10px, 3vh, 15px) clamp(15px, 4vw, 24px);
   background-color: #3498db;
   color: white;
   border: none;
   border-radius: var(--radius-md);
-  font-size: 1.1rem;
+  font-size: clamp(0.9rem, 3vw, 1.1rem);
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -153,7 +183,7 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   display: block;
   width: 100%;
-  max-width: 300px;
+  max-width: min(80vw, 300px);
   margin-left: auto;
   margin-right: auto;
   text-transform: uppercase;
@@ -215,73 +245,147 @@
   }
 }
 
-/* Responsive styles */
+/* Responsive styles with multiple breakpoints */
+/* Large tablets and small desktops */
+@media screen and (max-width: 1024px) {
+  .game-screen {
+    padding: clamp(60px, 10vh, 70px) clamp(10px, 3vw, 15px) clamp(20px, 5vh, 30px);
+  }
+  
+  .game-container {
+    max-width: 90vw;
+  }
+  
+  .question-container {
+    max-width: 90vw;
+  }
+}
+
+/* Tablets */
 @media screen and (max-width: 768px) {
   .game-screen {
-    padding-top: 70px;
-    padding-bottom: 60px;
+    padding-top: clamp(55px, 8vh, 65px);
+    padding-bottom: clamp(50px, 8vh, 60px);
     min-height: 100vh;
     height: auto;
     overflow-y: auto;
   }
   
   .question-container {
-    margin-top: 15px;
-    padding: 12px;
+    margin-top: 10px;
+    padding: 10px;
   }
   
-  .options-title {
-    font-size: var(--font-md);
-  }
-  
-  .option-button {
-    padding: 12px;
-    font-size: var(--font-sm);
-  }
-  
-  .next-button {
-    padding: 12px 24px;
-    font-size: var(--font-md);
+  .options-section {
+    gap: 8px;
   }
   
   .large-button {
-    font-size: 1.2rem;
-    padding: 15px 30px;
+    font-size: 1.1rem;
+    padding: 12px 24px;
+  }
+  
+  .feedback {
+    font-size: 1rem;
+    padding: 6px;
   }
 }
 
+/* Mobile phones */
 @media screen and (max-width: 480px) {
   .game-screen {
-    padding-top: 60px;
-    padding-bottom: 100px;
+    padding-top: clamp(50px, 7vh, 60px);
+    padding-bottom: clamp(80px, 15vh, 100px);
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  
+  .game-container {
+    max-height: 25vh;
   }
   
   .question-container {
     margin-top: 5px;
-    padding: 8px;
+    padding: 6px;
   }
   
   .options-section {
-    max-width: 95%;
-    padding: 10px;
-    margin-bottom: 20px;
+    max-width: 95vw;
+    padding: 8px;
+    margin-bottom: 15px;
+    gap: 6px;
+  }
+  
+  .options-title {
+    margin-bottom: 8px;
   }
   
   .next-button {
-    margin-top: 20px;
-    margin-bottom: 20px;
-    padding: 16px 24px;
-    font-size: 1rem;
-    position: relative;
-    z-index: 100;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    padding: 12px 20px;
+    font-size: 0.9rem;
+    max-width: 85vw;
   }
   
   .game-header {
-    margin-bottom: 10px;
+    margin-bottom: 8px;
+  }
+  
+  .feedback {
+    font-size: 0.9rem;
+    padding: 5px;
+    margin: 5px 0;
+  }
+  
+  .exit-button {
+    padding: 6px 12px;
+    font-size: var(--font-xs);
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
+}
+
+/* Small mobile devices */
+@media screen and (max-width: 360px) {
+  .game-screen {
+    padding-top: 45px;
+    padding-bottom: 70px;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+  
+  .game-container {
+    max-height: 20vh;
+  }
+  
+  .question-container {
+    padding: 4px;
+  }
+  
+  .options-section {
+    padding: 6px;
+    gap: 5px;
+  }
+  
+  .option-button {
+    padding: 8px;
+    font-size: var(--font-xs);
+  }
+  
+  .next-button {
+    padding: 10px 16px;
+    font-size: 0.8rem;
   }
   
   .score-display {
-    padding: 8px 12px;
-    font-size: var(--font-sm);
+    padding: 5px 8px;
+    font-size: var(--font-xs);
+  }
+  
+  .feedback {
+    font-size: 0.8rem;
+    padding: 4px;
+    margin: 4px 0;
   }
 }

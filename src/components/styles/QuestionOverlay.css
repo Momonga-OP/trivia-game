@@ -2,10 +2,20 @@
 
 .question-overlay {
   width: 100%;
+  max-width: 100vw;
   padding: 0;
   z-index: 10;
   opacity: 1;
-  margin-bottom: 10px;
+  margin-bottom: clamp(5px, 2vh, 10px);
+  overflow: hidden; /* Prevent scrolling in Discord */
+}
+
+/* Discord-specific optimizations */
+@media (max-width: 600px) {
+  .question-overlay {
+    margin-bottom: 3px;
+    transition: opacity 0.3s ease; /* Faster transitions for Discord */
+  }
 }
 
 .question-card {
@@ -15,7 +25,8 @@
   overflow: hidden;
   border: 1px solid rgba(140, 82, 255, 0.3);
   backdrop-filter: blur(8px);
-  max-width: 800px;
+  max-width: min(90vw, 800px);
+  width: 100%;
   margin: 0 auto;
   transition: transform 0.3s ease;
 }
@@ -24,10 +35,22 @@
 .question-card.slide-out {
   transform: translateX(-100%);
   opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
 .question-card.slide-in {
   animation: slideInRight 0.3s forwards;
+}
+
+/* Optimize animations for Discord */
+@media (max-width: 600px) {
+  .question-card.slide-out {
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+  
+  .question-card.slide-in {
+    animation-duration: 0.2s;
+  }
 }
 
 @keyframes slideInRight {
@@ -41,14 +64,30 @@
   }
 }
 
+@keyframes timerAnimation {
+  0% {
+    transform: scaleX(1);
+  }
+  100% {
+    transform: scaleX(0);
+  }
+}
+
+/* Reset animation when timer resets */
+.timer-bar.reset {
+  animation: none;
+  transform: scaleX(1);
+}
+
 .question-header {
   display: flex;
   align-items: center;
-  padding: 10px 15px;
+  padding: clamp(8px, 2vw, 10px) clamp(10px, 3vw, 15px);
   background-color: rgba(20, 20, 35, 0.8);
   border-top-left-radius: var(--radius-md);
   border-top-right-radius: var(--radius-md);
   border-bottom: 1px solid rgba(140, 82, 255, 0.3);
+  width: 100%;
 }
 
 .question-card {
@@ -57,38 +96,48 @@
 
 .timer-container {
   position: relative;
-  height: 8px;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius-full);
+  width: 100%;
+  max-width: 600px;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+  margin-top: 20px;
   overflow: hidden;
+  position: relative;
+  will-change: transform; /* Performance optimization */
 }
 
 .timer-bar {
   height: 100%;
-  background: linear-gradient(to right, var(--primary-accent), var(--secondary-accent));
-  border-radius: var(--radius-full);
-  transition: width 1s linear;
+  background: linear-gradient(90deg, #8c52ff, #5e17eb);
+  width: 100%;
+  transform-origin: left;
+  animation: timerAnimation 15s linear forwards;
+  will-change: transform; /* Performance optimization */
+  transform: translateZ(0); /* Force hardware acceleration */
+  backface-visibility: hidden; /* Prevent flickering */
 }
 
-.timer-text {
-  position: absolute;
-  top: -5px;
-  right: 0;
-  font-size: var(--font-sm);
-  color: var(--text-muted);
+/* Ensure timer works in Discord */
+@media (max-width: 600px) {
+  .timer-bar {
+    animation-timing-function: linear !important; /* Ensure linear timing in Discord */
+  }
 }
 
 .question-body {
-  padding: 10px;
+  padding: clamp(8px, 3vw, 20px);
   text-align: center;
+  width: 100%;
 }
 
 .question-text {
-  font-size: var(--font-lg);
+  font-size: clamp(var(--font-md), 3vw, var(--font-lg));
   color: var(--text-light);
   margin: 0;
   line-height: 1.3;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  width: 100%;
 }
 
 /* Animation for timer when time is running low */
@@ -109,33 +158,100 @@
   animation: pulse 1s infinite;
 }
 
-/* Responsive styles */
-@media screen and (max-width: 768px) {
-  .question-overlay {
-    top: 55px; /* Adjust for smaller header on tablets */
+/* Optimize pulse animation for Discord */
+@media (max-width: 600px) {
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(255, 77, 141, 0.7);
+    }
+    70% {
+      box-shadow: 0 0 0 5px rgba(255, 77, 141, 0); /* Smaller pulse for better performance */
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(255, 77, 141, 0);
+    }
   }
   
-  .question-body {
-    padding: 20px;
-  }
-  
-  .question-text {
-    font-size: var(--font-lg);
+  .timer-container.low-time .timer-bar {
+    animation-duration: 0.8s; /* Slightly faster animation */
   }
 }
 
+/* Responsive styles with multiple breakpoints */
+/* Large tablets and small desktops */
+@media screen and (max-width: 1024px) {
+  .question-card {
+    max-width: min(85vw, 700px);
+  }
+}
+
+/* Tablets */
+@media screen and (max-width: 768px) {
+  .question-overlay {
+    top: clamp(50px, 8vh, 55px); /* Adjust for smaller header on tablets */
+    margin-bottom: 8px;
+  }
+  
+  .question-card {
+    max-width: min(90vw, 600px);
+  }
+  
+  .timer-container {
+    height: 6px;
+  }
+  
+  .timer-text {
+    font-size: var(--font-xs);
+  }
+}
+
+/* Mobile phones */
 @media screen and (max-width: 480px) {
   .question-overlay {
-    top: 50px; /* Adjust for smaller header on mobile */
-    padding: 10px;
+    top: clamp(45px, 7vh, 50px); /* Adjust for smaller header on mobile */
+    padding: clamp(5px, 2vw, 10px);
+    margin-bottom: 5px;
+  }
+  
+  .question-card {
+    max-width: 95vw;
+  }
+  
+  .question-header {
+    padding: 6px 10px;
   }
   
   .question-body {
-    padding: 15px;
+    padding: clamp(10px, 3vw, 15px);
   }
   
   .question-text {
-    font-size: var(--font-md);
+    font-size: clamp(var(--font-sm), 4vw, var(--font-md));
     line-height: 1.4;
+  }
+}
+
+/* Small mobile devices */
+@media screen and (max-width: 360px) {
+  .question-overlay {
+    top: 40px;
+    padding: 3px;
+  }
+  
+  .question-header {
+    padding: 5px 8px;
+  }
+  
+  .timer-container {
+    height: 5px;
+  }
+  
+  .question-body {
+    padding: 8px;
+  }
+  
+  .question-text {
+    font-size: var(--font-sm);
+    line-height: 1.3;
   }
 }

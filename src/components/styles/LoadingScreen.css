@@ -1,0 +1,331 @@
+/* LoadingScreen.css */
+@import url('./variables.css');
+
+.loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--primary-bg), #0a0520);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  opacity: 1;
+  transition: opacity 0.5s ease-out;
+  overflow: hidden; /* Prevent scrolling in Discord */
+}
+
+/* Special styles for Discord mode */
+.loading-screen.discord-mode {
+  transition: opacity 0.3s ease-out;
+  max-width: 100%;
+  max-height: 100vh;
+}
+
+.loading-screen.fade-out {
+  opacity: 0;
+}
+
+.loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 600px;
+  padding: 2rem;
+  position: relative;
+}
+
+/* Logo styling */
+.loading-logo {
+  margin-bottom: 2rem;
+  position: relative;
+  text-align: center;
+}
+
+.loading-logo h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: white;
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px rgba(140, 82, 255, 0.8), 0 0 20px rgba(140, 82, 255, 0.5);
+  position: relative;
+  z-index: 2;
+  background: linear-gradient(to right, #ffffff, #c9a8ff, #ffffff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 3s infinite, pulse 2s infinite alternate;
+}
+
+.logo-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120%;
+  height: 120%;
+  background: radial-gradient(ellipse at center, rgba(140, 82, 255, 0.4) 0%, rgba(140, 82, 255, 0) 70%);
+  filter: blur(20px);
+  z-index: 1;
+  animation: pulse 4s infinite alternate;
+}
+
+/* Hexagon grid */
+.hexagon-container {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin: 2rem 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Smaller container for Discord */
+.discord-mode .hexagon-container {
+  width: 160px;
+  height: 160px;
+  margin: 1rem 0;
+}
+
+.hexagon {
+  position: absolute;
+  width: 60px;
+  height: 34px;
+  background-color: rgba(140, 82, 255, 0.1);
+  border: 1px solid rgba(140, 82, 255, 0.3);
+  box-shadow: 0 0 10px rgba(140, 82, 255, 0.2);
+  transform: rotate(30deg);
+  animation: hexPulse 2s infinite alternate;
+  transition: all 0.3s ease;
+  will-change: transform, opacity; /* Performance optimization */
+}
+
+/* Smaller hexagons for Discord */
+.discord-mode .hexagon {
+  width: 40px;
+  height: 24px;
+  animation-duration: 1.5s; /* Faster animation */
+}
+
+.hexagon::before,
+.hexagon::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  border-left: 30px solid transparent;
+  border-right: 30px solid transparent;
+}
+
+.hexagon::before {
+  bottom: 100%;
+  border-bottom: 17px solid rgba(140, 82, 255, 0.1);
+}
+
+.hexagon::after {
+  top: 100%;
+  border-top: 17px solid rgba(140, 82, 255, 0.1);
+}
+
+/* Position hexagons in a circular pattern */
+.hexagon:nth-child(1) { transform: translate(70px, 0) rotate(30deg); }
+.hexagon:nth-child(2) { transform: translate(35px, 60px) rotate(30deg); }
+.hexagon:nth-child(3) { transform: translate(-35px, 60px) rotate(30deg); }
+.hexagon:nth-child(4) { transform: translate(-70px, 0) rotate(30deg); }
+.hexagon:nth-child(5) { transform: translate(-35px, -60px) rotate(30deg); }
+.hexagon:nth-child(6) { transform: translate(35px, -60px) rotate(30deg); }
+.hexagon:nth-child(7) { transform: translate(0, 0) rotate(30deg); scale: 0.8; }
+.hexagon:nth-child(8) { transform: translate(50px, 30px) rotate(30deg); scale: 0.7; }
+.hexagon:nth-child(9) { transform: translate(0, 60px) rotate(30deg); scale: 0.7; }
+.hexagon:nth-child(10) { transform: translate(-50px, 30px) rotate(30deg); scale: 0.7; }
+.hexagon:nth-child(11) { transform: translate(-50px, -30px) rotate(30deg); scale: 0.7; }
+.hexagon:nth-child(12) { transform: translate(0, -60px) rotate(30deg); scale: 0.7; }
+
+/* Loading circle */
+.loading-circle {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+}
+
+.loading-circle svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.loading-circle-bg,
+.loading-circle-progress {
+  fill: none;
+  stroke-width: 4;
+}
+
+.loading-circle-bg {
+  stroke: rgba(140, 82, 255, 0.1);
+}
+
+.loading-circle-progress {
+  stroke: var(--primary-accent);
+  stroke-dasharray: 252;
+  stroke-dashoffset: 252;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.3s ease;
+  filter: drop-shadow(0 0 5px rgba(140, 82, 255, 0.5));
+}
+
+.loading-percentage {
+  position: absolute;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 0 5px rgba(140, 82, 255, 0.8);
+}
+
+/* Loading text */
+.loading-text {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--text-light);
+  font-size: 1rem;
+  text-align: center;
+}
+
+.loading-dots {
+  display: flex;
+  margin-top: 0.5rem;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  margin: 0 4px;
+  border-radius: 50%;
+  background-color: var(--primary-accent);
+  animation: dotPulse 1.5s infinite;
+}
+
+.dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+/* Particle effects */
+.loading-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.particle {
+  position: absolute;
+  background-color: rgba(140, 82, 255, 0.4);
+  border-radius: 50%;
+  animation: particleFloat 3s infinite ease-in-out;
+}
+
+/* Animations */
+@keyframes shimmer {
+  0% { background-position: -100% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes pulse {
+  0% { opacity: 0.5; transform: scale(1); }
+  100% { opacity: 0.8; transform: scale(1.05); }
+}
+
+@keyframes hexPulse {
+  0% { opacity: 0.3; transform: rotate(30deg) scale(1); }
+  100% { opacity: 0.8; transform: rotate(30deg) scale(1.1); }
+}
+
+@keyframes dotPulse {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.5); opacity: 1; }
+}
+
+@keyframes particleFloat {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  50% { transform: translateY(-20px) translateX(10px); }
+}
+
+/* Optimized animations for Discord */
+.discord-mode .loading-logo h1 {
+  animation: shimmer 2s infinite, pulse 1.5s infinite alternate;
+}
+
+.discord-mode .logo-glow {
+  animation: pulse 2s infinite alternate;
+}
+
+.discord-mode .dot {
+  animation: dotPulse 1s infinite;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .loading-logo h1 {
+    font-size: 2rem;
+  }
+  
+  .hexagon-container {
+    width: 180px;
+    height: 180px;
+  }
+  
+  .hexagon {
+    width: 50px;
+    height: 28px;
+  }
+  
+  .hexagon::before,
+  .hexagon::after {
+    border-left: 25px solid transparent;
+    border-right: 25px solid transparent;
+  }
+  
+  .hexagon::before {
+    border-bottom: 14px solid rgba(140, 82, 255, 0.1);
+  }
+  
+  .hexagon::after {
+    border-top: 14px solid rgba(140, 82, 255, 0.1);
+  }
+}
+
+@media (max-width: 480px) {
+  .loading-logo h1 {
+    font-size: 1.8rem;
+  }
+  
+  .hexagon-container {
+    width: 160px;
+    height: 160px;
+  }
+  
+  .loading-circle {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .loading-percentage {
+    font-size: 1rem;
+  }
+}
