@@ -4,7 +4,7 @@ import './index.css';
 import App from './App.jsx';
 
 // Import the Discord SDK
-import DiscordSDK from '@discord/embedded-app-sdk';
+import { DiscordSDK } from '@discord/embedded-app-sdk';
 
 const discordSdk = new DiscordSDK('1367687677092167770');
 
