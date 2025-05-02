@@ -1,0 +1,315 @@
+@import url('./variables.css');
+
+.animated-character-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5; /* Ensure it stays above background but below interactive elements */
+  top: 0;
+  left: 0;
+  overflow: hidden;
+}
+
+.spartan-character {
+  position: absolute;
+  width: 100px;
+  height: 150px;
+  transform-origin: bottom center;
+}
+
+/* Direction classes */
+.spartan-character.left {
+  transform: scaleX(-1);
+}
+
+/* Animation states */
+.spartan-character.walking .spartan-leg.left {
+  animation: walkLeft 0.5s infinite alternate;
+}
+
+.spartan-character.walking .spartan-leg.right {
+  animation: walkRight 0.5s infinite alternate;
+}
+
+.spartan-character.walking {
+  animation: bounce 0.5s infinite alternate;
+}
+
+.spartan-character.idle {
+  animation: breathe 3s infinite ease-in-out;
+}
+
+/* Spartan head */
+.spartan-head {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 50px;
+  height: 50px;
+  transform: translateX(-50%);
+  z-index: 2;
+}
+
+.spartan-helmet {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 70%;
+  background: linear-gradient(135deg, #DAA520, #B8860B);
+  border-radius: 50% 50% 0 0;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.spartan-helmet::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  width: 60%;
+  height: 40px;
+  background: linear-gradient(135deg, #FF0000, #8B0000);
+  transform: translateX(-50%) rotate(180deg);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+
+.spartan-face {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 80%;
+  height: 40%;
+  background: #D2B48C;
+  border-radius: 0 0 40% 40%;
+  transform: translateX(-50%);
+}
+
+/* Spartan body */
+.spartan-body {
+  position: absolute;
+  top: 45px;
+  left: 50%;
+  width: 70px;
+  height: 80px;
+  transform: translateX(-50%);
+  z-index: 1;
+}
+
+.spartan-armor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #8B0000, #A52A2A);
+  border-radius: 10px 10px 0 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.spartan-armor::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  width: 50%;
+  height: 20px;
+  background: linear-gradient(135deg, #DAA520, #B8860B);
+  transform: translateX(-50%);
+  border-radius: 5px;
+}
+
+.spartan-cape {
+  position: absolute;
+  top: 5px;
+  left: 50%;
+  width: 90%;
+  height: 90px;
+  background: #8B0000;
+  transform: translateX(-50%);
+  z-index: -1;
+  border-radius: 5px;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);
+  animation: capeWave 2s infinite ease-in-out;
+}
+
+.spartan-shield {
+  position: absolute;
+  left: -25px;
+  top: 20px;
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(45deg, #B8860B, #DAA520);
+  border: 3px solid #8B4513;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  z-index: 3;
+}
+
+.spartan-shield::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 70%;
+  height: 70%;
+  background: #8B0000;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.spartan-shield::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 30%;
+  height: 30%;
+  background: #DAA520;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.spartan-spear {
+  position: absolute;
+  right: -15px;
+  top: 0;
+  width: 10px;
+  height: 120px;
+  background: linear-gradient(45deg, #8B4513, #A0522D);
+  border-radius: 2px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 3;
+}
+
+.spartan-spear::before {
+  content: '';
+  position: absolute;
+  top: -15px;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 15px solid #A0522D;
+}
+
+/* Legs */
+.spartan-leg {
+  position: absolute;
+  bottom: -30px;
+  width: 20px;
+  height: 40px;
+  background: #8B4513;
+  border-radius: 5px;
+  z-index: 0;
+}
+
+.spartan-leg.left {
+  left: 15px;
+  transform-origin: top center;
+}
+
+.spartan-leg.right {
+  right: 15px;
+  transform-origin: top center;
+}
+
+/* Animation keyframes */
+@keyframes walkLeft {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(30deg); }
+}
+
+@keyframes walkRight {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(-30deg); }
+}
+
+@keyframes bounce {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-5px); }
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+
+@keyframes capeWave {
+  0%, 100% { transform: translateX(-50%) rotate(0deg); }
+  50% { transform: translateX(-50%) rotate(5deg); }
+}
+
+/* Responsive styles */
+@media screen and (max-width: 768px) {
+  .spartan-character {
+    width: 80px;
+    height: 120px;
+  }
+  
+  .spartan-head {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .spartan-body {
+    width: 55px;
+    height: 65px;
+    top: 35px;
+  }
+  
+  .spartan-shield {
+    width: 40px;
+    height: 40px;
+    left: -20px;
+  }
+  
+  .spartan-spear {
+    width: 8px;
+    height: 100px;
+    right: -12px;
+  }
+  
+  .spartan-leg {
+    height: 35px;
+    width: 16px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .spartan-character {
+    width: 60px;
+    height: 90px;
+  }
+  
+  .spartan-head {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .spartan-body {
+    width: 40px;
+    height: 50px;
+    top: 25px;
+  }
+  
+  .spartan-shield {
+    width: 30px;
+    height: 30px;
+    left: -15px;
+    top: 15px;
+  }
+  
+  .spartan-spear {
+    width: 6px;
+    height: 80px;
+    right: -10px;
+  }
+  
+  .spartan-leg {
+    height: 25px;
+    width: 12px;
+  }
+}

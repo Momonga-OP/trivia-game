@@ -1,0 +1,46 @@
+:root {
+  /* Color palette based on Discord trivia app */
+  --primary-bg: #1a1033;
+  --secondary-bg: #2a1b4a;
+  --card-bg: #2d1a5a;
+  --primary-accent: #8c52ff;
+  --secondary-accent: #ff4d8d;
+  --button-primary: #9146ff;
+  --button-secondary: #5865f2;
+  --text-light: #ffffff;
+  --text-muted: #a8a8b3;
+  --success: #43b581;
+  --error: #f04747;
+  --warning: #faa61a;
+  
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  
+  /* Border radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+  
+  /* Shadows */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.4);
+  
+  /* Font sizes */
+  --font-xs: 0.75rem;
+  --font-sm: 0.875rem;
+  --font-md: 1rem;
+  --font-lg: 1.25rem;
+  --font-xl: 1.5rem;
+  --font-2xl: 2rem;
+  --font-3xl: 2.5rem;
+  
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s ease;
+}

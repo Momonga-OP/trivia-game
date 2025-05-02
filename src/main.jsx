@@ -83,8 +83,8 @@ function RootApp() {
     };
   }, []);
 
-  // Pass Discord status to App in case you want to show connection state
-  return <App discordStatus={discordStatus} />;
+  // App now manages its own Discord status internally
+  return <App />;
 }
 
 // Handle rendering errors at the root level

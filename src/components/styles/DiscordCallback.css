@@ -1,0 +1,119 @@
+/* Discord Callback Styles */
+@import url('./variables.css');
+
+.discord-callback-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: rgba(30, 30, 47, 1);
+  padding: 20px;
+}
+
+.auth-card {
+  background-color: rgba(47, 49, 54, 0.9);
+  border-radius: 12px;
+  padding: 30px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(140, 82, 255, 0.3);
+  backdrop-filter: blur(10px);
+  animation: fadeIn 0.5s ease;
+}
+
+.discord-logo {
+  font-size: 60px;
+  color: #5865f2;
+  margin-bottom: 20px;
+  animation: pulse 2s infinite;
+}
+
+.auth-card h2 {
+  color: white;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.auth-card p {
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 20px;
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-left-color: #5865f2;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+.auth-error {
+  background-color: rgba(237, 66, 69, 0.1);
+  border-left: 4px solid #ed4245;
+  padding: 15px;
+  text-align: left;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.auth-error h2 {
+  color: #ed4245;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.auth-error p {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 20px;
+  }
+  
+  .discord-logo {
+    font-size: 50px;
+  }
+  
+  .auth-card h2 {
+    font-size: 20px;
+  }
+}

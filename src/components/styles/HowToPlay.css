@@ -1,0 +1,136 @@
+@import url('./variables.css');
+
+.how-to-play-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.how-to-play-content {
+  background-color: rgba(30, 30, 47, 0.85);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+}
+
+.how-to-play-title {
+  text-align: center;
+  color: var(--primary-accent);
+  margin-bottom: var(--spacing-xl);
+  font-size: var(--font-2xl);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.instruction-card {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+  background-color: rgba(44, 62, 80, 0.5);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  border-left: 4px solid var(--primary-accent);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.instruction-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.instruction-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  background-color: var(--secondary-bg);
+  border-radius: 50%;
+  margin-right: var(--spacing-md);
+  flex-shrink: 0;
+}
+
+.instruction-icon i {
+  font-size: var(--font-xl);
+  color: var(--primary-accent);
+}
+
+.instruction-text {
+  flex: 1;
+}
+
+.instruction-text h2 {
+  color: var(--text-light);
+  margin-bottom: var(--spacing-xs);
+  font-size: var(--font-lg);
+}
+
+.instruction-text p {
+  color: var(--text-muted);
+  font-size: var(--font-md);
+  line-height: 1.5;
+}
+
+.start-game-container {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--spacing-xl);
+}
+
+.start-game-button {
+  background-color: var(--button-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 15px 30px;
+  font-size: var(--font-lg);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-md);
+}
+
+.start-game-button:hover {
+  background-color: #7b38d8;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .how-to-play-title {
+    font-size: var(--font-xl);
+  }
+  
+  .instruction-card {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .instruction-icon {
+    margin-right: 0;
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  .start-game-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .how-to-play-content {
+    padding: var(--spacing-md);
+  }
+  
+  .instruction-text h2 {
+    font-size: var(--font-md);
+  }
+  
+  .instruction-text p {
+    font-size: var(--font-sm);
+  }
+}

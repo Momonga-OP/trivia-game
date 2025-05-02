@@ -1,0 +1,241 @@
+/* PlayerProfile.css */
+@import url('./variables.css');
+
+.player-profile-container {
+  position: relative;
+}
+
+/* Avatar styling */
+.player-avatar-wrapper {
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.player-avatar-wrapper:hover {
+  transform: scale(1.05);
+}
+
+.player-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: rgba(30, 30, 47, 0.8);
+  overflow: hidden;
+  border: 2px solid rgba(140, 82, 255, 0.5);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3), 
+              0 0 15px rgba(140, 82, 255, 0.5);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.player-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.player-level {
+  position: absolute;
+  bottom: -5px;
+  right: -5px;
+  background: linear-gradient(135deg, #8c52ff, #5c35a4);
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 2px 5px;
+  border-radius: 10px;
+  border: 2px solid rgba(30, 30, 47, 0.8);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Profile card styling */
+.player-profile-card {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  width: 300px;
+  background-color: rgba(30, 30, 47, 0.95);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(140, 82, 255, 0.3);
+  padding: 20px;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+  animation: fadeIn 0.3s ease;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid rgba(140, 82, 255, 0.2);
+  padding-bottom: 15px;
+}
+
+.profile-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid rgba(140, 82, 255, 0.5);
+  margin-right: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-info {
+  flex: 1;
+}
+
+.profile-username {
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  margin: 0 0 5px 0;
+}
+
+.profile-level {
+  font-size: 14px;
+  color: rgba(140, 82, 255, 0.8);
+  margin-bottom: 3px;
+}
+
+.profile-score {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.profile-guest {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+  font-style: italic;
+}
+
+/* Stats section */
+.profile-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.stat-item {
+  flex: 1;
+  min-width: calc(33% - 10px);
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+  border: 1px solid rgba(140, 82, 255, 0.2);
+}
+
+.stat-label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 5px;
+}
+
+.stat-value {
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+}
+
+/* Login section */
+.login-prompt {
+  text-align: center;
+  padding: 10px;
+}
+
+.login-prompt p {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 15px;
+}
+
+.discord-login-button {
+  background-color: #5865f2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 15px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.discord-login-button i {
+  margin-right: 8px;
+  font-size: 16px;
+}
+
+.discord-login-button:hover {
+  background-color: #4752c4;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+}
+
+/* Close button */
+.close-profile {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.close-profile:hover {
+  color: white;
+  transform: scale(1.1);
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile responsive styles */
+@media (max-width: 480px) {
+  .player-profile-card {
+    width: 280px;
+    right: -10px;
+  }
+  
+  .profile-avatar {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .profile-username {
+    font-size: 16px;
+  }
+  
+  .stat-item {
+    min-width: calc(50% - 10px);
+  }
+}
