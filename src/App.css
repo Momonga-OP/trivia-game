@@ -17,7 +17,7 @@ body {
   background-color: #1e1e2f;
   color: #f6f6f6;
   min-height: 100vh;
-  background-image: url('C:\Users\User\trivia-game\src\images\418813.jpg');
+  background-image: url('./images/418813.jpg');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -26,31 +26,31 @@ body {
 /* Background variations for game screen */
 /* Background variations for game screen */
 .game-screen.bg-1 {
-  background-image: linear-gradient(rgba(30, 30, 47, 0.85), rgba(30, 30, 47, 0.95)), url('C:\Users\User\trivia-game\src\images\418832.jpg');
+  background-image: linear-gradient(rgba(30, 30, 47, 0.85), rgba(30, 30, 47, 0.95)), url('./images/418832.jpg');
   background-size: cover;
   background-position: center;
 }
 
 .game-screen.bg-2 {
-  background-image: linear-gradient(rgba(30, 30, 47, 0.85), rgba(30, 30, 47, 0.95)), url('C:\Users\User\trivia-game\src\images\418856.jpg');
+  background-image: linear-gradient(rgba(30, 30, 47, 0.85), rgba(30, 30, 47, 0.95)), url('/images/418856.jpg');
   background-size: cover;
   background-position: center;
 }
 
 .game-screen.bg-3 {
-  background-image: linear-gradient(rgba(30, 30, 47, 0.85), rgba(30, 30, 47, 0.95)), url('C:\Users\User\trivia-game\src\images\418872.jpg');
+  background-image: linear-gradient(rgba(30, 30, 47, 0.85), rgba(30, 30, 47, 0.95)), url('/images/418872.jpg');
   background-size: cover;
   background-position: center;
 }
 
 .game-screen.bg-4 {
-  background-image: linear-gradient(rgba(30, 30, 47, 0.85), rgba(30, 30, 47, 0.95)), url('C:\Users\User\trivia-game\src\images\418880.jpg');
+  background-image: linear-gradient(rgba(30, 30, 47, 0.85), rgba(30, 30, 47, 0.95)), url('/images/418880.jpg');
   background-size: cover;
   background-position: center;
 }
 
 .game-screen.bg-5 {
-  background-image: linear-gradient(rgba(30, 30, 47, 0.85), rgba(30, 30, 47, 0.95)), url('C:\Users\User\trivia-game\src\images\418887.jpg');
+  background-image: linear-gradient(rgba(30, 30, 47, 0.85), rgba(30, 30, 47, 0.95)), url('/images/418887.jpg');
   background-size: cover;
   background-position: center;
 }
@@ -227,7 +227,7 @@ body {
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background-image: linear-gradient(rgba(30, 30, 47, 0.7), rgba(30, 30, 47, 0.9)), url('C:\Users\User\trivia-game\src\images\418887.jpg');
+  background-image: linear-gradient(rgba(30, 30, 47, 0.7), rgba(30, 30, 47, 0.9)), url('./images/456678.jpg');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
