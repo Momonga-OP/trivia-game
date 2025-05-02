@@ -9,11 +9,11 @@
     "lint": "eslint .",
     "preview": "vite preview"
   },
-  "dependencies": {
-    "@discord/embedded-app-sdk": "^0.0.6",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
-  },
+"dependencies": {
+  "@discord/embedded-app-sdk": "discord/embedded-app-sdk",
+  "react": "^19.0.0",
+  "react-dom": "^19.0.0"
+},
   "devDependencies": {
     "@eslint/js": "^9.22.0",
     "@types/react": "^19.0.10",
