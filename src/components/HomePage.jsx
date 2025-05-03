@@ -4,7 +4,7 @@ import BackgroundAnimation from './BackgroundAnimation';
 import PlayerProfile from './PlayerProfile';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDiscord, faTwitter, faGithub } from '@fortawesome/free-brands-svg-icons';
-import { faPlay, faInfoCircle, faTrophy, faQuestion, faUsers } from '@fortawesome/free-solid-svg-icons';
+import { faPlay, faInfoCircle, faTrophy, faQuestion, faUsers, faBook } from '@fortawesome/free-solid-svg-icons';
 import discordService from '../services/DiscordService';
 import playerDataService from '../services/PlayerDataService';
 import { useSound } from '../contexts/SoundContext.jsx';
@@ -70,6 +70,19 @@ function HomePage({ navigateTo, windowSize, playerData: propPlayerData }) {
       
       {/* Game Mode Section */}
       <div className="game-section">
+        <div className="home-buttons">
+          <button 
+            className="lore-button" 
+            onClick={() => {
+              playSound('primaryButton');
+              navigateTo('lore');
+            }}
+            onMouseEnter={() => playSound('buttonHover')}
+          >
+            <FontAwesomeIcon icon="book" />
+            <span>Explore Dofus Lore</span>
+          </button>
+        </div>
         <div 
           className={`game-mode-card ${hoverCard ? 'hover' : ''}`}
           onMouseEnter={() => {

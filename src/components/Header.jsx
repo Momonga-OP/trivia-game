@@ -40,6 +40,14 @@ function Header({ navigateTo, currentPage, isInGame }) {
                 How to Play
               </button>
             </li>
+            <li className={currentPage === 'lore' ? 'active' : ''}>
+              <button 
+                onClick={() => handleNavigation('lore')}
+                className={isInGame ? 'disabled' : ''}
+              >
+                Lore
+              </button>
+            </li>
           </ul>
           
           {/* Creator Credits */}
@@ -65,6 +73,14 @@ function Header({ navigateTo, currentPage, isInGame }) {
         >
           <FontAwesomeIcon icon="question-circle" />
           <span>How to Play</span>
+        </div>
+        
+        <div 
+          className={`tab-item ${currentPage === 'lore' ? 'active' : ''}`}
+          onClick={() => navigateTo('lore')}
+        >
+          <FontAwesomeIcon icon="book" />
+          <span>Lore</span>
         </div>
         
         <div 

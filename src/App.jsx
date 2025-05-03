@@ -17,6 +17,7 @@ import About from './components/About';
 import Credits from './components/Credits';
 import Header from './components/Header';
 import HowToPlay from './components/HowToPlay';
+import Lore from './components/Lore';
 import DiscordCallback from './components/DiscordCallback';
 
 // Main App component that handles routing and viewport adjustments
@@ -245,6 +246,9 @@ function App() {
                     )}
                     {currentPage === 'howtoplay' && (
                       <HowToPlay navigateTo={navigateTo} windowSize={windowSize} />
+                    )}
+                    {currentPage === 'lore' && (
+                      <Lore navigateTo={navigateTo} windowSize={windowSize} />
                     )}
                   </main>
                   
