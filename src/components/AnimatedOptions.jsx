@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './styles/AnimatedOptions.css';
+import { useSound } from '../contexts/SoundContext.jsx';
 
 function AnimatedOptions({ options, selectedOption, correctAnswer, showNextButton, onOptionSelect, questionId }) {
+  const { playSound } = useSound();
   const [animationClass, setAnimationClass] = useState('');
   const [displayedOptions, setDisplayedOptions] = useState(options);
   
@@ -48,6 +50,7 @@ function AnimatedOptions({ options, selectedOption, correctAnswer, showNextButto
             ${showNextButton && option === correctAnswer ? 'correct' : ''}
             ${showNextButton && selectedOption === option && option !== correctAnswer ? 'incorrect' : ''}`}
           onClick={() => onOptionSelect(option)}
+          onMouseEnter={() => playSound('buttonHover')}
           disabled={showNextButton}
           style={{ animationDelay: `${index * 0.1}s` }}
         >

@@ -151,15 +151,16 @@
 }
 
 .game-mode-title {
-  font-size: 1.2rem;
-  font-weight: bold;
+  font-size: 1.1rem;
+  font-weight: 600;
   margin-bottom: 3px;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   background: linear-gradient(to right, #ffffff, #c9a8ff);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  font-family: 'Poppins', sans-serif;
 }
 
 .logo-glow {
@@ -280,15 +281,17 @@
   background-color: var(--card-bg);
   background-image: linear-gradient(to bottom right, rgba(140, 82, 255, 0.1), rgba(0, 0, 0, 0.2));
   border-radius: var(--border-radius-lg);
-  padding: 15px;
+  padding: 12px;
   margin-bottom: 15px;
-  box-shadow: var(--shadow-lg);
-  width: 100%;
-  max-width: 500px;
   position: relative;
+  width: 100%;
+  max-width: 340px;
+  min-height: 220px;
+  box-shadow: var(--shadow-lg);
+  transition: all 0.3s ease;
   overflow: hidden;
-  border: 1px solid rgba(140, 82, 255, 0.3);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 10;
 }
 
 .game-mode-card.hover {
@@ -301,13 +304,63 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   border-bottom: 1px solid rgba(140, 82, 255, 0.2);
-  padding-bottom: 10px;
+  padding-bottom: 8px;
   background: linear-gradient(to right, rgba(140, 82, 255, 0.1), transparent);
   border-radius: 6px 6px 0 0;
   padding-top: 5px;
   padding-left: 8px;
+}
+
+.mode-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.3rem;
+  background: linear-gradient(135deg, rgba(140, 82, 255, 0.2), rgba(140, 82, 255, 0.05));
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.game-mode-details {
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  padding: 6px 10px;
+  background: rgba(140, 82, 255, 0.05);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-family: 'Poppins', sans-serif;
+  color: rgba(255, 255, 255, 0.85);
+  transition: all 0.2s ease;
+  border-left: 2px solid rgba(140, 82, 255, 0.3);
+}
+
+.detail-item:hover {
+  background: rgba(140, 82, 255, 0.1);
+  transform: translateX(2px);
+}
+
+.detail-item svg {
+  margin-right: 8px;
+  color: rgba(140, 82, 255, 0.9);
+  font-size: 0.9rem;
+}
+
+.detail-item span {
+  font-weight: 400;
+  letter-spacing: 0.3px;
 }
 
 .card-glow {
@@ -332,7 +385,7 @@
   position: relative;
   z-index: 2;
   margin-top: 5px;
-  padding: 20px;
+  padding: 15px;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -369,6 +422,7 @@
   margin-top: 15px;
   padding-top: 5px;
   border-top: 1px dashed rgba(140, 82, 255, 0.2);
+  position: relative;
 }
 
 .play-button {
@@ -376,9 +430,9 @@
   color: white;
   border: none;
   border-radius: var(--border-radius-md);
-  padding: 8px 15px;
-  font-size: 0.9rem;
-  font-weight: bold;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 10px rgba(146, 70, 255, 0.4);
@@ -386,10 +440,11 @@
   align-items: center;
   justify-content: center;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   position: relative;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.1);
+  font-family: 'Poppins', sans-serif;
 }
 
 .play-button::before {
@@ -425,20 +480,25 @@
   transform: translateX(5px);
 }
 
+.settings-container {
+  position: relative;
+  display: inline-block;
+}
+
 .settings-button {
   background-color: rgba(30, 30, 47, 0.8);
   color: rgba(140, 82, 255, 0.8);
   border: 1px solid rgba(140, 82, 255, 0.3);
-  border-radius: 12px;
-  width: 40px;
-  height: 40px;
+  border-radius: 10px;
+  width: 34px;
+  height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-left: 10px;
+  margin-left: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-size: 16px;
+  font-size: 14px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(5px);
 }
@@ -536,25 +596,53 @@
 .settings-panel {
   background-color: rgba(42, 27, 74, 0.95);
   border-radius: var(--radius-lg);
-  padding: var(--spacing-lg);
+  padding: 20px;
   color: var(--text-light);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), 0 0 20px rgba(140, 82, 255, 0.2);
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1000;
-  width: 90%;
-  max-width: 400px;
-  border: 2px solid rgba(140, 82, 255, 0.3);
-  backdrop-filter: blur(5px);
+  width: 320px;
+  max-width: 320px;
+  border: 1px solid rgba(140, 82, 255, 0.3);
+  backdrop-filter: blur(10px);
+  animation: fadeIn 0.3s ease forwards;
+  text-align: center;
 }
 
 .settings-panel h2 {
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: 20px;
   text-align: center;
-  font-size: var(--font-xl);
+  font-size: 28px;
   color: white;
+  font-weight: 600;
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.settings-panel h2::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(to right, rgba(140, 82, 255, 0.3), rgba(140, 82, 255, 0.8), rgba(140, 82, 255, 0.3));
+  border-radius: 3px;
+}
+
+.settings-content {
+  padding: 0 10px;
+}
+
+.settings-content p {
+  margin: 5px 0;
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.4;
 }
 
 .settings-row {
@@ -579,16 +667,23 @@
   color: white;
   border: none;
   border-radius: 8px;
-  padding: 10px 20px;
-  margin: 15px 0;
+  padding: 12px 20px;
+  margin: 20px 0 5px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
   cursor: pointer;
   width: 100%;
-  font-weight: bold;
+  font-weight: 600;
+  font-size: 16px;
   transition: all 0.2s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  letter-spacing: 0.5px;
+}
+
+.discord-button svg {
+  font-size: 18px;
 }
 
 .discord-button:hover {
@@ -600,16 +695,23 @@
   position: absolute;
   top: 10px;
   right: 10px;
-  background: none;
+  background: transparent;
   border: none;
   color: white;
   font-size: 24px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
+  opacity: 0.8;
 }
 
 .close-button:hover {
-  color: #ff4d8d;
+  opacity: 1;
   transform: scale(1.1);
 }
 
@@ -697,6 +799,27 @@
   }
 }
 
+/* Animation Keyframes */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 /* Small mobile devices */
 @media (max-width: 360px) {
   .home-page {
@@ -724,5 +847,11 @@
   .user-profile-wrapper {
     bottom: 10px;
     right: 10px;
+  }
+  
+  /* Adjust settings panel for small screens */
+  .settings-panel {
+    max-width: 280px;
+    right: -10px;
   }
 }

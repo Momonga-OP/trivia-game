@@ -31,10 +31,16 @@
   justify-content: center;
 }
 
-.player-avatar img {
+.avatar-placeholder {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  background: var(--primary-accent-gradient);
 }
 
 .player-level {
@@ -85,10 +91,16 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-.profile-avatar img {
+.profile-avatar .avatar-placeholder {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+  background: var(--primary-accent-gradient);
 }
 
 .profile-info {
@@ -161,8 +173,8 @@
   margin-bottom: 15px;
 }
 
-.discord-login-button {
-  background-color: #5865f2;
+.login-button {
+  background: var(--primary-accent-gradient);
   color: white;
   border: none;
   border-radius: 8px;
@@ -178,15 +190,10 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-.discord-login-button i {
-  margin-right: 8px;
-  font-size: 16px;
-}
-
-.discord-login-button:hover {
-  background-color: #4752c4;
+.login-button:hover {
+  background: var(--button-primary-gradient);
   transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4), 0 0 15px rgba(140, 82, 255, 0.4);
 }
 
 /* Close button */

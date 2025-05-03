@@ -17,7 +17,9 @@
 .fa-users,
 .fa-info-circle,
 .fa-play,
-.fa-question {
+.fa-question,
+.fa-book {
+  /* !important flags to override any other styles */
   font-family: 'Font Awesome 5 Free', 'Font Awesome 5 Brands' !important;
   font-weight: 900;
   display: inline-block !important;
@@ -44,15 +46,17 @@
 
 /* Ensure social icons are visible */
 .social-icon i,
-.close-button i {
+.close-button i,
+.social-icon svg,
+.close-button svg {
   display: inline-block !important;
   visibility: visible !important;
   opacity: 1 !important;
   font-size: 1.2em;
 }
 
-/* Discord mode specific styles */
-@media (max-width: 600px) {
+/* Discord mode specific styles - applies to Discord activities and mobile */
+@media (max-width: 600px), (any-pointer: coarse) {
   .social-icon,
   .close-button {
     /* Increase size for better visibility */
@@ -63,18 +67,39 @@
   
   /* Add background color to make icons more visible */
   .social-icon.discord {
-    background-color: rgba(88, 101, 242, 0.3);
+    background-color: rgba(88, 101, 242, 0.5);
+    position: relative;
   }
   
   .social-icon.youtube {
-    background-color: rgba(255, 0, 0, 0.3);
+    background-color: rgba(255, 0, 0, 0.5);
+    position: relative;
   }
   
   .close-button {
-    background-color: rgba(255, 77, 77, 0.2);
+    background-color: rgba(255, 77, 77, 0.4);
     border-radius: 50%;
     width: 36px;
     height: 36px;
+    position: relative;
+  }
+  
+  /* Add icon outlines for better visibility */
+  .social-icon i,
+  .close-button i,
+  .social-icon svg,
+  .close-button svg,
+  .fa,
+  .fas,
+  .far,
+  .fab,
+  svg[data-icon],
+  svg.svg-inline--fa {
+    text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+    filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.8));
+    color: white !important;
+    stroke: rgba(0, 0, 0, 0.8);
+    stroke-width: 0.5px;
   }
 }
 
@@ -82,18 +107,56 @@
 .social-icon.discord:after {
   content: attr(data-fallback);
   display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
 }
 
 .social-icon.youtube:after {
   content: attr(data-fallback);
   display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
+}
+
+.close-button:after {
+  content: 'X';
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
 }
 
 .social-icon.discord[data-failed="true"]:after,
-.social-icon.youtube[data-failed="true"]:after {
+.social-icon.youtube[data-failed="true"]:after,
+.close-button[data-failed="true"]:after {
   display: block;
   font-family: Arial, sans-serif;
-  font-size: 10px;
+  font-size: 14px;
+  color: white;
+}
+
+/* Fix for FontAwesome SVG icons */
+svg[data-icon] path,
+svg.svg-inline--fa path {
+  fill: white !important;
+  stroke: rgba(0, 0, 0, 0.8);
+  stroke-width: 0.5px;
+}
+
+/* Add background to SVG icons for better visibility */
+svg[data-icon],
+svg.svg-inline--fa {
+  background-color: rgba(140, 82, 255, 0.2);
+  border-radius: 4px;
+  padding: 2px;
 }
 
 /* Ensure icon font is loaded */

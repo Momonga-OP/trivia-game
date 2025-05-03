@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import './styles/HomePage.css';
 import BackgroundAnimation from './BackgroundAnimation';
 import PlayerProfile from './PlayerProfile';
+import SettingsModal from './SettingsModal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDiscord, faTwitter, faGithub } from '@fortawesome/free-brands-svg-icons';
-import { faPlay, faInfoCircle, faTrophy, faQuestion, faUsers, faBook } from '@fortawesome/free-solid-svg-icons';
+import { faPlay, faInfoCircle, faTrophy, faQuestion, faUsers, faBook, faCog, faTimes, faArrowRight, faStar, faClock } from '@fortawesome/free-solid-svg-icons';
 import discordService from '../services/DiscordService';
 import playerDataService from '../services/PlayerDataService';
 import { useSound } from '../contexts/SoundContext.jsx';
@@ -131,8 +132,9 @@ function HomePage({ navigateTo, windowSize, playerData: propPlayerData }) {
                   playSound('secondaryButton');
                 }}
                 onMouseEnter={() => playSound('buttonHover')}
+                data-fallback="⚙️"
               >
-                <FontAwesomeIcon icon="cog" />
+                <FontAwesomeIcon icon={faCog} />
               </button>
             </div>
           </div>
@@ -177,43 +179,6 @@ function HomePage({ navigateTo, windowSize, playerData: propPlayerData }) {
           onLogin={handleDiscordLogin}
         />
       </div>
-      
-      {/* Settings Panel (shown when settings button is clicked) */}
-      {showSettings && (
-        <div className="settings-panel">
-          <h2>Settings</h2>
-          
-
-          
-          <div style={{ textAlign: 'center', marginTop: '20px' }}>
-            <p>Have feedback or found a bug?</p>
-            <p>Join our Discord!</p>
-            
-            <button 
-              className="discord-button"
-              onClick={() => {
-                playSound('socialButton');
-                window.open('https://discord.gg/rKb3Zp7AQ2', '_blank');
-              }}
-              onMouseEnter={() => playSound('buttonHover')}
-            >
-              <i className="fab fa-discord"></i>
-              Join
-            </button>
-          </div>
-          
-          <button 
-            className="close-button"
-            onClick={() => {
-              setShowSettings(false);
-              playSound('closeButton');
-            }}
-            onMouseEnter={() => playSound('buttonHover')}
-          >
-            <i className="fas fa-times"></i>
-          </button>
-        </div>
-      )}
     </div>
   );
 }

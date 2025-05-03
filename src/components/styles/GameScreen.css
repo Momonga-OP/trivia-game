@@ -5,7 +5,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: var(--primary-bg);
+  background: var(--primary-bg-gradient);
   position: relative;
   overflow-x: hidden;
   overflow-y: auto;
@@ -19,6 +19,31 @@
   -webkit-overflow-scrolling: touch;
 }
 
+/* Background effects */
+.game-screen::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 50% 10%, rgba(140, 82, 255, 0.15) 0%, rgba(26, 16, 51, 0) 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.game-screen::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 40%;
+  background: linear-gradient(to top, rgba(26, 16, 51, 0.8) 0%, rgba(26, 16, 51, 0) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
 .game-container {
   position: relative;
   width: 100%;
@@ -30,6 +55,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  z-index: var(--z-default);
 }
 
 .game-header {
@@ -43,15 +69,35 @@
 }
 
 .score-display {
-  background-color: rgba(30, 30, 47, 0.8);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
   padding: clamp(8px, 2vw, 10px) clamp(10px, 3vw, 15px);
   border-radius: var(--radius-md);
   font-size: clamp(var(--font-sm), 2.5vw, var(--font-md));
   color: var(--text-light);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid rgba(140, 82, 255, 0.3);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--glass-border);
   display: flex;
   align-items: center;
+  position: relative;
+  overflow: hidden;
+  animation: scoreAppear 0.5s ease-out;
+}
+
+@keyframes scoreAppear {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.score-display::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+  pointer-events: none;
 }
 
 /* Icon styling for score display */
@@ -103,12 +149,19 @@
   max-width: min(90vw, 500px);
   margin: 0 auto;
   padding: clamp(10px, 3vw, 15px);
-  background-color: rgba(30, 30, 47, 0.8);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(140, 82, 255, 0.3);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-xl);
   position: relative;
-  z-index: 5;
+  z-index: var(--z-default);
+  animation: optionsPanelAppear 0.5s ease-out 0.2s backwards;
+}
+
+@keyframes optionsPanelAppear {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
 .options-title {
@@ -116,7 +169,25 @@
   color: var(--text-light);
   margin-bottom: clamp(5px, 2vh, 10px);
   text-align: center;
-  font-weight: 500;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-shadow: var(--text-light-glow);
+  position: relative;
+  display: inline-block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.options-title::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  width: 50%;
+  height: 2px;
+  background: var(--primary-accent-gradient);
+  transform: translateX(-50%);
+  border-radius: var(--radius-full);
 }
 
 .options-container {
@@ -127,16 +198,17 @@
 }
 
 .option-button {
-  background-color: rgba(44, 62, 80, 0.7);
+  background: var(--secondary-bg-gradient);
   color: white;
-  border: 2px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-md);
   padding: clamp(10px, 3vw, 15px);
   font-size: clamp(var(--font-sm), 2.5vw, var(--font-md));
   cursor: pointer;
-  transition: transform 0.2s cubic-bezier(0.4, 0.0, 0.2, 1), 
-              background-color 0.2s ease, 
-              border-color 0.2s ease;
+  transition: transform 0.3s var(--transition-bounce), 
+              background 0.3s ease, 
+              border-color 0.3s ease,
+              box-shadow 0.3s ease;
   text-align: left;
   position: relative;
   overflow: hidden;
@@ -144,69 +216,160 @@
   /* Performance optimizations */
   transform: translateZ(0);
   backface-visibility: hidden;
+  box-shadow: var(--shadow-md);
+  animation: optionAppear 0.5s ease-out backwards;
+}
+
+.option-button:nth-child(1) { animation-delay: 0.3s; }
+.option-button:nth-child(2) { animation-delay: 0.4s; }
+.option-button:nth-child(3) { animation-delay: 0.5s; }
+.option-button:nth-child(4) { animation-delay: 0.6s; }
+
+@keyframes optionAppear {
+  from { transform: translateX(-20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.option-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .option-button:hover:not(:disabled) {
-  background-color: rgba(52, 152, 219, 0.3);
-  border-color: rgba(255, 255, 255, 0.3);
-  transform: translate3d(0, -2px, 0);
+  background: var(--card-bg-gradient);
+  border-color: var(--glass-border);
+  transform: translate3d(0, -3px, 0);
+  box-shadow: var(--shadow-lg);
+}
+
+.option-button:hover:not(:disabled)::before {
+  opacity: 1;
 }
 
 .option-button.selected {
-  background-color: rgba(52, 152, 219, 0.5);
-  border-color: #3498db;
+  background: var(--primary-accent-gradient);
+  border-color: var(--primary-accent);
+  box-shadow: var(--shadow-glow);
 }
 
 .option-button.correct {
-  background-color: rgba(46, 204, 113, 0.5);
-  border-color: #2ecc71;
+  background: var(--success-gradient);
+  border-color: var(--success);
+  box-shadow: var(--shadow-success-glow);
+  animation: correctPulse 1s ease-in-out;
+}
+
+@keyframes correctPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
 }
 
 .option-button.incorrect {
-  background-color: rgba(231, 76, 60, 0.5);
-  border-color: #e74c3c;
+  background: var(--error-gradient);
+  border-color: var(--error);
+  box-shadow: var(--shadow-error-glow);
+  animation: incorrectShake 0.5s ease-in-out;
+}
+
+@keyframes incorrectShake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-5px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
 }
 
 .feedback {
-  margin: 8px 0;
-  padding: 8px;
+  margin: 12px 0;
+  padding: 10px;
   border-radius: var(--radius-md);
   text-align: center;
   font-weight: bold;
   font-size: 1.1rem;
-  animation: fadeIn 0.5s ease;
+  animation: feedbackAppear 0.5s ease;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-md);
+  color: var(--text-light);
+  position: relative;
+  overflow: hidden;
+}
+
+@keyframes feedbackAppear {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.feedback::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+  pointer-events: none;
 }
 
 .next-button {
-  margin-top: clamp(10px, 3vh, 15px);
-  margin-bottom: clamp(5px, 2vh, 10px);
-  padding: clamp(10px, 3vh, 15px) clamp(15px, 4vw, 24px);
-  background-color: #3498db;
+  margin-top: clamp(15px, 3vh, 20px);
+  margin-bottom: clamp(10px, 2vh, 15px);
+  padding: clamp(12px, 3vh, 18px) clamp(18px, 4vw, 28px);
+  background: var(--button-primary-gradient);
   color: white;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: var(--radius-md);
   font-size: clamp(0.9rem, 3vw, 1.1rem);
   font-weight: bold;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s var(--transition-bounce);
   align-self: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-lg);
   display: block;
   width: 100%;
   max-width: min(80vw, 300px);
   margin-left: auto;
   margin-right: auto;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  animation: fadeIn 0.5s ease-out;
+  letter-spacing: 1.5px;
+  animation: nextButtonAppear 0.5s ease-out 0.7s backwards;
   position: relative;
-  z-index: 10;
+  z-index: var(--z-floating);
+  overflow: hidden;
+}
+
+@keyframes nextButtonAppear {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.next-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: var(--transition-normal);
+}
+
+.next-button:hover::before {
+  left: 100%;
 }
 
 .next-button:hover {
-  background-color: #2980b9;
-  transform: translate3d(0, -2px, 0);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+  background: linear-gradient(135deg, #2980b9 0%, #3498db 100%);
+  transform: translate3d(0, -3px, 0);
+  box-shadow: var(--shadow-glow), var(--shadow-xl);
 }
 
 .large-button {
@@ -217,22 +380,45 @@
 }
 
 .exit-button {
-  background-color: rgba(44, 62, 80, 0.7);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
   color: var(--text-muted);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-md);
   padding: 8px 16px;
   font-size: var(--font-sm);
   cursor: pointer;
-  margin-top: 10px;
-  transition: all 0.2s ease;
+  margin-top: 15px;
+  transition: all 0.3s var(--transition-bounce);
   align-self: center;
   margin-bottom: 10px;
+  position: relative;
+  overflow: hidden;
+  z-index: var(--z-floating);
+  box-shadow: var(--shadow-md);
+}
+
+.exit-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: var(--transition-normal);
+}
+
+.exit-button:hover::before {
+  left: 100%;
 }
 
 .exit-button:hover {
-  background-color: rgba(231, 76, 60, 0.3);
+  background: linear-gradient(135deg, rgba(231, 76, 60, 0.3) 0%, rgba(231, 76, 60, 0.5) 100%);
   color: var(--text-light);
+  transform: translateY(-2px);
+  box-shadow: 0 0 15px rgba(231, 76, 60, 0.3);
+  border-color: rgba(231, 76, 60, 0.3);
 }
 
 .loading {

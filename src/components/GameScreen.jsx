@@ -3,11 +3,12 @@ import { questions } from '../questionsData.js';
 import CountdownAnimation from './CountdownAnimation';
 import QuestionOverlay from './QuestionOverlay';
 import AnimatedOptions from './AnimatedOptions';
-import soundService from '../services/SoundService';
+import { useSound } from '../contexts/SoundContext.jsx';
 import './styles/GameScreen.css';
 
 // Memoized GameScreen component to prevent unnecessary re-renders
 const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, totalAnswered, setTotalAnswered }) {
+  const { playSound } = useSound();
   // Create shuffled questions array on game start
   const [shuffledQuestions, setShuffledQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -46,12 +47,12 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
     setIsTimerActive(false);
     if (currentQuestion && selectedOption === currentQuestion.correctAnswer) {
       // Play success sound for correct answer
-      soundService.play('success');
+      playSound('success');
       setFeedback("Correct! 🎉");
       setScore(score + 1);
     } else if (currentQuestion) {
       // Play error sound for wrong answer
-      soundService.play('error');
+      playSound('error');
       setFeedback(`Wrong! ❌ The correct answer is ${currentQuestion.correctAnswer}.`);
     }
     setTotalAnswered(totalAnswered + 1);
@@ -81,7 +82,7 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
   // Handle next question - optimized with useCallback
   const handleNextQuestion = useCallback(() => {
     // Play button click sound when clicking next question
-    soundService.play('primaryButton');
+    playSound('primaryButton');
     
     if (currentQuestionIndex < shuffledQuestions.length - 1) {
       // Update to next question immediately without animation
@@ -101,19 +102,19 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
   const handleOptionSelect = useCallback((option) => {
     if (!showNextButton) {
       // Play button click sound when selecting an option
-      soundService.play('buttonClick');
+      playSound('buttonClick');
       
       setSelectedOption(option);
       // Auto-submit the answer when an option is selected
       setIsTimerActive(false);
       if (currentQuestion && option === currentQuestion.correctAnswer) {
         // Play success sound for correct answer
-        soundService.play('success');
+        playSound('success');
         setFeedback("Correct! 🎉");
         setScore(score + 1);
       } else if (currentQuestion) {
         // Play error sound for wrong answer
-        soundService.play('error');
+        playSound('error');
         setFeedback(`Wrong! ❌ The correct answer is ${currentQuestion.correctAnswer}.`);
       }
       setTotalAnswered(totalAnswered + 1);
@@ -169,7 +170,14 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
         </div>
       </div>
       
-      <button className="exit-button" onClick={() => navigateTo('home')}>
+      <button 
+        className="exit-button" 
+        onClick={() => {
+          playSound('secondaryButton');
+          navigateTo('home');
+        }}
+        onMouseEnter={() => playSound('buttonHover')}
+      >
         Exit Game
       </button>
     </div>

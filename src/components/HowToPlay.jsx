@@ -1,5 +1,7 @@
 import React from 'react';
 import './styles/HowToPlay.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGamepad, faMousePointer, faClock, faCheckCircle, faArrowRight, faTrophy } from '@fortawesome/free-solid-svg-icons';
 
 function HowToPlay({ navigateTo }) {
   return (
@@ -9,7 +11,7 @@ function HowToPlay({ navigateTo }) {
         
         <div className="instruction-card">
           <div className="instruction-icon">
-            <i className="fas fa-gamepad"></i>
+            <FontAwesomeIcon icon={faGamepad} className="instruction-fa-icon" data-fallback="🎮" />
           </div>
           <div className="instruction-text">
             <h2>Game Basics</h2>
@@ -19,7 +21,7 @@ function HowToPlay({ navigateTo }) {
         
         <div className="instruction-card">
           <div className="instruction-icon">
-            <i className="fas fa-mouse-pointer"></i>
+            <FontAwesomeIcon icon={faMousePointer} className="instruction-fa-icon" data-fallback="🖱️" />
           </div>
           <div className="instruction-text">
             <h2>Answer Questions</h2>
@@ -29,7 +31,7 @@ function HowToPlay({ navigateTo }) {
         
         <div className="instruction-card">
           <div className="instruction-icon">
-            <i className="fas fa-clock"></i>
+            <FontAwesomeIcon icon={faClock} className="instruction-fa-icon" data-fallback="⏱️" />
           </div>
           <div className="instruction-text">
             <h2>Time Limit</h2>
@@ -39,7 +41,7 @@ function HowToPlay({ navigateTo }) {
         
         <div className="instruction-card">
           <div className="instruction-icon">
-            <i className="fas fa-check-circle"></i>
+            <FontAwesomeIcon icon={faCheckCircle} className="instruction-fa-icon" data-fallback="✅" />
           </div>
           <div className="instruction-text">
             <h2>Feedback</h2>
@@ -49,7 +51,7 @@ function HowToPlay({ navigateTo }) {
         
         <div className="instruction-card">
           <div className="instruction-icon">
-            <i className="fas fa-arrow-right"></i>
+            <FontAwesomeIcon icon={faArrowRight} className="instruction-fa-icon" data-fallback="➡️" />
           </div>
           <div className="instruction-text">
             <h2>Next Question</h2>
@@ -59,7 +61,7 @@ function HowToPlay({ navigateTo }) {
         
         <div className="instruction-card">
           <div className="instruction-icon">
-            <i className="fas fa-trophy"></i>
+            <FontAwesomeIcon icon={faTrophy} className="instruction-fa-icon" data-fallback="🏆" />
           </div>
           <div className="instruction-text">
             <h2>Scoring</h2>

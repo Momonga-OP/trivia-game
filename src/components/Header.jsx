@@ -1,14 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useSound } from '../contexts/SoundContext.jsx';
 import './styles/Header.css';
 import './styles/Logo.css';
 
 function Header({ navigateTo, currentPage, isInGame }) {
   const [showSettings, setShowSettings] = useState(false);
+  const { playSound } = useSound();
 
   
   // Handle navigation with game lock
   const handleNavigation = (page) => {
+    // Play sound and navigate
+    playSound('secondaryButton');
+    // Always allow navigation, even during gameplay
     navigateTo(page);
   };
   
@@ -16,7 +21,11 @@ function Header({ navigateTo, currentPage, isInGame }) {
     <>
       {/* Top header for desktop and tablet */}
       <header className="main-header">
-        <div className="logo" onClick={() => handleNavigation('home')}>
+        <div 
+          className="logo" 
+          onClick={() => handleNavigation('home')}
+          onMouseEnter={() => playSound('buttonHover')}
+        >
           <div className="logo-container">
             <span className="logo-text">Dofus Lore Trivia</span>
           </div>
@@ -27,7 +36,8 @@ function Header({ navigateTo, currentPage, isInGame }) {
             <li className={currentPage === 'home' ? 'active' : ''}>
               <button 
                 onClick={() => handleNavigation('home')}
-                className={isInGame ? 'disabled' : ''}
+                className={isInGame ? 'in-game' : ''}
+                onMouseEnter={() => playSound('buttonHover')}
               >
                 Home
               </button>
@@ -35,7 +45,8 @@ function Header({ navigateTo, currentPage, isInGame }) {
             <li className={currentPage === 'howtoplay' ? 'active' : ''}>
               <button 
                 onClick={() => handleNavigation('howtoplay')}
-                className={isInGame ? 'disabled' : ''}
+                className={isInGame ? 'in-game' : ''}
+                onMouseEnter={() => playSound('buttonHover')}
               >
                 How to Play
               </button>
@@ -43,7 +54,8 @@ function Header({ navigateTo, currentPage, isInGame }) {
             <li className={currentPage === 'lore' ? 'active' : ''}>
               <button 
                 onClick={() => handleNavigation('lore')}
-                className={isInGame ? 'disabled' : ''}
+                className={isInGame ? 'in-game' : ''}
+                onMouseEnter={() => playSound('buttonHover')}
               >
                 Lore
               </button>
@@ -60,24 +72,27 @@ function Header({ navigateTo, currentPage, isInGame }) {
       {/* Bottom tab navigation for mobile */}
       <div className="tab-navigation">
         <div 
-          className={`tab-item ${currentPage === 'home' ? 'active' : ''}`}
-          onClick={() => navigateTo('home')}
+          className={`tab-item ${currentPage === 'home' ? 'active' : ''} ${isInGame ? 'in-game' : ''}`}
+          onClick={() => handleNavigation('home')}
+          onMouseEnter={() => playSound('buttonHover')}
         >
           <FontAwesomeIcon icon="home" />
           <span>Home</span>
         </div>
         
         <div 
-          className={`tab-item ${currentPage === 'howtoplay' ? 'active' : ''}`}
-          onClick={() => navigateTo('howtoplay')}
+          className={`tab-item ${currentPage === 'howtoplay' ? 'active' : ''} ${isInGame ? 'in-game' : ''}`}
+          onClick={() => handleNavigation('howtoplay')}
+          onMouseEnter={() => playSound('buttonHover')}
         >
           <FontAwesomeIcon icon="question-circle" />
           <span>How to Play</span>
         </div>
         
         <div 
-          className={`tab-item ${currentPage === 'lore' ? 'active' : ''}`}
-          onClick={() => navigateTo('lore')}
+          className={`tab-item ${currentPage === 'lore' ? 'active' : ''} ${isInGame ? 'in-game' : ''}`}
+          onClick={() => handleNavigation('lore')}
+          onMouseEnter={() => playSound('buttonHover')}
         >
           <FontAwesomeIcon icon="book" />
           <span>Lore</span>
@@ -85,7 +100,11 @@ function Header({ navigateTo, currentPage, isInGame }) {
         
         <div 
           className="tab-item"
-          onClick={() => setShowSettings(true)}
+          onClick={() => {
+            playSound('secondaryButton');
+            setShowSettings(true);
+          }}
+          onMouseEnter={() => playSound('buttonHover')}
         >
           <FontAwesomeIcon icon="cog" />
           <span>Settings</span>
@@ -94,52 +113,40 @@ function Header({ navigateTo, currentPage, isInGame }) {
       
       {/* Settings Panel (shown when settings tab is clicked) */}
       {showSettings && (
-        <div className="settings-panel">
-          <h2>Settings</h2>
-          
-
-          
-          <div style={{ textAlign: 'center', marginTop: '20px' }}>
-            <p>Have feedback or found a bug?</p>
-            <p>Join our Discord!</p>
+        <div className="settings-overlay">
+          <div className="settings-panel">
+            <h2>Settings</h2>
+            
+            <div className="settings-content">
+              <p>Have feedback or found a bug?</p>
+              <p>Join our Discord community!</p>
+              
+              <button 
+                className="discord-button"
+                onClick={() => {
+                  playSound('socialButton');
+                  window.open('https://discord.gg/rKb3Zp7AQ2', '_blank');
+                }}
+                onMouseEnter={() => playSound('buttonHover')}
+              >
+                <FontAwesomeIcon icon={['fab', 'discord']} />
+                <span>Join Discord</span>
+              </button>
+            </div>
             
             <button 
-              style={{
-                backgroundColor: '#5865f2',
-                color: 'white',
-                border: 'none',
-                borderRadius: '8px',
-                padding: '10px 20px',
-                margin: '15px 0',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '10px',
-                cursor: 'pointer',
-                width: '100%'
+              className="close-button"
+              onClick={() => {
+                playSound('closeButton');
+                setShowSettings(false);
               }}
-              onClick={() => window.open('https://discord.gg/rKb3Zp7AQ2', '_blank')}
+              onMouseEnter={() => playSound('buttonHover')}
+              aria-label="Close settings"
+              data-fallback="X"
             >
-              <FontAwesomeIcon icon={['fab', 'discord']} />
-              Join
+              <FontAwesomeIcon icon="times" />
             </button>
           </div>
-          
-          <button 
-            style={{
-              position: 'absolute',
-              top: '10px',
-              right: '10px',
-              background: 'none',
-              border: 'none',
-              color: 'white',
-              fontSize: '24px',
-              cursor: 'pointer'
-            }}
-            onClick={() => setShowSettings(false)}
-          >
-            <FontAwesomeIcon icon="times" />
-          </button>
         </div>
       )}
     </>

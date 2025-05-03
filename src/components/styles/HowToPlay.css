@@ -55,9 +55,41 @@
   flex-shrink: 0;
 }
 
-.instruction-icon i {
+.instruction-fa-icon {
   font-size: var(--font-xl);
   color: var(--primary-accent);
+  /* Discord compatibility */
+  filter: drop-shadow(0 0 2px rgba(140, 82, 255, 0.7));
+  background-color: transparent;
+  position: relative;
+  z-index: 1;
+}
+
+/* Fallback for Discord */
+.instruction-fa-icon[data-fallback]::after {
+  content: attr(data-fallback);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-xl);
+  opacity: 0;
+  z-index: -1;
+}
+
+/* Discord environment detection */
+@supports selector(:where(.discord-container)) {
+  .instruction-fa-icon {
+    opacity: 0;
+  }
+  .instruction-fa-icon[data-fallback]::after {
+    opacity: 1;
+    z-index: 2;
+  }
 }
 
 .instruction-text {

@@ -8,6 +8,7 @@ import discordService from './services/DiscordService';
 import playerDataService from './services/PlayerDataService';
 import soundService from './services/SoundService';
 import LoadingScreen from './components/LoadingScreen';
+import NoiseTexture from './components/NoiseTexture';
 
 // Import components
 import HomePage from './components/HomePage';
@@ -163,9 +164,11 @@ function App() {
     <SoundProvider>
       <Router>
         {isLoading ? (
-          <LoadingScreen onLoadingComplete={() => setIsLoading(false)} />
+          <LoadingScreen />
         ) : (
           <div className="app-container">
+            <NoiseTexture />
+            <div className="animated-bg"></div>
             {/* Background Animation */}
             <BackgroundAnimation />
             
