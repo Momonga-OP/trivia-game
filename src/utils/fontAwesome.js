@@ -18,7 +18,9 @@ import {
   faCheckCircle,
   faExclamationCircle,
   faExclamationTriangle,
-  faTimesCircle
+  faTimesCircle,
+  faBook,
+  faChevronLeft
 } from '@fortawesome/free-solid-svg-icons';
 import { 
   faDiscord, 
@@ -48,6 +50,8 @@ library.add(
   faExclamationCircle,
   faExclamationTriangle,
   faTimesCircle,
+  faBook,
+  faChevronLeft,
   
   // Brand icons
   faDiscord,
