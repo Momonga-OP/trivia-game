@@ -52,6 +52,8 @@
 
 .settings-modal-content {
   padding: 0 10px;
+  max-height: 400px;
+  overflow-y: auto;
 }
 
 .settings-modal-content p {
@@ -59,6 +61,91 @@
   font-size: 16px;
   color: rgba(255, 255, 255, 0.9);
   line-height: 1.4;
+}
+
+.settings-section {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(140, 82, 255, 0.3);
+}
+
+.settings-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.settings-section h3 {
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: rgba(140, 82, 255, 0.9);
+  text-align: left;
+}
+
+.setting-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  text-align: left;
+}
+
+.setting-item label {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.toggle-button {
+  background-color: rgba(80, 80, 80, 0.5);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 5px 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  min-width: 60px;
+}
+
+.toggle-button.active {
+  background-color: rgba(140, 82, 255, 0.8);
+}
+
+.volume-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 60%;
+}
+
+.volume-control input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  background: rgba(80, 80, 80, 0.5);
+  border-radius: 5px;
+  outline: none;
+}
+
+.volume-control input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  background: rgba(140, 82, 255, 0.8);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.volume-control input[type="range"]:disabled {
+  opacity: 0.5;
+}
+
+.volume-control span {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  min-width: 40px;
+  text-align: right;
 }
 
 .settings-modal .discord-button {

@@ -20,7 +20,8 @@ app.use(express.static(path.join(__dirname, 'dist')));
 // Create a route to serve lore files
 app.get('/lore/:filename', (req, res) => {
   const filename = req.params.filename;
-  const filePath = path.join(__dirname, 'src', 'components', 'assets', 'Dofus Lore', filename);
+  // Use a safer path join that doesn't have spaces in directory names
+  const filePath = path.join(__dirname, 'src', 'components', 'assets', 'DofusLore', filename);
   
   // Check if file exists
   if (fs.existsSync(filePath)) {

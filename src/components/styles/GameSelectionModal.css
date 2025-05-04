@@ -16,9 +16,9 @@
 .game-selection-modal {
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
   border-radius: 20px;
-  padding: 35px;
-  width: 90%;
-  max-width: 700px;
+  padding: 25px;
+  width: 85%;
+  max-width: 550px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(66, 134, 244, 0.4);
   position: relative;
   border: 1px solid rgba(66, 134, 244, 0.3);
@@ -96,14 +96,14 @@
 
 .modal-header {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   animation: fadeIn 0.6s ease-out;
 }
 
 .modal-header h2 {
   color: #fff;
-  font-size: 32px;
-  margin-bottom: 12px;
+  font-size: 28px;
+  margin-bottom: 10px;
   font-weight: 700;
   text-shadow: 0 0 15px rgba(66, 134, 244, 0.6);
   background: linear-gradient(to right, #fff, #88abda);
@@ -115,10 +115,10 @@
 
 .modal-header p {
   color: #b8c6db;
-  font-size: 18px;
-  max-width: 80%;
+  font-size: 16px;
+  max-width: 90%;
   margin: 0 auto;
-  line-height: 1.5;
+  line-height: 1.4;
 }
 
 .modal-footer {
@@ -155,9 +155,9 @@
 .game-options {
   display: flex;
   justify-content: space-between;
-  gap: 25px;
+  gap: 15px;
   margin: 0 auto;
-  max-width: 95%;
+  max-width: 100%;
   animation: optionsAppear 0.7s ease-out;
 }
 
@@ -170,13 +170,13 @@
   flex: 1;
   background-color: rgba(30, 41, 59, 0.7);
   border-radius: 15px;
-  padding: 25px;
+  padding: 20px;
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   position: relative;
   overflow: hidden;
   border: 1px solid rgba(66, 134, 244, 0.2);
-  min-height: 250px;
+  min-height: 200px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -212,15 +212,15 @@
 }
 
 .game-icon {
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background: rgba(66, 134, 244, 0.2);
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 20px;
-  font-size: 22px;
+  margin-bottom: 15px;
+  font-size: 18px;
   color: #fff;
   border: 1px solid rgba(66, 134, 244, 0.4);
   box-shadow: 0 0 15px rgba(66, 134, 244, 0.3);
@@ -338,29 +338,126 @@
 }
 
 @keyframes modalSlideIn {
-  from { 
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to { 
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { transform: translateY(50px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
 @keyframes pulseGlow {
-  0% { opacity: 0.5; }
+  0%, 100% { opacity: 0.5; }
   50% { opacity: 0.8; }
-  100% { opacity: 0.5; }
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .game-options {
-    flex-direction: column;
+/* Responsive styles */
+@media screen and (max-width: 768px) {
+  .game-selection-modal {
+    padding: 20px;
+    width: 90%;
+  }
+  
+  .modal-header h2 {
+    font-size: 24px;
+  }
+  
+  .modal-header p {
+    font-size: 14px;
   }
   
   .game-option {
-    height: 130px;
+    min-height: 180px;
+    padding: 15px;
   }
+  
+  .game-option-content h3 {
+    font-size: 18px;
+  }
+  
+  .game-option-content p {
+    font-size: 13px;
+  }
+  
+  .feature-list {
+    margin-top: 10px;
+  }
+  
+  .feature-item {
+    font-size: 12px;
+    margin-bottom: 5px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .game-selection-modal {
+    padding: 15px;
+    width: 95%;
+  }
+  
+  .game-options {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .game-option {
+    min-height: auto;
+    padding: 15px;
+  }
+  
+  .modal-header h2 {
+    font-size: 22px;
+  }
+  
+  .modal-header p {
+    font-size: 13px;
+    max-width: 95%;
+  }
+  
+  .close-button {
+    top: 10px;
+    right: 10px;
+  }
+  
+  .modal-footer {
+    margin-top: 15px;
+    padding-top: 10px;
+  }
+  
+  .modal-footer p {
+    font-size: 12px;
+  }
+}
+
+/* Animation for shine effect on hover */
+@keyframes shine {
+  0% {
+    background-position: -100% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Add shine effect on game option hover */
+.game-option::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  background-position: -100% 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.game-option:hover::after {
+  opacity: 1;
+  animation: shine 1.5s infinite;
 }

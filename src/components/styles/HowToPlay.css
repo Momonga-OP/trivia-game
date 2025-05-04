@@ -1,4 +1,5 @@
 @import url('./variables.css');
+@import url('./HomePage.css');
 
 .how-to-play-container {
   max-width: 800px;
@@ -22,9 +23,33 @@
 .how-to-play-title {
   text-align: center;
   color: var(--primary-accent);
-  margin-bottom: var(--spacing-xl);
+  margin-bottom: var(--spacing-md);
   font-size: var(--font-2xl);
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.how-to-play-title::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--primary-accent), transparent);
+}
+
+.how-to-play-subtitle {
+  text-align: center;
+  color: var(--text-muted);
+  margin-bottom: var(--spacing-xl);
+  font-size: var(--font-md);
+  max-width: 80%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .instruction-card {
@@ -35,12 +60,33 @@
   border-radius: var(--radius-md);
   padding: var(--spacing-md);
   border-left: 4px solid var(--primary-accent);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 .instruction-card:hover {
   transform: translateY(-3px);
   box-shadow: var(--shadow-md);
+  background-color: rgba(50, 70, 90, 0.6);
+}
+
+.instruction-card::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0) 100%);
+  transform: rotate(30deg);
+  transition: transform 0.7s;
+  opacity: 0;
+}
+
+.instruction-card:hover::after {
+  opacity: 1;
+  transform: rotate(30deg) translate(50%, -100%);
 }
 
 .instruction-icon {
@@ -53,42 +99,50 @@
   border-radius: 50%;
   margin-right: var(--spacing-md);
   flex-shrink: 0;
+  position: relative;
 }
 
-.instruction-fa-icon {
-  font-size: var(--font-xl);
-  color: var(--primary-accent);
-  /* Discord compatibility */
+.step-number {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 25px;
+  height: 25px;
+  background-color: var(--primary-accent);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  z-index: 2;
+}
+
+.icon-text {
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   filter: drop-shadow(0 0 2px rgba(140, 82, 255, 0.7));
-  background-color: transparent;
   position: relative;
   z-index: 1;
 }
 
-/* Fallback for Discord */
-.instruction-fa-icon[data-fallback]::after {
-  content: attr(data-fallback);
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: var(--font-xl);
-  opacity: 0;
-  z-index: -1;
-}
-
 /* Discord environment detection */
 @supports selector(:where(.discord-container)) {
-  .instruction-fa-icon {
-    opacity: 0;
+  /* Make sure step numbers are visible in Discord */
+  .step-number {
+    background-color: #8c52ff;
+    border: 2px solid white;
+    font-size: 16px;
+    width: 28px;
+    height: 28px;
   }
-  .instruction-fa-icon[data-fallback]::after {
-    opacity: 1;
-    z-index: 2;
+  
+  .icon-text {
+    font-size: 32px;
   }
 }
 
@@ -111,7 +165,9 @@
 .start-game-container {
   display: flex;
   justify-content: center;
+  gap: var(--spacing-md);
   margin-top: var(--spacing-xl);
+  flex-wrap: wrap;
 }
 
 .start-game-button {
@@ -124,6 +180,8 @@
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
 }
 
 .start-game-button:hover {
@@ -132,15 +190,76 @@
   box-shadow: var(--shadow-lg);
 }
 
+.start-game-button::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0) 100%);
+  transform: rotate(30deg);
+  transition: transform 0.5s;
+  opacity: 0;
+}
+
+.start-game-button:hover::after {
+  opacity: 1;
+  transform: rotate(30deg) translate(50%, -100%);
+}
+
+.back-button {
+  background-color: var(--button-secondary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 15px 30px;
+  font-size: var(--font-lg);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.back-button:hover {
+  background-color: #4a5568;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.back-button::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0) 100%);
+  transform: rotate(30deg);
+  transition: transform 0.5s;
+  opacity: 0;
+}
+
+.back-button:hover::after {
+  opacity: 1;
+  transform: rotate(30deg) translate(50%, -100%);
+}
+
 /* Responsive styles */
 @media (max-width: 768px) {
   .how-to-play-title {
     font-size: var(--font-xl);
   }
   
+  .how-to-play-subtitle {
+    max-width: 95%;
+  }
+  
   .instruction-card {
     flex-direction: column;
     text-align: center;
+    padding: var(--spacing-md) var(--spacing-sm);
   }
   
   .instruction-icon {
@@ -148,14 +267,23 @@
     margin-bottom: var(--spacing-sm);
   }
   
-  .start-game-button {
+  .start-game-button, .back-button {
     width: 100%;
+    padding: 12px 20px;
   }
 }
 
 @media (max-width: 480px) {
   .how-to-play-content {
-    padding: var(--spacing-md);
+    padding: var(--spacing-md) var(--spacing-sm);
+  }
+  
+  .how-to-play-title {
+    font-size: var(--font-lg);
+  }
+  
+  .how-to-play-subtitle {
+    font-size: var(--font-sm);
   }
   
   .instruction-text h2 {
@@ -164,5 +292,15 @@
   
   .instruction-text p {
     font-size: var(--font-sm);
+    line-height: 1.4;
+  }
+  
+  .instruction-icon {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .instruction-fa-icon {
+    font-size: var(--font-lg);
   }
 }

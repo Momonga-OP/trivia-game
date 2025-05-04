@@ -3,71 +3,28 @@
  * Handles loading, playing, and controlling sound effects
  */
 
-// Import sound generator utility
-import { generateSoundEffects } from '../utils/SoundGenerator';
-
 class SoundService {
   constructor() {
-    this.sounds = {};
     this.isMuted = false;
-    this.volume = 0.7; // Default volume (0.0 to 1.0)
-    this.initialized = false;
+    this.volume = 0.4; // Default volume (0.0 to 1.0)
+    this.initialized = true; // Set to true immediately
+    this.audioContext = null;
     
-    // Debug
+    // Try to create audio context right away
+    try {
+      this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    } catch (error) {
+      console.warn('Could not create AudioContext:', error);
+    }
+    
     console.log('SoundService constructor called');
   }
 
   /**
-   * Initialize the sound service with all sound effects
+   * Initialize the sound service - now just a stub for compatibility
    */
   async initialize() {
-    if (this.initialized) return;
-    
-    try {
-      // Load all sound effects
-      await this.loadSounds();
-      this.initialized = true;
-      console.log('Sound service initialized');
-    } catch (error) {
-      console.error('Failed to initialize sound service:', error);
-    }
-  }
-
-  /**
-   * Load all sound effects
-   */
-  async loadSounds() {
-    try {
-      // Generate sound effects
-      const soundEffects = generateSoundEffects();
-      
-      // Create audio objects for each sound
-      for (const [name, src] of Object.entries(soundEffects)) {
-        this.sounds[name] = new Audio(src);
-        this.sounds[name].volume = this.volume;
-      }
-      
-      // Add additional custom sounds for different button types
-      // Primary buttons (like Play Now)
-      this.sounds.primaryButton = new Audio(generateSoundEffects().buttonClick);
-      this.sounds.primaryButton.volume = this.volume * 1.2; // Slightly louder
-      
-      // Secondary buttons (like Settings)
-      this.sounds.secondaryButton = new Audio(generateSoundEffects().buttonHover);
-      this.sounds.secondaryButton.volume = this.volume;
-      
-      // Close buttons
-      this.sounds.closeButton = new Audio(generateSoundEffects().error);
-      this.sounds.closeButton.volume = this.volume * 0.8; // Slightly quieter
-      
-      // Social buttons
-      this.sounds.socialButton = new Audio(generateSoundEffects().notification);
-      this.sounds.socialButton.volume = this.volume * 0.9;
-      
-      console.log('Sounds loaded successfully:', Object.keys(this.sounds));
-    } catch (error) {
-      console.error('Error loading sounds:', error);
-    }
+    return Promise.resolve();
   }
 
   /**
@@ -75,29 +32,97 @@ class SoundService {
    * @param {string} soundName - Name of the sound to play
    */
   play(soundName) {
-    if (this.isMuted) {
-      console.log('Sound muted, not playing:', soundName);
+    if (this.isMuted || !this.audioContext) {
       return;
     }
     
-    if (!this.initialized) {
-      console.log('Sound service not initialized yet, initializing now...');
-      this.initialize().then(() => this.play(soundName));
-      return;
-    }
-    
-    const sound = this.sounds[soundName];
-    if (sound) {
-      console.log('Playing sound:', soundName);
-      // Create a clone to allow overlapping sounds
-      const soundClone = sound.cloneNode();
-      soundClone.volume = this.volume;
-      soundClone.play().catch(error => {
-        // Handle autoplay restrictions
-        console.error(`Could not play sound ${soundName}:`, error);
-      });
-    } else {
-      console.warn(`Sound ${soundName} not found`);
+    try {
+      // Create sound on-demand instead of storing references
+      const currentTime = this.audioContext.currentTime;
+      
+      // Create oscillator
+      const oscillator = this.audioContext.createOscillator();
+      const gainNode = this.audioContext.createGain();
+      
+      // Set sound parameters based on sound name
+      let frequency = 440; // Default A4 note
+      let duration = 0.1; // Default duration in seconds
+      let type = 'sine'; // Default waveform
+      
+      // Configure sound based on name
+      switch(soundName) {
+        case 'buttonClick':
+          frequency = 800;
+          duration = 0.05;
+          break;
+        case 'buttonHover':
+          frequency = 1200;
+          duration = 0.03;
+          break;
+        case 'primaryButton':
+          frequency = 880;
+          duration = 0.06;
+          break;
+        case 'secondaryButton':
+          frequency = 660;
+          duration = 0.05;
+          break;
+        case 'success':
+          frequency = 1046.5;
+          duration = 0.1;
+          break;
+        case 'error':
+          frequency = 400;
+          duration = 0.1;
+          type = 'square';
+          break;
+        case 'notification':
+          frequency = 900;
+          duration = 0.08;
+          break;
+        case 'cardFlip':
+          frequency = 600;
+          duration = 0.07;
+          break;
+        case 'gameStart':
+          frequency = 523.25;
+          duration = 0.15;
+          break;
+        case 'gameEnd':
+          frequency = 493.88;
+          duration = 0.15;
+          break;
+        case 'closeButton':
+          frequency = 330;
+          duration = 0.07;
+          type = 'triangle';
+          break;
+        case 'socialButton':
+          frequency = 700;
+          duration = 0.07;
+          break;
+      }
+      
+      // Configure oscillator
+      oscillator.type = type;
+      oscillator.frequency.value = frequency;
+      
+      // Configure gain (volume)
+      const volume = this.volume * 0.3; // Keep volume low
+      gainNode.gain.setValueAtTime(0, currentTime);
+      gainNode.gain.linearRampToValueAtTime(volume, currentTime + 0.005);
+      gainNode.gain.linearRampToValueAtTime(0, currentTime + duration);
+      
+      // Connect nodes
+      oscillator.connect(gainNode);
+      gainNode.connect(this.audioContext.destination);
+      
+      // Play sound
+      oscillator.start(currentTime);
+      oscillator.stop(currentTime + duration);
+      
+    } catch (error) {
+      // Silently fail - don't log errors to avoid console spam
     }
   }
 
@@ -107,11 +132,14 @@ class SoundService {
    */
   setVolume(volume) {
     this.volume = Math.max(0, Math.min(1, volume));
+    // Volume is applied when sounds are played
     
-    // Update volume for all loaded sounds
-    Object.values(this.sounds).forEach(sound => {
-      sound.volume = this.volume;
-    });
+    // Save to localStorage for persistence
+    try {
+      localStorage.setItem('soundVolume', this.volume.toString());
+    } catch (e) {
+      // Ignore storage errors
+    }
   }
 
   /**
@@ -120,6 +148,13 @@ class SoundService {
    */
   setMuted(muted) {
     this.isMuted = muted;
+    
+    // Save to localStorage for persistence
+    try {
+      localStorage.setItem('soundMuted', this.isMuted.toString());
+    } catch (e) {
+      // Ignore storage errors
+    }
   }
 
   /**
@@ -128,6 +163,14 @@ class SoundService {
    */
   toggleMute() {
     this.isMuted = !this.isMuted;
+    
+    // Save to localStorage for persistence
+    try {
+      localStorage.setItem('soundMuted', this.isMuted.toString());
+    } catch (e) {
+      // Ignore storage errors
+    }
+    
     return this.isMuted;
   }
 }

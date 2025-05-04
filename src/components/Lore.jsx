@@ -1,8 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash, faArrowLeft, faArrowRight, faVolumeUp, faVolumeMute, faSync } from '@fortawesome/free-solid-svg-icons';
 import './styles/Lore.css';
-import soundService from '../services/SoundService';
+import { useSound } from '../contexts/SoundContext.jsx';
+import BackgroundAnimation from './BackgroundAnimation';
+import FloatingParticles from './FloatingParticles';
+import { generateImageForChapter, generateNewImage, FALLBACK_IMAGE } from '../utils/ImageGenerator';
 
 // Lore component to display Dofus lore chapters
 function Lore({ navigateTo, windowSize }) {
@@ -12,6 +16,13 @@ function Lore({ navigateTo, windowSize }) {
   // By default, sidebar is closed on mobile, open on desktop
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 900);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 900);
+  const [showIllustration, setShowIllustration] = useState(true);
+  const [chapterImages, setChapterImages] = useState([]);
+  const [isImageLoading, setIsImageLoading] = useState(false);
+  const contentRef = useRef(null);
+  
+  // Get sound functions from context
+  const { playSound } = useSound();
 
   // Responsive: update isMobile and sidebar state on resize
   useEffect(() => {
@@ -167,27 +178,72 @@ The Dofus Era was a time of great conflict, as many sought to gain control of th
     loadChapter();
   }, [currentChapter]);
 
+  // Generate themed images for each chapter on component mount
+  useEffect(() => {
+    const generateImages = async () => {
+      // Generate initial images for all chapters
+      const images = chapters.map((chapter, index) => 
+        generateImageForChapter(chapter.title, index)
+      );
+      setChapterImages(images);
+    };
+    
+    generateImages();
+  }, []);
+  
+  // Regenerate a specific chapter image
+  const regenerateImage = () => {
+    setIsImageLoading(true);
+    playSound('buttonClick');
+    
+    // Generate a new image for the current chapter that's different from the current one
+    const currentImage = chapterImages[currentChapter];
+    const newImage = generateNewImage(chapters[currentChapter].title, currentChapter, currentImage);
+    
+    // Update the image in the array
+    setChapterImages(prev => {
+      const updated = [...prev];
+      updated[currentChapter] = newImage;
+      return updated;
+    });
+    
+    // Set a timeout to ensure the loading state is visible
+    setTimeout(() => setIsImageLoading(false), 500);
+  };
+
   // Handle navigation between chapters
   const goToNextChapter = () => {
     if (currentChapter < chapters.length - 1) {
-      soundService.play('buttonClick');
+      playSound('buttonClick');
       setCurrentChapter(currentChapter + 1);
-      window.scrollTo(0, 0);
+      if (contentRef.current) {
+        contentRef.current.scrollTop = 0;
+      }
     }
   };
 
   const goToPreviousChapter = () => {
     if (currentChapter > 0) {
-      soundService.play('buttonClick');
+      playSound('buttonClick');
       setCurrentChapter(currentChapter - 1);
-      window.scrollTo(0, 0);
+      if (contentRef.current) {
+        contentRef.current.scrollTop = 0;
+      }
     }
   };
 
   const selectChapter = (chapterId) => {
-    soundService.play('buttonClick');
+    playSound('buttonClick');
     setCurrentChapter(chapterId);
-    window.scrollTo(0, 0);
+    if (contentRef.current) {
+      contentRef.current.scrollTop = 0;
+    }
+  };
+  
+  // Toggle illustration visibility
+  const toggleIllustration = () => {
+    playSound('buttonClick');
+    setShowIllustration(!showIllustration);
   };
 
   // Sidebar behavior: open on hover (desktop), toggle on click (mobile)
@@ -221,10 +277,16 @@ The Dofus Era was a time of great conflict, as many sought to gain control of th
 
   return (
     <div className="lore-container">
+      {/* Background Animation */}
+      <BackgroundAnimation type="lore" />
+      <FloatingParticles count={15} speed={0.5} size={3} color="#ffe082" opacity={0.3} />
+      
       {/* Mobile backdrop overlay */}
       {isMobile && isSidebarOpen && (
         <div className="sidebar-backdrop" onClick={handleBackdropClick} />
       )}
+      
+      {/* Sidebar with chapter navigation */}
       <div
         className={`lore-sidebar${isSidebarOpen ? ' expanded' : ''}${isMobile ? ' mobile' : ''}`}
         onMouseEnter={handleSidebarMouseEnter}
@@ -255,31 +317,82 @@ The Dofus Era was a time of great conflict, as many sought to gain control of th
           ))}
         </ul>
       </div>
-      <div className="lore-content">
+      
+      {/* Main content area */}
+      <div className="lore-content" ref={contentRef}>
         {isLoading ? (
           <div className="loading-spinner">Loading...</div>
         ) : (
           <>
-            <h2 className="chapter-title">{chapters[currentChapter].title}</h2>
+            {/* Chapter illustration */}
+            {showIllustration && (
+              <div className="chapter-illustration-container" data-component-name="Lore">
+                {isImageLoading ? (
+                  <div className="image-loading">
+                    <FontAwesomeIcon icon={faSync} spin />
+                    <p>Generating image...</p>
+                  </div>
+                ) : (
+                  <>
+                    <img 
+                      src={chapterImages[currentChapter] || FALLBACK_IMAGE} 
+                      alt={`Illustration for ${chapters[currentChapter].title}`} 
+                      className="chapter-illustration"
+                      onError={(e) => {
+                        console.log('Image failed to load, setting fallback');
+                        e.target.src = FALLBACK_IMAGE;
+                      }}
+                      data-component-name="Lore"
+                    />
+                    <button 
+                      className="regenerate-image-button" 
+                      onClick={regenerateImage}
+                      title="Generate new image for this chapter"
+                      onMouseEnter={() => playSound('buttonHover')}
+                    >
+                      <FontAwesomeIcon icon={faSync} />
+                    </button>
+                    <div className="illustration-overlay"></div>
+                  </>
+                )}
+              </div>
+            )}
+            
+            {/* Chapter title and toggle illustration button */}
+            <div className="chapter-header">
+              <h2 className="chapter-title">{chapters[currentChapter].title}</h2>
+              <button 
+                className="toggle-illustration-button" 
+                onClick={toggleIllustration}
+                title={showIllustration ? "Hide illustration" : "Show illustration"}
+              >
+                <FontAwesomeIcon icon={showIllustration ? faEyeSlash : faEye} />
+              </button>
+            </div>
+            
+            {/* Chapter content */}
             <div className="chapter-content">
               {formatContent(chapterContent)}
             </div>
             
+            {/* Navigation buttons */}
             <div className="navigation-buttons">
               <button 
                 className={`nav-button ${currentChapter === 0 ? 'disabled' : ''}`}
                 onClick={goToPreviousChapter}
                 disabled={currentChapter === 0}
+                onMouseEnter={() => playSound('buttonHover')}
               >
-                <i className="fas fa-arrow-left"></i> Previous
+                <FontAwesomeIcon icon={faArrowLeft} /> Previous
               </button>
               
               <button 
                 className="return-button"
                 onClick={() => {
-                  soundService.play('buttonClick');
+                  playSound('buttonClick');
                   navigateTo('home');
                 }}
+                onMouseEnter={() => playSound('buttonHover')}
               >
                 Return to Home
               </button>
@@ -288,8 +401,9 @@ The Dofus Era was a time of great conflict, as many sought to gain control of th
                 className={`nav-button ${currentChapter === chapters.length - 1 ? 'disabled' : ''}`}
                 onClick={goToNextChapter}
                 disabled={currentChapter === chapters.length - 1}
+                onMouseEnter={() => playSound('buttonHover')}
               >
-                Next <i className="fas fa-arrow-right"></i>
+                Next <FontAwesomeIcon icon={faArrowRight} />
               </button>
             </div>
           </>

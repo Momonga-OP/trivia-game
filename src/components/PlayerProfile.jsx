@@ -8,16 +8,12 @@ const PlayerProfile = ({
   score = 0,
   isLoggedIn = false,
   onLogin = () => {},
+  isVisible = false,
+  onClose = () => {},
 }) => {
-  const [showProfile, setShowProfile] = useState(false);
-  
   // Default avatar if none provided
   const defaultAvatar = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="40" r="25" fill="%238c52ff"/><circle cx="50" cy="110" r="50" fill="%238c52ff"/></svg>';
   const userAvatar = avatarUrl || defaultAvatar;
-  
-  const toggleProfile = () => {
-    setShowProfile(!showProfile);
-  };
   
   const handleLogin = () => {
     onLogin();
@@ -25,13 +21,7 @@ const PlayerProfile = ({
   
   return (
     <div className="player-profile-container">
-      <div className="player-avatar-wrapper" onClick={toggleProfile}>
-        <div className="player-avatar">
-          {isLoggedIn && <div className="player-level">Lvl {level}</div>}
-        </div>
-      </div>
-      
-      {showProfile && (
+      {isVisible && (
         <div className="player-profile-card">
           <div className="profile-header">
             <div className="profile-avatar">
@@ -75,7 +65,7 @@ const PlayerProfile = ({
             )}
           </div>
           
-          <button className="close-profile" onClick={toggleProfile}>
+          <button className="close-profile" onClick={onClose}>
             <i className="fas fa-times"></i>
           </button>
         </div>

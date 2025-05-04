@@ -68,7 +68,7 @@ function HomePage({ navigateTo, windowSize, playerData: propPlayerData }) {
           <h1 className="game-title">Dofus Lore Trivia</h1>
           <div className="logo-glow"></div>
         </div>
-        <p className="subtitle">Test your knowledge of the World of Twelve!</p>
+        <p className="subtitle">Test your knowledge of the <span className="highlight">World of Twelve</span>!</p>
       </div>
       
       {/* Game Mode Section */}
@@ -81,9 +81,13 @@ function HomePage({ navigateTo, windowSize, playerData: propPlayerData }) {
               navigateTo('lore');
             }}
             onMouseEnter={() => playSound('buttonHover')}
+            data-fallback="📚"
           >
-            <FontAwesomeIcon icon="book" />
-            <span>Explore Dofus Lore</span>
+            <div className="lore-button-icon">
+              <FontAwesomeIcon icon="book" />
+            </div>
+            <span className="lore-button-text">Explore Dofus Lore</span>
+            <div className="lore-button-shine"></div>
           </button>
         </div>
         <div 
@@ -110,7 +114,7 @@ function HomePage({ navigateTo, windowSize, playerData: propPlayerData }) {
               </div>
               <div className="detail-item">
                 <FontAwesomeIcon icon="clock" />
-                <span>15 seconds per question</span>
+                <span>30 seconds per question</span>
               </div>
               <div className="detail-item">
                 <FontAwesomeIcon icon="trophy" />

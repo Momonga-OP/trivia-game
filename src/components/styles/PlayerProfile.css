@@ -5,55 +5,41 @@
   position: relative;
 }
 
-/* Avatar styling */
-.player-avatar-wrapper {
-  position: relative;
+/* Profile toggle styling */
+.profile-toggle {
+  display: flex;
+  align-items: center;
+  background: rgba(30, 30, 47, 0.8);
+  border-radius: 20px;
+  padding: 6px 12px;
   cursor: pointer;
   transition: all 0.3s ease;
+  border: 1px solid rgba(140, 82, 255, 0.5);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3), 0 0 10px rgba(140, 82, 255, 0.3);
 }
 
-.player-avatar-wrapper:hover {
-  transform: scale(1.05);
+.profile-toggle:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.4), 0 0 15px rgba(140, 82, 255, 0.4);
+  background: rgba(40, 40, 60, 0.9);
 }
 
-.player-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: rgba(30, 30, 47, 0.8);
-  overflow: hidden;
-  border: 2px solid rgba(140, 82, 255, 0.5);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3), 
-              0 0 10px rgba(140, 82, 255, 0.5);
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.avatar-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  font-weight: bold;
+.username-display {
+  font-size: 0.9rem;
+  font-weight: 600;
   color: white;
-  background: var(--primary-accent-gradient);
+  margin-right: 8px;
+  letter-spacing: 0.5px;
 }
 
-.player-level {
-  position: absolute;
-  bottom: -3px;
-  right: -3px;
+.level-indicator {
+  font-size: 0.75rem;
   background: linear-gradient(135deg, #8c52ff, #5c35a4);
   color: white;
-  font-size: 8px;
+  padding: 3px 6px;
+  border-radius: 10px;
   font-weight: bold;
-  padding: 1px 4px;
-  border-radius: 8px;
-  border: 1px solid rgba(30, 30, 47, 0.8);
+  z-index: 5;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 

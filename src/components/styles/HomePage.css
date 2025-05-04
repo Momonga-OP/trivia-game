@@ -133,7 +133,7 @@
 }
 
 .game-title {
-  font-size: 1.8rem;
+  font-size: 2rem;
   color: white;
   margin-bottom: 0.5rem;
   font-weight: bold;
@@ -197,15 +197,48 @@
 }
 
 .subtitle {
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.9);
   margin-bottom: 0.5rem;
   text-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
   position: relative;
   z-index: 20;
-  letter-spacing: 1px;
+  letter-spacing: 1.2px;
   width: 100%;
   max-width: 100%;
+  padding: 10px 20px;
+  background: rgba(20, 15, 35, 0.3);
+  border-radius: 30px;
+  border: 1px solid rgba(140, 82, 255, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transform: translateY(-10px);
+  animation: float 5s ease-in-out infinite;
+}
+
+.subtitle .highlight {
+  color: rgba(255, 215, 0, 0.9);
+  font-weight: bold;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+  position: relative;
+}
+
+.subtitle .highlight::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(255, 215, 0, 0.6), transparent);
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(-10px);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
 }
 
 /* Game section */
@@ -232,23 +265,58 @@
 }
 
 .lore-button {
-  background: linear-gradient(135deg, rgba(138, 93, 59, 0.8), rgba(80, 50, 30, 0.9));
+  background: linear-gradient(135deg, rgba(138, 93, 59, 0.9), rgba(80, 50, 30, 0.95));
   color: white;
-  border: none;
+  border: 2px solid rgba(255, 215, 0, 0.3);
   border-radius: 12px;
-  padding: 12px 24px;
-  font-size: 1rem;
+  padding: 15px 28px;
+  font-size: 1.1rem;
   font-weight: bold;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   display: flex;
   align-items: center;
-  gap: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), 0 0 5px rgba(138, 93, 59, 0.5);
+  gap: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), 0 0 10px rgba(138, 93, 59, 0.5), inset 0 0 15px rgba(255, 215, 0, 0.1);
   position: relative;
   overflow: hidden;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
+  z-index: 10;
+}
+
+.lore-button-icon {
+  background: rgba(255, 215, 0, 0.2);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+  transition: all 0.3s ease;
+  color: rgba(255, 215, 0, 0.9);
+}
+
+.lore-button-text {
+  position: relative;
+  z-index: 2;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+}
+
+.lore-button-shine {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at center, rgba(255, 215, 0, 0.4) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  transform: rotate(-45deg);
 }
 
 .lore-button::before {
@@ -258,14 +326,31 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.2), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.3), transparent);
   transition: all 0.5s ease;
+  z-index: 1;
 }
 
 .lore-button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 7px 20px rgba(0, 0, 0, 0.4), 0 0 10px rgba(138, 93, 59, 0.7);
-  background: linear-gradient(135deg, rgba(160, 110, 70, 0.9), rgba(100, 60, 35, 1));
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 15px rgba(255, 215, 0, 0.4), inset 0 0 20px rgba(255, 215, 0, 0.2);
+  background: linear-gradient(135deg, rgba(160, 110, 70, 0.95), rgba(100, 60, 35, 1));
+  border-color: rgba(255, 215, 0, 0.6);
+}
+
+.lore-button:hover .lore-button-icon {
+  transform: rotate(360deg) scale(1.1);
+  background: rgba(255, 215, 0, 0.3);
+  color: rgba(255, 215, 0, 1);
+}
+
+.lore-button:hover .lore-button-text {
+  transform: scale(1.05);
+  letter-spacing: 2px;
+}
+
+.lore-button:hover .lore-button-shine {
+  opacity: 0.8;
 }
 
 .lore-button:hover::before {
@@ -273,8 +358,19 @@
 }
 
 .lore-button:active {
-  transform: translateY(-1px);
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+}
+
+/* Add animation for the button */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+  100% { transform: scale(1); }
+}
+
+.lore-button {
+  animation: pulse 3s infinite ease-in-out;
 }
 
 .game-mode-card {

@@ -8,6 +8,16 @@ import ResultsModal from './ResultsModal';
 import { useSound } from '../contexts/SoundContext.jsx';
 import './styles/GameScreen.css';
 
+// Utility function to shuffle an array
+function shuffleArray(array) {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
 // Memoized GameScreen component to prevent unnecessary re-renders
 const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, totalAnswered, setTotalAnswered, gameType }) {
   const [showResults, setShowResults] = useState(false);
@@ -27,6 +37,7 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
   const [showCountdown, setShowCountdown] = useState(true);
   const [showQuestion, setShowQuestion] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
+  const [shuffledOptions, setShuffledOptions] = useState([]);
   
   // Shuffle questions when component mounts based on game type
   useEffect(() => {
@@ -44,6 +55,17 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
   }, []);
   
   const currentQuestion = shuffledQuestions[currentQuestionIndex];
+
+  // Shuffle options whenever the current question changes
+  useEffect(() => {
+    if (currentQuestion && currentQuestion.options) {
+      // Create a copy of the options array and shuffle it
+      const options = [...currentQuestion.options];
+      const shuffled = shuffleArray(options);
+      setShuffledOptions(shuffled);
+      console.log('Options shuffled:', shuffled);
+    }
+  }, [currentQuestion]);
 
   // Background rotation
   useEffect(() => {
@@ -196,9 +218,9 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
         <div className="options-section">
           <h3 className="options-title">Choose your answer:</h3>
           <AnimatedOptions 
-            options={currentQuestion.options}
+            options={shuffledOptions.length > 0 ? shuffledOptions : (currentQuestion ? currentQuestion.options : [])}
             selectedOption={selectedOption}
-            correctAnswer={currentQuestion.correctAnswer}
+            correctAnswer={currentQuestion ? currentQuestion.correctAnswer : ''}
             showNextButton={showNextButton}
             onOptionSelect={handleOptionSelect}
             questionId={currentQuestionIndex}
