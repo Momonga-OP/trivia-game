@@ -7,7 +7,7 @@ import GameSelectionModal from './GameSelectionModal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDiscord, faTwitter, faGithub } from '@fortawesome/free-brands-svg-icons';
 import { faPlay, faInfoCircle, faTrophy, faQuestion, faUsers, faBook, faCog, faTimes, faArrowRight, faStar, faClock } from '@fortawesome/free-solid-svg-icons';
-import discordService from '../services/DiscordService';
+import { useDiscordAuth } from '../contexts/DiscordAuthContext.jsx';
 import playerDataService from '../services/PlayerDataService';
 import { useSound } from '../contexts/SoundContext.jsx';
 
@@ -19,6 +19,9 @@ function HomePage({ navigateTo, windowSize, playerData: propPlayerData }) {
   
   // Get sound functions from context
   const { playSound } = useSound();
+  
+  // Get Discord auth functions from context
+  const { login, isAuthenticated, user } = useDiscordAuth();
 
   
   // Load player data on component mount
@@ -41,7 +44,7 @@ function HomePage({ navigateTo, windowSize, playerData: propPlayerData }) {
       
       // Show a loading indicator or message if needed
       console.log('Initiating Discord login...');
-      discordService.login();
+      login(); // Use the login function from DiscordAuthContext
     } catch (error) {
       console.error('Error initiating Discord login:', error);
       // Play error sound
@@ -184,8 +187,6 @@ function HomePage({ navigateTo, windowSize, playerData: propPlayerData }) {
           avatarUrl={playerData?.avatarUrl}
           level={playerData?.level || 1}
           score={playerData?.score || 0}
-          isLoggedIn={!playerData?.isGuest}
-          onLogin={handleDiscordLogin}
         />
       </div>
 

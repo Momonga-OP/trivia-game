@@ -1,10 +1,10 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './components/styles/App.css';
 import './components/styles/discord-compatibility.css';
 import { SoundProvider } from './contexts/SoundContext.jsx';
+import { DiscordAuthProvider } from './contexts/DiscordAuthContext.jsx';
 import BackgroundAnimation from './components/BackgroundAnimation';
-import discordService from './services/DiscordService';
 import playerDataService from './services/PlayerDataService';
 import soundService from './services/SoundService';
 import LoadingScreen from './components/LoadingScreen';
@@ -19,6 +19,7 @@ import Credits from './components/Credits';
 import Header from './components/Header';
 import HowToPlay from './components/HowToPlay';
 import Lore from './components/Lore';
+import UserProfile from './components/UserProfile';
 import DiscordCallback from './components/DiscordCallback';
 
 // Main App component that handles routing and viewport adjustments
@@ -36,27 +37,40 @@ function App() {
   const [showExitConfirmation, setShowExitConfirmation] = useState(false);
   const [pendingNavigation, setPendingNavigation] = useState(null);
   const [playerData, setPlayerData] = useState(null);
-  const [discordStatus, setDiscordStatus] = useState('disconnected');
   const [isLoading, setIsLoading] = useState(true);
 
-  
-  // Initialize player data, check Discord login status, and initialize sounds
+  // Initialize player data and sounds
   useEffect(() => {
-    // Load player data
-    const player = playerDataService.getCurrentPlayer();
-    setPlayerData(player);
+    // Simulate resource loading with a minimum display time for the loading screen
+    const loadResources = async () => {
+      try {
+        // Load player data
+        const player = playerDataService.getCurrentPlayer();
+        setPlayerData(player);
+        
+        // Initialize sound service
+        await soundService.initialize();
+        console.log('Sound service initialized in App component');
+        
+        // Ensure loading screen shows for at least 3 seconds (better user experience)
+        const minLoadingTime = 3000;
+        const startTime = performance.now();
+        const elapsedTime = performance.now() - startTime;
+        
+        if (elapsedTime < minLoadingTime) {
+          await new Promise(resolve => setTimeout(resolve, minLoadingTime - elapsedTime));
+        }
+        
+        // Transition to main content
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error during initialization:', error);
+        // Even on error, we should still show the app after a timeout
+        setIsLoading(false);
+      }
+    };
     
-    // Check Discord login status
-    if (discordService.isLoggedIn()) {
-      setDiscordStatus('connected');
-    }
-    
-    // Initialize sound service
-    soundService.initialize().then(() => {
-      console.log('Sound service initialized in App component');
-    }).catch(error => {
-      console.error('Failed to initialize sound service:', error);
-    });
+    loadResources();
     
     // Safety timeout to ensure loading screen doesn't get stuck
     const safetyTimeout = setTimeout(() => {
@@ -65,10 +79,6 @@ function App() {
     
     return () => clearTimeout(safetyTimeout);
   }, []);
-
-
-
-
 
   // Track viewport size changes
   useEffect(() => {
@@ -112,6 +122,7 @@ function App() {
       case 'about':
       case 'credits':
       case 'howtoplay':
+      case 'lore':
         soundService.play('buttonClick');
         break;
       default:
@@ -167,112 +178,111 @@ function App() {
   // Render the appropriate page based on state
   return (
     <SoundProvider>
-      <Router>
-        {isLoading ? (
-          <LoadingScreen />
-        ) : (
+      <DiscordAuthProvider>
+        <Router>
           <div className="app-container">
-            <NoiseTexture />
-            <div className="animated-bg"></div>
-            {/* Background Animation */}
+            {/* Background elements */}
             <BackgroundAnimation />
+            <NoiseTexture opacity={0.05} />
             
-            {/* Routes */}
-            <Routes>
-              {/* Discord OAuth Callback Route */}
-              <Route path="/auth/discord/callback" element={<DiscordCallback />} />
-              
-              {/* Main App Routes */}
-              <Route path="/*" element={
-                <>
-                  {/* Header with navigation */}
-                  <Header 
-                    navigateTo={navigateTo} 
-                    currentPage={currentPage} 
-                    isInGame={isInGame}
-                    playerData={playerData}
-                  />
-                  
-                  {/* Exit confirmation dialog */}
-                  {showExitConfirmation && (
-                    <div className="confirmation-overlay">
-                      <div className="confirmation-dialog">
-                        <h3>Exit Game?</h3>
-                        <p>You will lose your current progress if you leave the game.</p>
-                        <div className="confirmation-buttons">
-                          <button 
-                            className="cancel-button" 
-                            onClick={() => handleConfirmNavigation(false)}
-                          >
-                            Cancel
-                          </button>
-                          <button 
-                            className="confirm-button" 
-                            onClick={() => handleConfirmNavigation(true)}
-                          >
-                            Exit Anyway
-                          </button>
+            {/* Loading screen */}
+            {isLoading ? (
+              <LoadingScreen />
+            ) : (
+              <Routes>
+                {/* Discord OAuth Callback Route */}
+                <Route path="/discord/callback" element={<DiscordCallback />} />
+                
+                {/* Main App Routes */}
+                <Route path="/*" element={
+                  <>
+                    {/* Header with navigation */}
+                    <Header 
+                      navigateTo={navigateTo} 
+                      currentPage={currentPage} 
+                      isInGame={isInGame}
+                      playerData={playerData}
+                    />
+                    
+                    {/* User Profile - Discord Account Linking */}
+                    <div className="user-profile-container">
+                      <UserProfile />
+                    </div>
+                    
+                    {/* Exit confirmation dialog */}
+                    {showExitConfirmation && (
+                      <div className="confirmation-overlay">
+                        <div className="confirmation-dialog">
+                          <h3>Exit Game?</h3>
+                          <p>You will lose your current progress if you leave the game.</p>
+                          <div className="confirmation-buttons">
+                            <button 
+                              className="cancel-button" 
+                              onClick={() => handleConfirmNavigation(false)}
+                            >
+                              Cancel
+                            </button>
+                            <button 
+                              className="confirm-button" 
+                              onClick={() => handleConfirmNavigation(true)}
+                            >
+                              Exit Anyway
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  )}
-                  
-                  {/* Main content area */}
-                  <main className="main-content">
-                    {currentPage === 'home' && (
-                      <HomePage 
-                        navigateTo={navigateTo} 
-                        windowSize={windowSize} 
-                        playerData={playerData}
-                      />
                     )}
-                    {currentPage === 'game' && (
-                      <GameScreen 
-                        navigateTo={navigateTo} 
-                        score={score} 
-                        setScore={setScore}
-                        totalAnswered={totalAnswered}
-                        setTotalAnswered={setTotalAnswered}
-                        windowSize={windowSize}
-                        playerData={playerData}
-                        gameType={gameType}
-                      />
-                    )}
-                    {currentPage === 'dashboard' && (
-                      <Dashboard 
-                        navigateTo={navigateTo} 
-                        score={score} 
-                        totalAnswered={totalAnswered}
-                        windowSize={windowSize}
-                        playerData={playerData}
-                      />
-                    )}
-                    {currentPage === 'about' && (
-                      <About navigateTo={navigateTo} windowSize={windowSize} />
-                    )}
-                    {currentPage === 'credits' && (
-                      <Credits navigateTo={navigateTo} windowSize={windowSize} />
-                    )}
-                    {currentPage === 'howtoplay' && (
-                      <HowToPlay navigateTo={navigateTo} windowSize={windowSize} />
-                    )}
-                    {currentPage === 'lore' && (
-                      <Lore navigateTo={navigateTo} windowSize={windowSize} />
-                    )}
-                  </main>
-                  
-                  {/* Discord connection badge */}
-                  {discordStatus === 'connected' && (
-                    <div className="discord-badge">
-                      <i className="fab fa-discord"></i> Connected
-                    </div>
-                  )}
-                </>
-              } />
-            </Routes>
+                    
+                    {/* Main content area */}
+                    <main className="main-content">
+                      {currentPage === 'home' && (
+                        <HomePage 
+                          navigateTo={navigateTo} 
+                          windowSize={windowSize} 
+                          playerData={playerData}
+                        />
+                      )}
+                      {currentPage === 'game' && (
+                        <GameScreen 
+                          navigateTo={navigateTo} 
+                          score={score} 
+                          setScore={setScore}
+                          totalAnswered={totalAnswered}
+                          setTotalAnswered={setTotalAnswered}
+                          windowSize={windowSize}
+                          playerData={playerData}
+                          gameType={gameType}
+                        />
+                      )}
+                      {currentPage === 'dashboard' && (
+                        <Dashboard 
+                          navigateTo={navigateTo} 
+                          score={score} 
+                          totalAnswered={totalAnswered}
+                          windowSize={windowSize}
+                          playerData={playerData}
+                        />
+                      )}
+                      {currentPage === 'about' && (
+                        <About navigateTo={navigateTo} windowSize={windowSize} />
+                      )}
+                      {currentPage === 'credits' && (
+                        <Credits navigateTo={navigateTo} windowSize={windowSize} />
+                      )}
+                      {currentPage === 'howtoplay' && (
+                        <HowToPlay navigateTo={navigateTo} windowSize={windowSize} />
+                      )}
+                      {currentPage === 'lore' && (
+                        <Lore navigateTo={navigateTo} windowSize={windowSize} />
+                      )}
+                    </main>
+                  </>
+                } />
+              </Routes>
+            )}
           </div>
-        )}
-      </Router>
+        </Router>
+      </DiscordAuthProvider>
     </SoundProvider>
   );
 }

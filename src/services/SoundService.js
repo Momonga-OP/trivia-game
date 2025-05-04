@@ -9,15 +9,31 @@ class SoundService {
     this.volume = 0.4; // Default volume (0.0 to 1.0)
     this.initialized = true; // Set to true immediately
     this.audioContext = null;
+    this.isDiscordEnvironment = this.checkIfDiscordEnvironment();
     
-    // Try to create audio context right away
+    // Try to create audio context right away with fallbacks for Discord
     try {
-      this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      // Only create AudioContext if not in Discord or if Discord allows it
+      if (!this.isDiscordEnvironment || (window.discord && window.discord.audio)) {
+        this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
     } catch (error) {
       console.warn('Could not create AudioContext:', error);
     }
     
     console.log('SoundService constructor called');
+  }
+  
+  /**
+   * Check if we're running in a Discord environment
+   * @returns {boolean} Whether we're in Discord
+   */
+  checkIfDiscordEnvironment() {
+    return (
+      window.discord || 
+      window.__DISCORD__ || 
+      window.location.hostname.includes('discord.com')
+    );
   }
 
   /**
@@ -32,11 +48,29 @@ class SoundService {
    * @param {string} soundName - Name of the sound to play
    */
   play(soundName) {
-    if (this.isMuted || !this.audioContext) {
+    // If muted or we're in Discord without audio context, just return
+    if (this.isMuted || (this.isDiscordEnvironment && !this.audioContext)) {
       return;
     }
     
     try {
+      // If we're in Discord and have the Discord audio API, use it
+      if (this.isDiscordEnvironment && window.discord && window.discord.audio) {
+        this.playDiscordSound(soundName);
+        return;
+      }
+      
+      // Otherwise use Web Audio API if available
+      if (!this.audioContext) {
+        // Try to create audio context on-demand if it wasn't created earlier
+        try {
+          this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        } catch (e) {
+          // If we can't create it, just silently return
+          return;
+        }
+      }
+      
       // Create sound on-demand instead of storing references
       const currentTime = this.audioContext.currentTime;
       
@@ -172,6 +206,57 @@ class SoundService {
     }
     
     return this.isMuted;
+  }
+  
+  /**
+   * Play a sound using Discord's audio API
+   * @param {string} soundName - Name of the sound to play
+   */
+  playDiscordSound(soundName) {
+    // Only proceed if Discord audio API is available
+    if (!window.discord || !window.discord.audio) {
+      return;
+    }
+    
+    try {
+      // Map our sound names to Discord's built-in sounds
+      let discordSound = 'click'; // Default sound
+      
+      switch(soundName) {
+        case 'buttonClick':
+        case 'primaryButton':
+        case 'secondaryButton':
+          discordSound = 'click';
+          break;
+        case 'buttonHover':
+          discordSound = 'hover';
+          break;
+        case 'success':
+          discordSound = 'success';
+          break;
+        case 'error':
+          discordSound = 'error';
+          break;
+        case 'notification':
+          discordSound = 'notification';
+          break;
+        case 'gameStart':
+        case 'gameEnd':
+          discordSound = 'success';
+          break;
+        case 'closeButton':
+          discordSound = 'click';
+          break;
+        case 'socialButton':
+          discordSound = 'click';
+          break;
+      }
+      
+      // Play the sound with adjusted volume
+      window.discord.audio.play(discordSound, { volume: this.volume });
+    } catch (error) {
+      // Silently fail
+    }
   }
 }
 

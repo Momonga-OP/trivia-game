@@ -1,42 +1,46 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import discordService from '../services/DiscordService';
+import { useDiscordAuth } from '../contexts/DiscordAuthContext';
 import playerDataService from '../services/PlayerDataService';
 import './styles/DiscordCallback.css';
 
 const DiscordCallback = () => {
   const navigate = useNavigate();
+  const { isLoading, error: authError, user } = useDiscordAuth();
   const [status, setStatus] = useState('Processing login...');
   const [error, setError] = useState(null);
   
   useEffect(() => {
-    const processAuth = async () => {
-      try {
-        // Handle the OAuth callback
-        const userData = await discordService.handleCallback();
-        
-        // Update player data with Discord info
-        playerDataService.updatePlayerWithDiscordData(userData);
-        
-        setStatus('Login successful! Redirecting...');
-        
-        // Redirect back to home after a short delay
-        setTimeout(() => {
-          navigate('/');
-        }, 1500);
-      } catch (err) {
-        console.error('Authentication error:', err);
-        setError('Failed to authenticate with Discord. Please try again.');
-        
-        // Redirect back to home after a delay
-        setTimeout(() => {
-          navigate('/');
-        }, 3000);
-      }
-    };
+    // If there's an error from the Discord auth context
+    if (authError) {
+      setError(`Authentication error: ${authError}`);
+      
+      // Redirect back to home after a delay
+      setTimeout(() => {
+        navigate('/');
+      }, 3000);
+      return;
+    }
     
-    processAuth();
-  }, [navigate]);
+    // If we have a user, authentication was successful
+    if (user && !isLoading) {
+      // Update player data with Discord info
+      playerDataService.updatePlayerWithDiscordData({
+        id: user.id,
+        username: user.username,
+        discriminator: user.discriminator || '',
+        avatar: user.avatar,
+        global_name: user.global_name
+      });
+      
+      setStatus('Login successful! Redirecting...');
+      
+      // Redirect back to home after a short delay
+      setTimeout(() => {
+        navigate('/');
+      }, 1500);
+    }
+  }, [navigate, user, isLoading, authError]);
   
   return (
     <div className="discord-callback-container">

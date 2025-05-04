@@ -1,0 +1,130 @@
+/* Discord Authentication Button Styles */
+@import url('./variables.css');
+
+.discord-auth-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #5865f2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+  min-width: 200px;
+  max-width: 100%;
+}
+
+.discord-auth-button:hover {
+  background-color: #4752c4;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.discord-auth-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+}
+
+.discord-auth-button.logged-in {
+  background-color: #36393f;
+}
+
+.discord-auth-button.logged-in:hover {
+  background-color: #2f3136;
+}
+
+.discord-auth-button:disabled {
+  background-color: #72767d;
+  cursor: not-allowed;
+  opacity: 0.7;
+  transform: none;
+  box-shadow: none;
+}
+
+.discord-button-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.discord-auth-button i {
+  font-size: 20px;
+  margin-right: 5px;
+}
+
+.discord-user-preview {
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+  padding-left: 10px;
+  border-left: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.discord-avatar-preview {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.discord-avatar-placeholder {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #7289da;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+/* Responsive styles */
+@media (max-width: 480px) {
+  .discord-auth-button {
+    padding: 8px 12px;
+    font-size: 14px;
+    min-width: 180px;
+  }
+  
+  .discord-auth-button i {
+    font-size: 18px;
+  }
+  
+  .discord-avatar-preview,
+  .discord-avatar-placeholder {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .discord-avatar-placeholder {
+    font-size: 10px;
+  }
+}
+
+/* Discord activity specific styles */
+@media (max-width: 600px), (any-pointer: coarse) {
+  .discord-auth-button {
+    padding: 12px 16px;
+    font-size: 16px;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
+  }
+  
+  .discord-auth-button i {
+    font-size: 22px;
+  }
+  
+  .discord-avatar-preview,
+  .discord-avatar-placeholder {
+    width: 28px;
+    height: 28px;
+  }
+}

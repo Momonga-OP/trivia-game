@@ -3,12 +3,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDiscord, faTwitter } from '@fortawesome/free-brands-svg-icons';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { useSound } from '../contexts/SoundContext.jsx';
+import { useDiscordAuth } from '../contexts/DiscordAuthContext.jsx';
+import DiscordAuthButton from './DiscordAuthButton';
 import './styles/Header.css';
 import './styles/Logo.css';
 
 function Header({ navigateTo, currentPage, isInGame }) {
   const [showSettings, setShowSettings] = useState(false);
   const { playSound, isMuted, toggleMute, volume, updateVolume } = useSound();
+  const { isAuthenticated, user } = useDiscordAuth();
 
   
   // Handle navigation with game lock
@@ -78,7 +81,7 @@ function Header({ navigateTo, currentPage, isInGame }) {
           onClick={() => handleNavigation('home')}
           onMouseEnter={() => playSound('buttonHover')}
         >
-          <FontAwesomeIcon icon="home" />
+          <FontAwesomeIcon icon="home" data-fallback="🏠" />
           <span>Home</span>
         </div>
         
@@ -87,7 +90,7 @@ function Header({ navigateTo, currentPage, isInGame }) {
           onClick={() => handleNavigation('howtoplay')}
           onMouseEnter={() => playSound('buttonHover')}
         >
-          <FontAwesomeIcon icon="question-circle" />
+          <FontAwesomeIcon icon="question-circle" data-fallback="❓" />
           <span>How to Play</span>
         </div>
         
@@ -96,7 +99,7 @@ function Header({ navigateTo, currentPage, isInGame }) {
           onClick={() => handleNavigation('lore')}
           onMouseEnter={() => playSound('buttonHover')}
         >
-          <FontAwesomeIcon icon="book" />
+          <FontAwesomeIcon icon="book" data-fallback="📖" />
           <span>Lore</span>
         </div>
         
@@ -108,15 +111,42 @@ function Header({ navigateTo, currentPage, isInGame }) {
           }}
           onMouseEnter={() => playSound('buttonHover')}
         >
-          <FontAwesomeIcon icon="cog" />
+          <FontAwesomeIcon icon="cog" data-fallback="⚙️" />
           <span>Settings</span>
         </div>
       </div>
       
       {/* Settings Panel (shown when settings tab is clicked) */}
       {showSettings && (
-        <div className="settings-overlay">
-          <div className="settings-panel">
+        <div className="settings-modal-overlay" style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          width: '100vw',
+          height: '100vh',
+          backgroundColor: 'rgba(0, 0, 0, 0.7)',
+          backdropFilter: 'blur(5px)',
+          zIndex: 2000,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          <div className="settings-modal" style={{
+            backgroundColor: 'rgba(42, 27, 74, 0.95)',
+            borderRadius: '16px',
+            padding: '20px',
+            color: 'white',
+            boxShadow: '0 4px 15px rgba(0, 0, 0, 0.4), 0 0 20px rgba(140, 82, 255, 0.2)',
+            position: 'relative',
+            width: '320px',
+            maxWidth: '90%',
+            border: '1px solid rgba(140, 82, 255, 0.3)',
+            backdropFilter: 'blur(10px)',
+            animation: 'fadeIn 0.3s ease forwards',
+            margin: '0 auto'
+          }}>
             <h2>Settings</h2>
             
             <div className="settings-content">
@@ -161,6 +191,22 @@ function Header({ navigateTo, currentPage, isInGame }) {
               </div>
               
               <div className="settings-section">
+                <h3>Discord Integration</h3>
+                <p>{isAuthenticated ? 'Your account is linked with Discord' : 'Link your account with Discord to save progress'}</p>
+                
+                <DiscordAuthButton 
+                  className="settings-discord-button"
+                  onClick={() => playSound('socialButton')}
+                />
+                
+                {isAuthenticated && user && (
+                  <div className="discord-user-info">
+                    <p>Logged in as: {user.global_name || user.username}</p>
+                  </div>
+                )}
+              </div>
+              
+              <div className="settings-section">
                 <h3>Support</h3>
                 <p>Have feedback or found a bug?</p>
                 <p>Join our Discord community!</p>
@@ -173,7 +219,7 @@ function Header({ navigateTo, currentPage, isInGame }) {
                   }}
                   onMouseEnter={() => playSound('buttonHover')}
                 >
-                  <FontAwesomeIcon icon={faDiscord} />
+                  <FontAwesomeIcon icon={faDiscord} data-fallback="Discord" />
                   <span>Join Discord</span>
                 </button>
               </div>
@@ -188,8 +234,26 @@ function Header({ navigateTo, currentPage, isInGame }) {
               onMouseEnter={() => playSound('buttonHover')}
               aria-label="Close settings"
               data-fallback="X"
+              style={{
+                position: 'absolute',
+                top: '10px',
+                right: '10px',
+                background: 'transparent',
+                border: 'none',
+                color: 'white',
+                fontSize: '24px',
+                width: '30px',
+                height: '30px',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                opacity: 0.8
+              }}
             >
-              <FontAwesomeIcon icon={faTimes} />
+              <FontAwesomeIcon icon={faTimes} data-fallback="X" />
             </button>
           </div>
         </div>
