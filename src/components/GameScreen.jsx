@@ -1,13 +1,18 @@
 import React, { useState, useEffect, useCallback, useMemo, memo } from 'react';
 import { questions } from '../questionsData.js';
+import { questionsDofusTouch } from '../QuestionDofustouch.js';
 import CountdownAnimation from './CountdownAnimation';
 import QuestionOverlay from './QuestionOverlay';
 import AnimatedOptions from './AnimatedOptions';
+import ResultsModal from './ResultsModal';
 import { useSound } from '../contexts/SoundContext.jsx';
 import './styles/GameScreen.css';
 
 // Memoized GameScreen component to prevent unnecessary re-renders
-const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, totalAnswered, setTotalAnswered }) {
+const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, totalAnswered, setTotalAnswered, gameType }) {
+  const [showResults, setShowResults] = useState(false);
+  // Set the game type to 'dofus' by default if not provided
+  const currentGameType = gameType || 'dofus';
   const { playSound } = useSound();
   // Create shuffled questions array on game start
   const [shuffledQuestions, setShuffledQuestions] = useState([]);
@@ -15,18 +20,21 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
   const [selectedOption, setSelectedOption] = useState(null);
   const [feedback, setFeedback] = useState('');
   const [showNextButton, setShowNextButton] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(15);
+  const [timeLeft, setTimeLeft] = useState(30);
   const [isTimerActive, setIsTimerActive] = useState(false);
+  const [showTimesUp, setShowTimesUp] = useState(false);
   const [bgIndex, setBgIndex] = useState(Math.floor(Math.random() * 5) + 1);
   const [showCountdown, setShowCountdown] = useState(true);
   const [showQuestion, setShowQuestion] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
   
-  // Shuffle questions when component mounts
+  // Shuffle questions when component mounts based on game type
   useEffect(() => {
-    const shuffled = [...questions].sort(() => Math.random() - 0.5);
+    // Select the appropriate question set based on game type
+    const questionSet = currentGameType === 'dofusTouch' ? questionsDofusTouch : questions;
+    const shuffled = [...questionSet].sort(() => Math.random() - 0.5);
     setShuffledQuestions(shuffled);
-  }, []);
+  }, [currentGameType]);
   
   // Handle countdown completion - optimized with useCallback
   const handleCountdownComplete = useCallback(() => {
@@ -45,7 +53,12 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
   // Check answer function - optimized with useCallback
   const checkAnswer = useCallback(() => {
     setIsTimerActive(false);
-    if (currentQuestion && selectedOption === currentQuestion.correctAnswer) {
+    if (timeLeft === 0 && !selectedOption) {
+      // Time's up and no option selected
+      playSound('error');
+      setFeedback(`Time's up! ⏱️ The correct answer is ${currentQuestion.correctAnswer}.`);
+      setShowTimesUp(true);
+    } else if (currentQuestion && selectedOption === currentQuestion.correctAnswer) {
       // Play success sound for correct answer
       playSound('success');
       setFeedback("Correct! 🎉");
@@ -57,7 +70,7 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
     }
     setTotalAnswered(totalAnswered + 1);
     setShowNextButton(true);
-  }, [currentQuestion, selectedOption, score, totalAnswered, setScore, setTotalAnswered]);
+  }, [currentQuestion, selectedOption, score, totalAnswered, setScore, setTotalAnswered, timeLeft]);
 
   // Timer effect
   useEffect(() => {
@@ -65,7 +78,7 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
     if (gameStarted && !isTimerActive) {
       // Start the timer when the game starts (after countdown)
       setIsTimerActive(true);
-      setTimeLeft(15);
+      setTimeLeft(30);
     }
     
     if (isTimerActive && timeLeft > 0) {
@@ -90,11 +103,13 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
       setSelectedOption(null);
       setFeedback('');
       setShowNextButton(false);
-      setTimeLeft(15);
+      setTimeLeft(30);
       setIsTimerActive(true);
+      setShowTimesUp(false);
     } else {
-      // End of questions, go to dashboard
-      navigateTo('dashboard');
+      // Show results modal instead of going to dashboard
+      setIsTimerActive(false);
+      setShowResults(true);
     }
   }, [currentQuestionIndex, shuffledQuestions.length, navigateTo]);
 
@@ -129,6 +144,35 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
 
   return (
     <div className={`game-screen bg-${bgIndex}`}>
+      {/* Game type indicator */}
+      <div className="game-type-indicator">
+        {currentGameType === 'dofusTouch' ? 'Dofus Touch' : 'Dofus'}
+      </div>
+      
+      {/* Results Modal */}
+      {showResults && (
+        <ResultsModal
+          score={score}
+          totalAnswered={totalAnswered}
+          onClose={() => navigateTo('home')}
+          onPlayAgain={() => {
+            setShowResults(false);
+            setCurrentQuestionIndex(0);
+            setScore(0);
+            setTotalAnswered(0);
+            setSelectedOption(null);
+            setFeedback('');
+            setShowNextButton(false);
+            setTimeLeft(30);
+            setIsTimerActive(true);
+            setShowTimesUp(false);
+            setShowCountdown(true);
+            setShowQuestion(false);
+            setGameStarted(false);
+          }}
+          gameType={currentGameType}
+        />
+      )}
       {/* Countdown animation at the start of the game */}
       {showCountdown && (
         <CountdownAnimation onComplete={handleCountdownComplete} />
@@ -161,6 +205,13 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
           />
           
           {feedback && <div className="feedback">{feedback}</div>}
+          
+          {showTimesUp && !selectedOption && (
+            <div className="times-up-message">
+              <div className="times-up-icon">⏱️</div>
+              <div className="times-up-text">Time's Up!</div>
+            </div>
+          )}
           
           {showNextButton && (
             <button className="next-button large-button" onClick={handleNextQuestion}>

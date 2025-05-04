@@ -3,6 +3,7 @@ import './styles/HomePage.css';
 import BackgroundAnimation from './BackgroundAnimation';
 import PlayerProfile from './PlayerProfile';
 import SettingsModal from './SettingsModal';
+import GameSelectionModal from './GameSelectionModal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDiscord, faTwitter, faGithub } from '@fortawesome/free-brands-svg-icons';
 import { faPlay, faInfoCircle, faTrophy, faQuestion, faUsers, faBook, faCog, faTimes, faArrowRight, faStar, faClock } from '@fortawesome/free-solid-svg-icons';
@@ -12,6 +13,7 @@ import { useSound } from '../contexts/SoundContext.jsx';
 
 function HomePage({ navigateTo, windowSize, playerData: propPlayerData }) {
   const [showSettings, setShowSettings] = useState(false);
+  const [showGameSelection, setShowGameSelection] = useState(false);
   const [hoverCard, setHoverCard] = useState(false);
   const [playerData, setPlayerData] = useState(null);
   
@@ -119,8 +121,11 @@ function HomePage({ navigateTo, windowSize, playerData: propPlayerData }) {
             <div className="game-mode-action">
               <button 
                 className="play-button" 
-                onClick={() => navigateTo('game')}
-                onMouseEnter={() => playSound('primaryButton')}
+                onClick={() => {
+                  playSound('primaryButton');
+                  setShowGameSelection(true);
+                }}
+                onMouseEnter={() => playSound('buttonHover')}
               >
                 <span className="button-text">Play Now</span>
                 <FontAwesomeIcon icon="arrow-right" />
@@ -179,6 +184,22 @@ function HomePage({ navigateTo, windowSize, playerData: propPlayerData }) {
           onLogin={handleDiscordLogin}
         />
       </div>
+
+      {/* Settings Modal */}
+      {showSettings && (
+        <SettingsModal onClose={() => setShowSettings(false)} />
+      )}
+
+      {/* Game Selection Modal */}
+      {showGameSelection && (
+        <GameSelectionModal 
+          onClose={() => setShowGameSelection(false)} 
+          onSelectGame={(game) => {
+            setShowGameSelection(false);
+            navigateTo('game', { gameType: game });
+          }}
+        />
+      )}
     </div>
   );
 }

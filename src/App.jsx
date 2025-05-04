@@ -26,6 +26,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState('home');
   const [score, setScore] = useState(0);
   const [totalAnswered, setTotalAnswered] = useState(0);
+  const [gameType, setGameType] = useState('dofus');
   const [windowSize, setWindowSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight
@@ -85,7 +86,11 @@ function App() {
   }, []);
 
   // Navigation handler - optimized with useCallback
-  const navigateTo = useCallback((page) => {
+  const navigateTo = useCallback((page, options = {}) => {
+    // Set game type if provided
+    if (options.gameType) {
+      setGameType(options.gameType);
+    }
     // If player is in game and trying to navigate away
     if (isInGame && page !== 'game') {
       setPendingNavigation(page);
@@ -230,6 +235,7 @@ function App() {
                         setTotalAnswered={setTotalAnswered}
                         windowSize={windowSize}
                         playerData={playerData}
+                        gameType={gameType}
                       />
                     )}
                     {currentPage === 'dashboard' && (
