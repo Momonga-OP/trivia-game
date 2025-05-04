@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useDiscordAuth } from '../contexts/DiscordAuthContext';
 import './styles/PlayerProfile.css';
 
 const PlayerProfile = ({ 
@@ -7,27 +6,17 @@ const PlayerProfile = ({
   avatarUrl = null, 
   level = 1, 
   score = 0,
+  isLoggedIn = false,
+  onLogin = () => {},
   isVisible = false,
   onClose = () => {},
 }) => {
-  // Get Discord auth context
-  const { isAuthenticated, user, login } = useDiscordAuth();
-  
   // Default avatar if none provided
   const defaultAvatar = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="40" r="25" fill="%238c52ff"/><circle cx="50" cy="110" r="50" fill="%238c52ff"/></svg>';
-  
-  // Use Discord avatar if authenticated, otherwise use provided avatar or default
-  const userAvatar = isAuthenticated && user?.avatar 
-    ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` 
-    : (avatarUrl || defaultAvatar);
-  
-  // Use Discord username if authenticated
-  const displayName = isAuthenticated && user 
-    ? (user.global_name || user.username) 
-    : username;
+  const userAvatar = avatarUrl || defaultAvatar;
   
   const handleLogin = () => {
-    login();
+    onLogin();
   };
   
   return (
@@ -38,8 +27,8 @@ const PlayerProfile = ({
             <div className="profile-avatar">
             </div>
             <div className="profile-info">
-              <h3 className="profile-username">{displayName}</h3>
-              {isAuthenticated ? (
+              <h3 className="profile-username">{username}</h3>
+              {isLoggedIn ? (
                 <>
                   <div className="profile-level">Level {level}</div>
                   <div className="profile-score">Score: {score}</div>
@@ -51,7 +40,7 @@ const PlayerProfile = ({
           </div>
           
           <div className="profile-stats">
-            {isAuthenticated ? (
+            {isLoggedIn ? (
               <>
                 <div className="stat-item">
                   <div className="stat-label">Games Played</div>

@@ -220,18 +220,18 @@
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
   z-index: var(--z-modal);
   display: flex;
   justify-content: center;
   align-items: center;
   animation: fadeIn 0.3s ease-in-out;
-  width: 100vw;
-  height: 100vh;
 }
 
 .settings-panel {
   background: var(--card-bg-gradient);
-  width: min(90vw, 400px);
+  width: 90%;
+  max-width: min(90vw, 400px);
   padding: clamp(var(--spacing-md), 4vw, var(--spacing-lg));
   border: 2px solid var(--primary-accent);
   border-radius: var(--radius-lg);
@@ -239,14 +239,13 @@
   box-shadow: var(--shadow-xl), var(--shadow-glow);
   animation: popIn 0.4s var(--transition-bounce);
   transform-origin: center;
-  position: absolute;
+  position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  margin: 0 auto;
   max-height: 80vh;
   overflow-y: auto;
-  z-index: calc(var(--z-modal) + 1);
+  z-index: var(--z-modal);
 }
 
 .settings-panel h2 {

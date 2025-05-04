@@ -1,5 +1,5 @@
 // Player data management service
-import discordAuthService from './DiscordAuthService';
+import discordService from './DiscordService';
 
 class PlayerDataService {
   constructor() {
@@ -25,11 +25,9 @@ class PlayerDataService {
     }
     
     // If user is logged in with Discord, update the profile
-    if (discordAuthService.isAuthenticated()) {
-      const discordUser = discordAuthService.getUser();
-      if (discordUser) {
-        this.updatePlayerWithDiscordData(discordUser);
-      }
+    if (discordService.isLoggedIn()) {
+      const discordUser = discordService.getCurrentUser();
+      this.updatePlayerWithDiscordData(discordUser);
     }
     
     return this.currentPlayer;

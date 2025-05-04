@@ -16,7 +16,7 @@ function Lore({ navigateTo, windowSize }) {
   // By default, sidebar is closed on mobile, open on desktop
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 900);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 900);
-  const [showIllustration, setShowIllustration] = useState(false);
+  const [showIllustration, setShowIllustration] = useState(true);
   const [chapterImages, setChapterImages] = useState([]);
   const [isImageLoading, setIsImageLoading] = useState(false);
   const contentRef = useRef(null);

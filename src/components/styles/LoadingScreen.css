@@ -51,14 +51,14 @@
   font-weight: bold;
   color: white;
   letter-spacing: 2px;
-  text-shadow: 0 0 10px rgba(140, 82, 255, 0.5);
+  text-shadow: 0 0 10px rgba(140, 82, 255, 0.8), 0 0 20px rgba(140, 82, 255, 0.5);
   position: relative;
   z-index: 2;
-  background: linear-gradient(to right, #ffffff, #c9a8ff);
+  background: linear-gradient(to right, #ffffff, #c9a8ff, #ffffff);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  transition: all 0.3s ease;
+  animation: shimmer 3s infinite, pulse 2s infinite alternate;
 }
 
 .logo-glow {
@@ -68,10 +68,10 @@
   transform: translate(-50%, -50%);
   width: 120%;
   height: 120%;
-  background: radial-gradient(ellipse at center, rgba(140, 82, 255, 0.2) 0%, rgba(140, 82, 255, 0) 70%);
+  background: radial-gradient(ellipse at center, rgba(140, 82, 255, 0.4) 0%, rgba(140, 82, 255, 0) 70%);
   filter: blur(20px);
   z-index: 1;
-  opacity: 0.6;
+  animation: pulse 4s infinite alternate;
 }
 
 /* Hexagon grid */
@@ -241,56 +241,19 @@
 }
 
 /* Animations */
-/* Removed shimmer and pulse animations */
+@keyframes shimmer {
+  0% { background-position: -100% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes pulse {
+  0% { opacity: 0.5; transform: scale(1); }
+  100% { opacity: 0.8; transform: scale(1.05); }
+}
 
 @keyframes hexPulse {
   0% { opacity: 0.3; transform: rotate(30deg) scale(1); }
-  100% { opacity: 0.6; transform: rotate(30deg) scale(1.05); }
-}
-
-/* Interactive particles */
-.loading-screen {
-  --mouse-x: 50%;
-  --mouse-y: 50%;
-}
-
-.interactive-particles {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 5;
-}
-
-.interactive-particle {
-  position: absolute;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background-color: rgba(140, 82, 255, 0.6);
-  box-shadow: 0 0 10px rgba(140, 82, 255, 0.4);
-  pointer-events: none;
-  opacity: 0.8;
-  z-index: 10;
-  top: var(--mouse-y);
-  left: var(--mouse-x);
-  transform: translate(-50%, -50%);
-  transition: opacity 0.3s ease;
-  animation: followMouse 1s infinite ease-out;
-}
-
-.interactive-particle:nth-child(1) { animation-delay: 0s; width: 8px; height: 8px; }
-.interactive-particle:nth-child(2) { animation-delay: 0.1s; width: 7px; height: 7px; }
-.interactive-particle:nth-child(3) { animation-delay: 0.2s; width: 5px; height: 5px; }
-.interactive-particle:nth-child(4) { animation-delay: 0.3s; width: 4px; height: 4px; }
-.interactive-particle:nth-child(5) { animation-delay: 0.4s; width: 3px; height: 3px; }
-.interactive-particle:nth-child(6) { animation-delay: 0.5s; width: 2px; height: 2px; }
-
-@keyframes followMouse {
-  0% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
-  100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+  100% { opacity: 0.8; transform: rotate(30deg) scale(1.1); }
 }
 
 @keyframes dotPulse {
@@ -303,18 +266,13 @@
   50% { transform: translateY(-20px) translateX(10px); }
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Optimized styles for Discord */
+/* Optimized animations for Discord */
 .discord-mode .loading-logo h1 {
-  font-size: 2rem;
+  animation: shimmer 2s infinite, pulse 1.5s infinite alternate;
 }
 
 .discord-mode .logo-glow {
-  opacity: 0.4;
+  animation: pulse 2s infinite alternate;
 }
 
 .discord-mode .dot {
@@ -370,142 +328,4 @@
   .loading-percentage {
     font-size: 1rem;
   }
-}
-
-/* Game tips section */
-.loading-tip {
-  margin-top: 1.5rem;
-  background: rgba(20, 15, 35, 0.5);
-  border-radius: 12px;
-  padding: 15px;
-  max-width: 90%;
-  width: 90%;
-  border: 1px solid rgba(140, 82, 255, 0.2);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease;
-  animation: fadeIn 0.5s ease-in-out;
-  position: relative;
-  overflow: hidden;
-}
-
-.tip-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-  flex-wrap: wrap;
-}
-
-.loading-tip h3 {
-  font-size: 1.1rem;
-  color: rgba(140, 82, 255, 0.9);
-  margin: 0;
-  font-weight: 600;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-.tip-categories {
-  display: flex;
-  gap: 8px;
-  margin-top: 5px;
-  animation: fadeIn 0.5s ease-in-out;
-}
-
-.tip-categories button {
-  background: rgba(140, 82, 255, 0.2);
-  border: 1px solid rgba(140, 82, 255, 0.3);
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 0.8rem;
-  padding: 3px 8px;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.tip-categories button.active {
-  background: rgba(140, 82, 255, 0.5);
-  color: white;
-  box-shadow: 0 0 8px rgba(140, 82, 255, 0.4);
-}
-
-.tip-categories button:hover {
-  background: rgba(140, 82, 255, 0.4);
-  transform: translateY(-1px);
-}
-
-.tip-content {
-  position: relative;
-}
-
-.loading-tip p {
-  font-size: 0.95rem;
-  color: rgba(255, 255, 255, 0.9);
-  line-height: 1.5;
-  margin: 0;
-  min-height: 3em;
-  animation: tipFadeIn 0.5s ease-in-out;
-}
-
-.tip-pagination {
-  display: flex;
-  justify-content: center;
-  gap: 5px;
-  margin-top: 12px;
-}
-
-.tip-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.3);
-  transition: all 0.3s ease;
-}
-
-.tip-dot.active {
-  background: rgba(140, 82, 255, 0.8);
-  transform: scale(1.2);
-}
-
-.discord-mode .loading-tip {
-  padding: 10px;
-  margin-top: 1rem;
-  max-width: 95%;
-}
-
-.discord-mode .loading-tip h3 {
-  font-size: 0.9rem;
-}
-
-.discord-mode .tip-categories button {
-  font-size: 0.7rem;
-  padding: 2px 6px;
-}
-
-.discord-mode .loading-tip p {
-  font-size: 0.8rem;
-  min-height: 2.5em;
-}
-
-@keyframes tipFadeIn {
-  0% { opacity: 0; transform: translateY(5px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-
-/* Loading progress bar */
-.loading-progress-bar {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.1);
-  overflow: hidden;
-  z-index: 20;
-}
-
-.loading-progress-fill {
-  height: 100%;
-  background: linear-gradient(to right, rgba(140, 82, 255, 0.5), rgba(140, 82, 255, 0.9));
-  box-shadow: 0 0 8px rgba(140, 82, 255, 0.5);
-  transition: width 0.3s ease-out;
 }
