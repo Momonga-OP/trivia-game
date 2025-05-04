@@ -191,7 +191,8 @@
 
 /* Loading text */
 .loading-text {
-  margin-top: 2rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -220,6 +221,92 @@
 
 .dot:nth-child(3) {
   animation-delay: 0.4s;
+}
+
+/* Did You Know card */
+.did-you-know-card {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--glass-border);
+  padding: 1.2rem;
+  max-width: 90%;
+  width: 400px;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-md);
+  animation: cardAppear 0.5s ease 0.5s backwards;
+  position: relative;
+  overflow: hidden;
+}
+
+.did-you-know-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(140, 82, 255, 0.1) 0%, rgba(140, 82, 255, 0) 100%);
+  pointer-events: none;
+}
+
+.did-you-know-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.8rem;
+  color: var(--primary-accent);
+}
+
+.lightbulb-icon {
+  font-size: 1.2rem;
+  margin-right: 0.5rem;
+  color: #ffd700;
+  filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.3));
+}
+
+.did-you-know-header h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+  background: linear-gradient(135deg, #ffd700, #ffec80);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.did-you-know-card p {
+  color: var(--text-light);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0;
+  animation: factFade 0.5s ease-in-out;
+}
+
+@keyframes cardAppear {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Removed pulse animations */
+
+@keyframes factFade {
+  0% { opacity: 0; transform: translateY(5px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Discord mode adjustments for Did You Know card */
+.discord-mode .did-you-know-card {
+  padding: 0.8rem;
+  width: 320px;
+  margin-bottom: 1rem;
+}
+
+.discord-mode .did-you-know-header h3 {
+  font-size: 1rem;
+}
+
+.discord-mode .did-you-know-card p {
+  font-size: 0.85rem;
 }
 
 /* Particle effects */

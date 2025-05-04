@@ -221,7 +221,7 @@
   bottom: 0;
   background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(5px);
-  z-index: var(--z-modal);
+  z-index: 9999;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -239,13 +239,14 @@
   box-shadow: var(--shadow-xl), var(--shadow-glow);
   animation: popIn 0.4s var(--transition-bounce);
   transform-origin: center;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
   max-height: 80vh;
   overflow-y: auto;
-  z-index: var(--z-modal);
+  z-index: 10000;
+  margin: 0 !important;
 }
 
 .settings-panel h2 {

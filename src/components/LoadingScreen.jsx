@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLightbulb } from '@fortawesome/free-solid-svg-icons';
 import './styles/LoadingScreen.css';
 
 const LoadingScreen = ({ onLoadingComplete }) => {
   const [progress, setProgress] = useState(0);
   const [loadingText, setLoadingText] = useState('Initializing');
   const [showContent, setShowContent] = useState(true);
+  const [didYouKnowIndex, setDidYouKnowIndex] = useState(0);
   
   // Loading messages to cycle through
   const loadingMessages = [
@@ -14,6 +17,22 @@ const LoadingScreen = ({ onLoadingComplete }) => {
     'Connecting to World of Twelve',
     'Calibrating knowledge systems',
     'Almost ready'
+  ];
+  
+  // Did You Know facts about Dofus
+  const didYouKnowFacts = [
+    "The name 'Dofus' comes from the dragon eggs that contain immense power in the game universe.",
+    "The World of Twelve is named after the 12 main gods in the game.",
+    "Ankama, the company behind Dofus, also created the animated series Wakfu.",
+    "Dofus was first released in 2004 and has been running for over 20 years.",
+    "The Brotherhood of the Tofu is the main group of heroes in the Dofus/Wakfu universe.",
+    "Ogrest's Chaos was caused by the character Ogrest crying an ocean of tears.",
+    "The Eliatropes were the first civilization in the World of Twelve.",
+    "Each of the 12 main classes in Dofus is associated with one of the gods.",
+    "The Dofus are six primordial dragon eggs with immense magical power.",
+    "The timeline of the World of Twelve spans thousands of years of history.",
+    "The Krosmoz is the name of the entire universe where Dofus takes place.",
+    "Ecaflips are cat-like beings who love gambling and games of chance."
   ];
   
   useEffect(() => {
@@ -43,6 +62,11 @@ const LoadingScreen = ({ onLoadingComplete }) => {
         return loadingMessages[nextIndex];
       });
     }, messageInterval);
+    
+    // Cycle through Did You Know facts
+    const factInterval = setInterval(() => {
+      setDidYouKnowIndex(prevIndex => (prevIndex + 1) % didYouKnowFacts.length);
+    }, isInDiscord ? 3000 : 5000);
     
     // Ensure we reach 100% before completing
     const ensureProgressTimeout = setTimeout(() => {
@@ -85,6 +109,7 @@ const LoadingScreen = ({ onLoadingComplete }) => {
     return () => {
       clearInterval(progressInterval);
       clearInterval(textInterval);
+      clearInterval(factInterval);
       clearTimeout(ensureProgressTimeout);
       clearTimeout(completeTimeout);
       clearTimeout(directCallbackTimeout);
@@ -142,6 +167,15 @@ const LoadingScreen = ({ onLoadingComplete }) => {
             <span className="dot"></span>
             <span className="dot"></span>
           </div>
+        </div>
+        
+        {/* Did You Know card */}
+        <div className="did-you-know-card">
+          <div className="did-you-know-header">
+            <FontAwesomeIcon icon={faLightbulb} className="lightbulb-icon" />
+            <h3>Did You Know?</h3>
+          </div>
+          <p>{didYouKnowFacts[didYouKnowIndex]}</p>
         </div>
         
         {/* Reduced particles for Discord */}

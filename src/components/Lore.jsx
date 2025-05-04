@@ -16,6 +16,7 @@ function Lore({ navigateTo, windowSize }) {
   // By default, sidebar is closed on mobile, open on desktop
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 900);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 900);
+  // Always show illustration by default until user turns it off
   const [showIllustration, setShowIllustration] = useState(true);
   const [chapterImages, setChapterImages] = useState([]);
   const [isImageLoading, setIsImageLoading] = useState(false);
@@ -63,6 +64,25 @@ function Lore({ navigateTo, windowSize }) {
     { id: 9, title: 'Chapter 9 – The Time of the Gods' },
     { id: 10, title: 'Chapter 10 – The Dofus Era' },
   ];
+
+  // Persist illustration preference in localStorage
+  useEffect(() => {
+    // Only save when user explicitly changes the setting
+    if (!isLoading) {
+      localStorage.setItem('showIllustration', showIllustration.toString());
+    }
+  }, [showIllustration, isLoading]);
+  
+  // Load user preferences on initial load
+  useEffect(() => {
+    const savedIllustrationPref = localStorage.getItem('showIllustration');
+    // Only apply if explicitly set to false, otherwise default to true
+    if (savedIllustrationPref === 'false') {
+      setShowIllustration(false);
+    } else {
+      setShowIllustration(true);
+    }
+  }, []);
 
   // Load chapter content
   useEffect(() => {

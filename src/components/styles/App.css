@@ -242,23 +242,7 @@ body::before {
   border-color: var(--error);
 }
 
-/* Settings panel */
-.settings-panel {
-  background: var(--secondary-accent-gradient);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-lg);
-  color: var(--text-light);
-  box-shadow: var(--shadow-xl);
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: var(--z-modal);
-  width: 90%;
-  max-width: 400px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  backdrop-filter: var(--glass-blur);
-}
+/* Settings panel - moved to Header.css */
 
 .settings-panel h2 {
   margin-bottom: var(--spacing-lg);
