@@ -7,7 +7,9 @@ import AnimatedOptions from './AnimatedOptions';
 import ResultsModal from './ResultsModal';
 import { useSound } from '../contexts/SoundContext.jsx';
 import richPresenceService from '../services/RichPresenceService';
+import { isInDiscord, optimizeForDiscord, enhanceIconsForDiscord } from '../utils/DiscordUtils';
 import './styles/GameScreen.css';
+import './styles/DiscordMode.css';
 
 // Utility function to shuffle an array
 function shuffleArray(array) {
@@ -41,7 +43,9 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
   const [shuffledOptions, setShuffledOptions] = useState([]);
   const [startTime, setStartTime] = useState(null);
   const [answeredQuestions, setAnsweredQuestions] = useState([]);
-  
+  // Detect if running in Discord
+  const [inDiscordEnv, setInDiscordEnv] = useState(isInDiscord || false);
+
   // Shuffle questions when component mounts based on game type
   useEffect(() => {
     // Select the appropriate question set based on game type
@@ -49,7 +53,7 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
     const shuffled = [...questionSet].sort(() => Math.random() - 0.5);
     setShuffledQuestions(shuffled);
   }, [currentGameType]);
-  
+
   // Handle countdown completion - optimized with useCallback
   const handleCountdownComplete = useCallback(() => {
     setShowCountdown(false);
@@ -57,7 +61,7 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
     setGameStarted(true);
     setStartTime(Date.now());
   }, []);
-  
+
   const currentQuestion = shuffledQuestions[currentQuestionIndex];
 
   // Shuffle options whenever the current question changes
@@ -107,7 +111,7 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
       setIsTimerActive(true);
       setTimeLeft(30);
     }
-    
+
     if (isTimerActive && timeLeft > 0) {
       timer = setTimeout(() => {
         setTimeLeft(timeLeft - 1);
@@ -115,7 +119,7 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
     } else if (timeLeft === 0 && isTimerActive) {
       checkAnswer();
     }
-    
+
     return () => clearTimeout(timer);
   }, [timeLeft, isTimerActive, gameStarted]);
 
@@ -123,7 +127,7 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
   const handleNextQuestion = useCallback(() => {
     // Play button click sound when clicking next question
     playSound('primaryButton');
-    
+
     if (currentQuestionIndex < shuffledQuestions.length - 1) {
       // Update to next question immediately without animation
       setCurrentQuestionIndex(currentQuestionIndex + 1);
@@ -145,7 +149,7 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
     if (!showNextButton) {
       // Play button click sound when selecting an option
       playSound('buttonClick');
-      
+
       setSelectedOption(option);
       // Auto-submit the answer when an option is selected
       setIsTimerActive(false);
@@ -163,7 +167,30 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
       setShowNextButton(true);
       setAnsweredQuestions([...answeredQuestions, { question: currentQuestion, isCorrect: option === currentQuestion.correctAnswer }]);
     }
-  }, [currentQuestion, showNextButton, score, totalAnswered, setScore, setTotalAnswered]);
+  }, [currentQuestion, showNextButton, score, totalAnswered, setScore, setTotalAnswered, playSound]);
+
+  // Apply Discord optimizations when in Discord environment
+  useEffect(() => {
+    const checkDiscordEnv = () => {
+      // For testing in browser, we'll only apply Discord mode if explicitly set
+      // In production, this would use the actual isInDiscord() check
+      const isDiscord = isInDiscord || false; // Set to false for browser testing
+      setInDiscordEnv(isDiscord);
+      
+      if (isDiscord) {
+        // Apply Discord-specific optimizations
+        optimizeForDiscord();
+        // Enhance icons for better visibility
+        setTimeout(enhanceIconsForDiscord, 500);
+      }
+    };
+    
+    checkDiscordEnv();
+    
+    // Re-check when window is fully loaded
+    window.addEventListener('load', checkDiscordEnv);
+    return () => window.removeEventListener('load', checkDiscordEnv);
+  }, []);
 
   // Update game state
   useEffect(() => {
@@ -178,7 +205,7 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
           timeLeft
         });
       }
-      
+
       // Update Rich Presence with detailed game information
       try {
         richPresenceService.updateGamePresence({
@@ -205,14 +232,14 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
       incorrectAnswers: answeredQuestions.length - correctAnswersCount,
       timeTaken: Math.floor((Date.now() - startTime) / 1000)
     };
-    
+
     // Update Rich Presence with game results
     try {
       richPresenceService.updateResultsPresence(finalResults);
     } catch (error) {
       console.warn('Rich Presence results update failed:', error);
     }
-    
+
     // Navigate to dashboard with results
     navigateTo('dashboard');
   }, [answeredQuestions, navigateTo, shuffledQuestions.length, score, startTime]);
@@ -223,12 +250,12 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
   }
 
   return (
-    <div className={`game-screen bg-${bgIndex}`}>
+    <div className={`game-screen bg-${bgIndex} ${inDiscordEnv ? 'discord-mode' : ''}`}>
       {/* Game type indicator */}
       <div className="game-type-indicator">
         {currentGameType === 'dofusTouch' ? 'Dofus Touch' : 'Dofus'}
       </div>
-      
+
       {/* Results Modal */}
       {showResults && (
         <ResultsModal
@@ -253,48 +280,50 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
             setStartTime(null);
           }}
           gameType={currentGameType}
+          isInDiscord={inDiscordEnv}
         />
       )}
       {/* Countdown animation at the start of the game */}
       {showCountdown && (
         <CountdownAnimation onComplete={handleCountdownComplete} />
       )}
-      
 
       <div className="game-container">
         <div className="score-display">Score: {score}/{totalAnswered}</div>
       </div>
-      
+
       {/* Question overlay - always visible after countdown */}
       {!showCountdown && currentQuestion && (
-        <QuestionOverlay 
-          question={currentQuestion} 
+        <QuestionOverlay
+          question={currentQuestion}
           timeLeft={timeLeft}
-          questionId={currentQuestionIndex} 
+          questionId={currentQuestionIndex}
+          isInDiscord={inDiscordEnv}
         />
       )}
-      
+
       <div className="question-container">
         <div className="options-section">
           <h3 className="options-title">Choose your answer:</h3>
-          <AnimatedOptions 
+          <AnimatedOptions
             options={shuffledOptions.length > 0 ? shuffledOptions : (currentQuestion ? currentQuestion.options : [])}
             selectedOption={selectedOption}
             correctAnswer={currentQuestion ? currentQuestion.correctAnswer : ''}
             showNextButton={showNextButton}
             onOptionSelect={handleOptionSelect}
             questionId={currentQuestionIndex}
+            isInDiscord={inDiscordEnv}
           />
-          
+
           {feedback && <div className="feedback">{feedback}</div>}
-          
+
           {showTimesUp && !selectedOption && (
             <div className="times-up-message">
               <div className="times-up-icon">⏱️</div>
               <div className="times-up-text">Time's Up!</div>
             </div>
           )}
-          
+
           {showNextButton && (
             <button className="next-button large-button" onClick={handleNextQuestion}>
               {currentQuestionIndex < shuffledQuestions.length - 1 ? 'Next Question' : 'See Results'}
@@ -302,9 +331,9 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
           )}
         </div>
       </div>
-      
-      <button 
-        className="exit-button" 
+
+      <button
+        className="exit-button"
         onClick={() => {
           playSound('secondaryButton');
           navigateTo('home');

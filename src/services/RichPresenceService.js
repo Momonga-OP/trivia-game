@@ -1,5 +1,5 @@
 // This service is for Discord Rich Presence
-// It's designed to work when the game is run outside of Discord
+// It's designed to work when the game is run outside of Discord AND inside Discord
 
 // Only initialize in browser environment, not during server-side rendering
 const isClient = typeof window !== 'undefined';
@@ -15,6 +15,7 @@ class RichPresenceService {
     this.initialized = false;
     this.startTimestamp = null;
     this.lastPresenceData = null;
+    this.discordSdk = null;
   }
 
   /**
@@ -22,19 +23,28 @@ class RichPresenceService {
    * @returns {Promise<boolean>} Whether initialization was successful
    */
   async initialize() {
-    // Skip initialization in Discord iframe or if not in client environment
-    if (!isClient || isDiscordEnvironment) {
-      console.log('Skipping Rich Presence initialization (running in Discord or not in client)');
+    // Always try to initialize in Discord environment
+    if (!isClient) {
+      console.log('Skipping Rich Presence initialization (not in client)');
       return false;
     }
 
     if (this.initialized) return this.connected;
 
     try {
-      // In a real implementation, this would connect to Discord's local RPC
-      // For now, we'll just log the presence data for demonstration
-      console.log('Rich Presence would initialize here in a desktop environment');
-      this.connected = true;
+      // Check if we're in Discord
+      if (isDiscordEnvironment) {
+        console.log('Initializing Discord Activity presence');
+        // In Discord, we'll use the Activity SDK
+        if (window.discord?.activities) {
+          this.discordSdk = window.discord.activities;
+          this.connected = true;
+        }
+      } else {
+        // In a regular browser, we'd use Discord's local RPC
+        console.log('Rich Presence would initialize here in a desktop environment');
+      }
+      
       this.initialized = true;
       this.startTimestamp = new Date();
       
@@ -58,7 +68,7 @@ class RichPresenceService {
    * @returns {Promise<boolean>} Whether the update was successful
    */
   async updatePresence(presenceData) {
-    if (!isClient || !this.connected) return false;
+    if (!isClient) return false;
 
     try {
       // Save the presence data for refreshing
@@ -73,8 +83,41 @@ class RichPresenceService {
         ...presenceData
       };
       
-      // In a real implementation, this would send to Discord
-      console.log('Rich Presence Update:', this.lastPresenceData);
+      // If in Discord, use the Activity SDK
+      if (isDiscordEnvironment && this.discordSdk) {
+        try {
+          // Format data for Discord Activity
+          const activityData = {
+            state: this.lastPresenceData.state || 'Playing Trivia',
+            details: this.lastPresenceData.details || 'Dofus Lore Trivia',
+            timestamps: {
+              start: this.startTimestamp ? this.startTimestamp.getTime() : Date.now(),
+            },
+            assets: {
+              largeImage: this.lastPresenceData.largeImageKey || 'dofus_logo',
+              largeText: this.lastPresenceData.largeImageText || 'Dofus Lore Trivia',
+            }
+          };
+          
+          // Add small image if provided
+          if (this.lastPresenceData.smallImageKey) {
+            activityData.assets.smallImage = this.lastPresenceData.smallImageKey;
+            activityData.assets.smallText = this.lastPresenceData.smallImageText || '';
+          }
+          
+          // Update Discord Activity
+          if (this.discordSdk.setActivity) {
+            await this.discordSdk.setActivity(activityData);
+            console.log('Discord Activity updated:', activityData);
+          }
+        } catch (activityError) {
+          console.warn('Failed to update Discord Activity:', activityError);
+        }
+      } else {
+        // In a regular browser, this would send to Discord's local RPC
+        console.log('Rich Presence Update:', this.lastPresenceData);
+      }
+      
       return true;
     } catch (error) {
       console.error('Failed to update Rich Presence:', error);
@@ -87,7 +130,7 @@ class RichPresenceService {
    * @param {Object} gameState - Current game state
    */
   updateGamePresence(gameState) {
-    if (!this.connected) return;
+    if (!this.initialized) return;
     
     const { score, currentQuestion, totalQuestions, category, difficulty } = gameState;
     
@@ -104,7 +147,7 @@ class RichPresenceService {
    * @param {Object} results - Game results
    */
   updateResultsPresence(results) {
-    if (!this.connected) return;
+    if (!this.initialized) return;
     
     const { score, totalQuestions, correctAnswers } = results;
     
@@ -123,6 +166,7 @@ class RichPresenceService {
   destroy() {
     this.connected = false;
     this.initialized = false;
+    this.discordSdk = null;
     console.log('Rich Presence service destroyed');
   }
 }

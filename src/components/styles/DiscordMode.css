@@ -1,0 +1,222 @@
+/* Discord Mode Styles
+   These styles optimize the game UI when running inside Discord
+*/
+
+/* Root variables for Discord-specific theming */
+:root {
+  --discord-bg: #36393f;
+  --discord-dark: #2f3136;
+  --discord-light: #40444b;
+  --discord-text: #dcddde;
+  --discord-highlight: #5865f2;
+  --discord-success: #43b581;
+  --discord-error: #f04747;
+  --discord-warning: #faa61a;
+}
+
+/* Apply Discord-specific styles when in Discord environment */
+.discord-mode {
+  /* Adjust overall layout for Discord's iframe */
+  max-width: 100%;
+  max-height: 100vh;
+  overflow: hidden;
+  color: var(--discord-text);
+}
+
+/* Don't override the background in Discord mode */
+.discord-mode.bg-1,
+.discord-mode.bg-2,
+.discord-mode.bg-3,
+.discord-mode.bg-4,
+.discord-mode.bg-5 {
+  /* Keep the original background */
+  background: inherit;
+}
+
+/* Optimize header for Discord */
+.discord-mode .app-header {
+  padding: 8px;
+  background-color: var(--discord-dark);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.discord-mode .app-header h1 {
+  font-size: 1.2rem;
+}
+
+/* Optimize game container for Discord */
+.discord-mode .game-container {
+  padding: 10px;
+}
+
+/* Make buttons more visible in Discord */
+.discord-mode button {
+  background-color: var(--discord-highlight);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.discord-mode button:hover {
+  background-color: #4752c4;
+}
+
+.discord-mode .next-button {
+  background-color: var(--discord-success);
+}
+
+.discord-mode .next-button:hover {
+  background-color: #3ca374;
+}
+
+.discord-mode .exit-button {
+  background-color: var(--discord-error);
+}
+
+.discord-mode .exit-button:hover {
+  background-color: #d84040;
+}
+
+/* Make question text more readable in Discord */
+.discord-mode .question-text {
+  font-size: 1.2rem;
+  line-height: 1.4;
+  margin-bottom: 15px;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+/* Optimize options for Discord */
+.discord-mode .option-button {
+  background-color: var(--discord-light);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--discord-text);
+  margin: 5px 0;
+  padding: 10px;
+  text-align: left;
+}
+
+.discord-mode .option-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.discord-mode .option-button.selected {
+  background-color: var(--discord-highlight);
+  color: white;
+}
+
+.discord-mode .option-button.correct {
+  background-color: var(--discord-success);
+  color: white;
+}
+
+.discord-mode .option-button.incorrect {
+  background-color: var(--discord-error);
+  color: white;
+}
+
+/* Optimize timer for Discord */
+.discord-mode .timer-container {
+  background-color: var(--discord-dark);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.discord-mode .timer-bar {
+  background-color: var(--discord-highlight);
+}
+
+.discord-mode .low-time .timer-bar {
+  background-color: var(--discord-error);
+}
+
+/* Optimize feedback messages */
+.discord-mode .feedback {
+  background-color: var(--discord-dark);
+  padding: 10px;
+  border-radius: 4px;
+  margin: 10px 0;
+}
+
+/* Optimize icons to ensure visibility */
+.discord-mode .social-icon {
+  filter: brightness(1.2);
+  background-color: rgba(0, 0, 0, 0.3);
+  padding: 5px;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.discord-mode .social-icon img {
+  width: 20px;
+  height: 20px;
+}
+
+/* Optimize for smaller Discord windows */
+@media (max-width: 768px) {
+  .discord-mode .question-text {
+    font-size: 1rem;
+  }
+  
+  .discord-mode .option-button {
+    padding: 8px;
+    font-size: 0.9rem;
+  }
+  
+  .discord-mode .game-type-indicator {
+    font-size: 0.8rem;
+    padding: 3px 6px;
+  }
+}
+
+/* Ensure icons are visible with proper contrast */
+.discord-mode .icon-youtube,
+.discord-mode .icon-discord,
+.discord-mode .icon-close {
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  padding: 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.discord-mode .icon-youtube svg,
+.discord-mode .icon-discord svg,
+.discord-mode .icon-close svg {
+  fill: white;
+  stroke: white;
+  width: 20px;
+  height: 20px;
+}
+
+/* Add sound effect icons for better visibility */
+.discord-mode .sound-icon {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  padding: 3px;
+  margin-right: 5px;
+}
+
+/* Improve background contrast for better readability */
+.discord-mode.bg-1::before,
+.discord-mode.bg-2::before,
+.discord-mode.bg-3::before,
+.discord-mode.bg-4::before,
+.discord-mode.bg-5::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: -1;
+  pointer-events: none;
+}

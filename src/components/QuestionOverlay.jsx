@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, memo, useCallback } from 'react';
 import './styles/QuestionOverlay.css';
 
 // Memoized QuestionOverlay component to prevent unnecessary re-renders
-const QuestionOverlay = memo(function QuestionOverlay({ question, timeLeft, questionId }) {
+const QuestionOverlay = memo(function QuestionOverlay({ question, timeLeft, questionId, isInDiscord }) {
   const [animationClass, setAnimationClass] = useState('');
   const [displayedQuestion, setDisplayedQuestion] = useState(question);
   const timerBarRef = useRef(null);
@@ -61,7 +61,7 @@ const QuestionOverlay = memo(function QuestionOverlay({ question, timeLeft, ques
   }, [timeLeft, questionId]);
 
   return (
-    <div className="question-overlay">
+    <div className={`question-overlay ${isInDiscord ? 'discord-mode' : ''}`}>
       <div className={`question-card ${animationClass}`}>
         <div className="question-header">
           <div className={`timer-container ${isTimeLow ? 'low-time' : ''}`}>
@@ -78,6 +78,15 @@ const QuestionOverlay = memo(function QuestionOverlay({ question, timeLeft, ques
         
         <div className="question-body">
           <h2 className="question-text">{displayedQuestion.text}</h2>
+          {isInDiscord && displayedQuestion.image && (
+            <div className="question-image-container">
+              <img 
+                src={displayedQuestion.image} 
+                alt="Question illustration" 
+                className="question-image discord-optimized"
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>
