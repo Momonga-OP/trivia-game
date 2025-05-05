@@ -19,8 +19,11 @@
   /* Adjust overall layout for Discord's iframe */
   max-width: 100%;
   max-height: 100vh;
-  overflow: hidden;
+  overflow-y: auto !important; /* Force scrolling to be enabled */
   color: var(--discord-text);
+  display: flex;
+  flex-direction: column;
+  padding: 10px !important; /* Reduce padding to fit more content */
 }
 
 /* Don't override the background in Discord mode */
@@ -35,18 +38,65 @@
 
 /* Optimize header for Discord */
 .discord-mode .app-header {
-  padding: 8px;
+  padding: 4px;
   background-color: var(--discord-dark);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .discord-mode .app-header h1 {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
 }
 
 /* Optimize game container for Discord */
 .discord-mode .game-container {
-  padding: 10px;
+  padding: 5px;
+  max-height: unset !important; /* Remove height restriction */
+}
+
+/* Make the question overlay visible in Discord */
+.discord-mode .question-overlay {
+  position: relative !important;
+  top: 0 !important;
+  left: 0 !important;
+  transform: none !important;
+  width: 100% !important;
+  margin-bottom: 10px;
+  z-index: 1;
+}
+
+.discord-mode .question-card {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 10px !important;
+}
+
+.discord-mode .question-text {
+  font-size: 1.1rem !important;
+  line-height: 1.3 !important;
+  margin-bottom: 10px !important;
+  color: white !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+  display: block !important;
+  visibility: visible !important;
+}
+
+/* Make the question container more compact for Discord */
+.discord-mode .question-container {
+  margin-top: 0 !important;
+  padding: 5px !important;
+}
+
+/* Optimize options section for Discord */
+.discord-mode .options-section {
+  padding: 8px !important;
+  gap: 5px !important;
+  margin-bottom: 10px !important;
+}
+
+.discord-mode .options-title {
+  font-size: 1rem !important;
+  margin-bottom: 5px !important;
 }
 
 /* Make buttons more visible in Discord */
@@ -58,6 +108,7 @@
   border-radius: 4px;
   font-weight: bold;
   transition: background-color 0.2s;
+  margin: 5px 0 !important;
 }
 
 .discord-mode button:hover {
@@ -65,28 +116,31 @@
 }
 
 .discord-mode .next-button {
-  background-color: var(--discord-success);
+  background-color: var(--discord-success) !important;
+  margin-top: 5px !important;
+  margin-bottom: 10px !important;
+  padding: 8px 12px !important;
+  font-size: 1rem !important;
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  position: relative !important;
+  z-index: 10 !important;
 }
 
 .discord-mode .next-button:hover {
-  background-color: #3ca374;
+  background-color: #3ca374 !important;
 }
 
 .discord-mode .exit-button {
   background-color: var(--discord-error);
+  margin-top: 5px !important;
+  padding: 5px 10px !important;
+  font-size: 0.9rem !important;
 }
 
 .discord-mode .exit-button:hover {
   background-color: #d84040;
-}
-
-/* Make question text more readable in Discord */
-.discord-mode .question-text {
-  font-size: 1.2rem;
-  line-height: 1.4;
-  margin-bottom: 15px;
-  color: white;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 /* Optimize options for Discord */
@@ -94,9 +148,10 @@
   background-color: var(--discord-light);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: var(--discord-text);
-  margin: 5px 0;
-  padding: 10px;
+  margin: 3px 0 !important;
+  padding: 8px !important;
   text-align: left;
+  font-size: 0.9rem !important;
 }
 
 .discord-mode .option-button:hover {
@@ -122,6 +177,7 @@
 .discord-mode .timer-container {
   background-color: var(--discord-dark);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  height: 24px !important;
 }
 
 .discord-mode .timer-bar {
@@ -135,9 +191,10 @@
 /* Optimize feedback messages */
 .discord-mode .feedback {
   background-color: var(--discord-dark);
-  padding: 10px;
+  padding: 5px !important;
   border-radius: 4px;
-  margin: 10px 0;
+  margin: 5px 0 !important;
+  font-size: 0.9rem !important;
 }
 
 /* Optimize icons to ensure visibility */
@@ -156,23 +213,6 @@
 .discord-mode .social-icon img {
   width: 20px;
   height: 20px;
-}
-
-/* Optimize for smaller Discord windows */
-@media (max-width: 768px) {
-  .discord-mode .question-text {
-    font-size: 1rem;
-  }
-  
-  .discord-mode .option-button {
-    padding: 8px;
-    font-size: 0.9rem;
-  }
-  
-  .discord-mode .game-type-indicator {
-    font-size: 0.8rem;
-    padding: 3px 6px;
-  }
 }
 
 /* Ensure icons are visible with proper contrast */
@@ -219,4 +259,68 @@
   background-color: rgba(0, 0, 0, 0.4);
   z-index: -1;
   pointer-events: none;
+}
+
+/* Fix the game type indicator position */
+.discord-mode .game-type-indicator {
+  position: relative !important;
+  top: 0 !important;
+  right: 0 !important;
+  margin: 0 0 5px auto !important;
+  display: inline-block !important;
+  padding: 3px 8px !important;
+  font-size: 0.8rem !important;
+}
+
+/* Make sure the question body is visible */
+.discord-mode .question-body {
+  display: block !important;
+  visibility: visible !important;
+  margin-bottom: 5px !important;
+}
+
+/* Fix the score display */
+.discord-mode .score-display {
+  padding: 4px 8px !important;
+  margin-bottom: 5px !important;
+  font-size: 0.9rem !important;
+}
+
+/* Fix the times-up message */
+.discord-mode .times-up-message {
+  padding: 5px !important;
+  margin: 5px 0 !important;
+}
+
+.discord-mode .times-up-icon {
+  font-size: 1.5rem !important;
+  margin-bottom: 3px !important;
+}
+
+.discord-mode .times-up-text {
+  font-size: 1rem !important;
+}
+
+/* Make the Next Question button always visible and accessible in Discord */
+.discord-mode .discord-next-button {
+  position: sticky !important;
+  bottom: 10px !important;
+  margin-top: 10px !important;
+  margin-bottom: 5px !important;
+  background-color: var(--discord-success) !important;
+  color: white !important;
+  font-weight: bold !important;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5) !important;
+  border: 2px solid rgba(255, 255, 255, 0.2) !important;
+  z-index: 1000 !important; /* Ensure it's above other elements */
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 10px !important;
+  font-size: 1rem !important;
+  border-radius: 4px !important;
+}
+
+.discord-mode .discord-next-button:hover {
+  background-color: #3ca374 !important;
+  transform: translateY(-2px) !important;
 }

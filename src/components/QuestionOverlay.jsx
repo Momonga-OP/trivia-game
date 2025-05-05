@@ -77,7 +77,15 @@ const QuestionOverlay = memo(function QuestionOverlay({ question, timeLeft, ques
         </div>
         
         <div className="question-body">
-          <h2 className="question-text">{displayedQuestion.text}</h2>
+          {/* Add a special wrapper for Discord mode to ensure visibility */}
+          {isInDiscord ? (
+            <div className="discord-question-wrapper">
+              <h2 className="question-text">{displayedQuestion.text}</h2>
+            </div>
+          ) : (
+            <h2 className="question-text">{displayedQuestion.text}</h2>
+          )}
+          
           {isInDiscord && displayedQuestion.image && (
             <div className="question-image-container">
               <img 

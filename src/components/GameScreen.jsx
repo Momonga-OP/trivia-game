@@ -255,7 +255,7 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
       <div className="game-type-indicator">
         {currentGameType === 'dofusTouch' ? 'Dofus Touch' : 'Dofus'}
       </div>
-
+      
       {/* Results Modal */}
       {showResults && (
         <ResultsModal
@@ -294,18 +294,20 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
 
       {/* Question overlay - always visible after countdown */}
       {!showCountdown && currentQuestion && (
-        <QuestionOverlay
-          question={currentQuestion}
+        <QuestionOverlay 
+          question={currentQuestion} 
           timeLeft={timeLeft}
-          questionId={currentQuestionIndex}
+          questionId={currentQuestionIndex} 
           isInDiscord={inDiscordEnv}
         />
       )}
 
       <div className="question-container">
         <div className="options-section">
-          <h3 className="options-title">Choose your answer:</h3>
-          <AnimatedOptions
+          {/* Only show title if not in Discord mode to save space */}
+          {!inDiscordEnv && <h3 className="options-title">Choose your answer:</h3>}
+          
+          <AnimatedOptions 
             options={shuffledOptions.length > 0 ? shuffledOptions : (currentQuestion ? currentQuestion.options : [])}
             selectedOption={selectedOption}
             correctAnswer={currentQuestion ? currentQuestion.correctAnswer : ''}
@@ -314,26 +316,30 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
             questionId={currentQuestionIndex}
             isInDiscord={inDiscordEnv}
           />
-
+          
           {feedback && <div className="feedback">{feedback}</div>}
-
+          
           {showTimesUp && !selectedOption && (
             <div className="times-up-message">
               <div className="times-up-icon">⏱️</div>
               <div className="times-up-text">Time's Up!</div>
             </div>
           )}
-
+          
+          {/* Make Next Question button more prominent in Discord mode */}
           {showNextButton && (
-            <button className="next-button large-button" onClick={handleNextQuestion}>
+            <button 
+              className={`next-button large-button ${inDiscordEnv ? 'discord-next-button' : ''}`} 
+              onClick={handleNextQuestion}
+            >
               {currentQuestionIndex < shuffledQuestions.length - 1 ? 'Next Question' : 'See Results'}
             </button>
           )}
         </div>
       </div>
-
-      <button
-        className="exit-button"
+      
+      <button 
+        className="exit-button" 
         onClick={() => {
           playSound('secondaryButton');
           navigateTo('home');
