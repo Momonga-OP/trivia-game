@@ -7,15 +7,24 @@ import { isInDiscord } from '../utils/DiscordUtils';
 import './styles/Header.css';
 import './styles/Logo.css';
 
-function Header({ navigateTo, currentPage, isInGame }) {
+function Header({ navigateTo, currentPage, isInGame, isInDiscord: propIsInDiscord }) {
   const [showSettings, setShowSettings] = useState(false);
   const { playSound, isMuted, toggleMute, volume, updateVolume } = useSound();
-  const [inDiscordEnv, setInDiscordEnv] = useState(false);
+  const [inDiscordEnv, setInDiscordEnv] = useState(propIsInDiscord || false);
   
   // Check if we're in Discord environment
   useEffect(() => {
-    setInDiscordEnv(isInDiscord());
-  }, []);
+    // Use the prop if provided, otherwise detect it
+    setInDiscordEnv(propIsInDiscord || isInDiscord());
+    
+    // Force update on window load to ensure proper detection
+    const handleLoad = () => {
+      setInDiscordEnv(propIsInDiscord || isInDiscord());
+    };
+    
+    window.addEventListener('load', handleLoad);
+    return () => window.removeEventListener('load', handleLoad);
+  }, [propIsInDiscord]);
   
   // Handle navigation with game lock
   const handleNavigation = (page) => {
@@ -28,114 +37,119 @@ function Header({ navigateTo, currentPage, isInGame }) {
   // Hide top header when in game AND in Discord environment
   const shouldHideTopHeader = isInGame && inDiscordEnv;
   
+  // For debugging - log the state
+  useEffect(() => {
+    console.log('Header state:', { isInGame, inDiscordEnv, shouldHideTopHeader });
+  }, [isInGame, inDiscordEnv, shouldHideTopHeader]);
+  
+  if (shouldHideTopHeader) {
+    // Return only the simplified bottom navigation for Discord game mode
+    return (
+      <div className="tab-navigation discord-game-mode">
+        <div 
+          className="tab-item active"
+          onClick={() => handleNavigation('home')}
+          onMouseEnter={() => playSound('buttonHover')}
+        >
+          <FontAwesomeIcon icon="home" />
+          <span>Exit Game</span>
+        </div>
+      </div>
+    );
+  }
+  
   return (
     <>
-      {/* Top header for desktop and tablet - hidden during gameplay in Discord */}
-      {!shouldHideTopHeader && (
-        <header className="main-header">
-          <div 
-            className="logo" 
-            onClick={() => handleNavigation('home')}
-            onMouseEnter={() => playSound('buttonHover')}
-          >
-            <div className="logo-container">
-              <span className="logo-text">Dofus Lore Trivia</span>
-            </div>
+      {/* Top header for desktop and tablet */}
+      <header className="main-header">
+        <div 
+          className="logo" 
+          onClick={() => handleNavigation('home')}
+          onMouseEnter={() => playSound('buttonHover')}
+        >
+          <div className="logo-container">
+            <span className="logo-text">Dofus Lore Trivia</span>
           </div>
+        </div>
+        
+        <nav className="main-nav">
+          <ul className="nav-links">
+            <li className={currentPage === 'home' ? 'active' : ''}>
+              <button 
+                onClick={() => handleNavigation('home')}
+                className={isInGame ? 'in-game' : ''}
+                onMouseEnter={() => playSound('buttonHover')}
+              >
+                Home
+              </button>
+            </li>
+            <li className={currentPage === 'howtoplay' ? 'active' : ''}>
+              <button 
+                onClick={() => handleNavigation('howtoplay')}
+                className={isInGame ? 'in-game' : ''}
+                onMouseEnter={() => playSound('buttonHover')}
+              >
+                How to Play
+              </button>
+            </li>
+            <li className={currentPage === 'lore' ? 'active' : ''}>
+              <button 
+                onClick={() => handleNavigation('lore')}
+                className={isInGame ? 'in-game' : ''}
+                onMouseEnter={() => playSound('buttonHover')}
+              >
+                Lore
+              </button>
+            </li>
+          </ul>
           
-          <nav className="main-nav">
-            <ul className="nav-links">
-              <li className={currentPage === 'home' ? 'active' : ''}>
-                <button 
-                  onClick={() => handleNavigation('home')}
-                  className={isInGame ? 'in-game' : ''}
-                  onMouseEnter={() => playSound('buttonHover')}
-                >
-                  Home
-                </button>
-              </li>
-              <li className={currentPage === 'howtoplay' ? 'active' : ''}>
-                <button 
-                  onClick={() => handleNavigation('howtoplay')}
-                  className={isInGame ? 'in-game' : ''}
-                  onMouseEnter={() => playSound('buttonHover')}
-                >
-                  How to Play
-                </button>
-              </li>
-              <li className={currentPage === 'lore' ? 'active' : ''}>
-                <button 
-                  onClick={() => handleNavigation('lore')}
-                  className={isInGame ? 'in-game' : ''}
-                  onMouseEnter={() => playSound('buttonHover')}
-                >
-                  Lore
-                </button>
-              </li>
-            </ul>
-            
-            {/* Creator Credits */}
-            <div className="creator-credits">
-              <span>Created by Momonga</span>
-            </div>
-          </nav>
-        </header>
-      )}
-      
-      {/* Bottom tab navigation for mobile - always visible but simplified in Discord during gameplay */}
-      <div className={`tab-navigation ${shouldHideTopHeader ? 'discord-game-mode' : ''}`}>
-        {/* Only show Home tab during gameplay in Discord */}
-        {shouldHideTopHeader ? (
-          <div 
-            className="tab-item active"
-            onClick={() => handleNavigation('home')}
-            onMouseEnter={() => playSound('buttonHover')}
-          >
-            <FontAwesomeIcon icon="home" />
-            <span>Exit Game</span>
+          {/* Creator Credits */}
+          <div className="creator-credits">
+            <span>Created by Momonga</span>
           </div>
-        ) : (
-          <>
-            <div 
-              className={`tab-item ${currentPage === 'home' ? 'active' : ''} ${isInGame ? 'in-game' : ''}`}
-              onClick={() => handleNavigation('home')}
-              onMouseEnter={() => playSound('buttonHover')}
-            >
-              <FontAwesomeIcon icon="home" />
-              <span>Home</span>
-            </div>
-            
-            <div 
-              className={`tab-item ${currentPage === 'howtoplay' ? 'active' : ''} ${isInGame ? 'in-game' : ''}`}
-              onClick={() => handleNavigation('howtoplay')}
-              onMouseEnter={() => playSound('buttonHover')}
-            >
-              <FontAwesomeIcon icon="question-circle" />
-              <span>How to Play</span>
-            </div>
-            
-            <div 
-              className={`tab-item ${currentPage === 'lore' ? 'active' : ''} ${isInGame ? 'in-game' : ''}`}
-              onClick={() => handleNavigation('lore')}
-              onMouseEnter={() => playSound('buttonHover')}
-            >
-              <FontAwesomeIcon icon="book" />
-              <span>Lore</span>
-            </div>
-            
-            <div 
-              className="tab-item"
-              onClick={() => {
-                playSound('secondaryButton');
-                setShowSettings(true);
-              }}
-              onMouseEnter={() => playSound('buttonHover')}
-            >
-              <FontAwesomeIcon icon="cog" />
-              <span>Settings</span>
-            </div>
-          </>
-        )}
+        </nav>
+      </header>
+      
+      {/* Bottom tab navigation for mobile */}
+      <div className="tab-navigation">
+        <div 
+          className={`tab-item ${currentPage === 'home' ? 'active' : ''} ${isInGame ? 'in-game' : ''}`}
+          onClick={() => handleNavigation('home')}
+          onMouseEnter={() => playSound('buttonHover')}
+        >
+          <FontAwesomeIcon icon="home" />
+          <span>Home</span>
+        </div>
+        
+        <div 
+          className={`tab-item ${currentPage === 'howtoplay' ? 'active' : ''} ${isInGame ? 'in-game' : ''}`}
+          onClick={() => handleNavigation('howtoplay')}
+          onMouseEnter={() => playSound('buttonHover')}
+        >
+          <FontAwesomeIcon icon="question-circle" />
+          <span>How to Play</span>
+        </div>
+        
+        <div 
+          className={`tab-item ${currentPage === 'lore' ? 'active' : ''} ${isInGame ? 'in-game' : ''}`}
+          onClick={() => handleNavigation('lore')}
+          onMouseEnter={() => playSound('buttonHover')}
+        >
+          <FontAwesomeIcon icon="book" />
+          <span>Lore</span>
+        </div>
+        
+        <div 
+          className="tab-item"
+          onClick={() => {
+            playSound('secondaryButton');
+            setShowSettings(true);
+          }}
+          onMouseEnter={() => playSound('buttonHover')}
+        >
+          <FontAwesomeIcon icon="cog" />
+          <span>Settings</span>
+        </div>
       </div>
       
       {/* Settings Panel (shown when settings tab is clicked) */}

@@ -9,6 +9,7 @@
 export const isInDiscord = () => {
   if (typeof window === 'undefined') return false;
   
+  // Use actual detection logic for Discord environment
   return (
     window.discord !== undefined || 
     window.__DISCORD__ !== undefined || 
