@@ -1,0 +1,112 @@
+DOFUS LORE TRIVIA GAME - PRIVACY POLICY
+
+Last Updated: May 5, 2025
+
+This Privacy Policy describes how your personal information is collected, used, and shared when you play the Dofus Lore Trivia Game ("the Game").
+
+1. INFORMATION WE COLLECT
+
+When you use the Game, we may collect the following types of information:
+
+1.1 Information from Discord:
+- Your Discord username and user ID
+- Your Discord profile picture
+- Your Discord presence status
+- Voice activity status (when using voice features)
+
+1.2 Game Data:
+- Game scores and performance statistics
+- Game preferences and settings
+- Interaction data (such as questions answered, time taken)
+
+1.3 Technical Data:
+- IP address
+- Browser type and version
+- Device information
+- Operating system
+- Time zone and location
+- Usage data (how you interact with the Game)
+
+2. HOW WE USE YOUR INFORMATION
+
+We use the information we collect to:
+
+2.1 Provide, operate, and maintain the Game
+2.2 Display your username and profile picture to other players
+2.3 Track and store your game progress and scores
+2.4 Improve and personalize your experience
+2.5 Understand how users interact with the Game
+2.6 Detect and prevent fraud, abuse, and security incidents
+2.7 Communicate with you about the Game (updates, announcements)
+2.8 Comply with legal obligations
+
+3. SHARING YOUR INFORMATION
+
+We may share your information in the following circumstances:
+
+3.1 With other players (limited to username, profile picture, and game performance)
+3.2 With service providers who help us operate the Game
+3.3 To comply with applicable laws, regulations, or legal processes
+3.4 To protect the rights, property, or safety of users or others
+3.5 In connection with a business transfer (merger, acquisition, etc.)
+
+We do not sell your personal information to third parties.
+
+4. DISCORD DATA
+
+4.1 When you access the Game through Discord, we receive information from Discord in accordance with Discord's Privacy Policy.
+4.2 We only access Discord data that is necessary for the Game's functionality.
+4.3 Your use of Discord is subject to Discord's own Terms of Service and Privacy Policy.
+
+5. DATA RETENTION
+
+We retain your personal information only for as long as necessary to fulfill the purposes outlined in this Privacy Policy, unless a longer retention period is required or permitted by law.
+
+6. DATA SECURITY
+
+We implement reasonable security measures to protect your personal information from unauthorized access, alteration, disclosure, or destruction. However, no method of transmission over the Internet or electronic storage is 100% secure.
+
+7. YOUR RIGHTS
+
+Depending on your location, you may have rights regarding your personal information, including:
+
+7.1 The right to access the personal information we hold about you
+7.2 The right to request correction of inaccurate information
+7.3 The right to request deletion of your information
+7.4 The right to restrict or object to processing
+7.5 The right to data portability
+7.6 The right to withdraw consent
+
+To exercise these rights, please contact us using the information provided at the end of this policy.
+
+8. CHILDREN'S PRIVACY
+
+The Game is not intended for children under 13 years of age. We do not knowingly collect personal information from children under 13. If you are a parent or guardian and believe your child has provided us with personal information, please contact us.
+
+9. INTERNATIONAL TRANSFERS
+
+Your information may be transferred to and processed in countries other than your country of residence, which may have different data protection laws.
+
+10. THIRD-PARTY LINKS
+
+The Game may contain links to third-party websites or services. We are not responsible for the privacy practices of these third parties.
+
+11. CHANGES TO THIS PRIVACY POLICY
+
+We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last Updated" date.
+
+12. CALIFORNIA PRIVACY RIGHTS
+
+If you are a California resident, you have specific rights regarding your personal information under the California Consumer Privacy Act (CCPA). Please contact us for more information.
+
+13. EUROPEAN ECONOMIC AREA (EEA) USERS
+
+If you are in the EEA, we process your personal data based on legitimate interests, consent, or as necessary to fulfill our contractual obligations. You have the right to lodge a complaint with a supervisory authority.
+
+14. CONTACT US
+
+If you have questions about this Privacy Policy or our data practices, please contact us at:
+
+[Your contact email]
+
+Thank you for using Dofus Lore Trivia Game!
