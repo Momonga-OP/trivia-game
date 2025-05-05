@@ -124,6 +124,7 @@ body::before {
   z-index: var(--z-floating);
   animation: pulse 2s infinite;
   border: 1px solid rgba(255, 255, 255, 0.2);
+  margin-top: 60px; /* Add space below header */
 }
 
 .discord-badge i {
@@ -413,6 +414,20 @@ input[type="range"]::-webkit-slider-thumb {
 /* Improved exit confirmation dialog */
 .confirmation-overlay {
   z-index: var(--z-modal) !important; /* Ensure it's above everything */
+}
+
+/* Discord UI container - separate from main content */
+.discord-ui-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 50;
+  pointer-events: none; /* Allow clicks to pass through the container */
+}
+
+/* But allow clicks on actual UI elements */
+.discord-ui-container > * {
+  pointer-events: auto;
 }
 
 /* Responsive styles with multiple breakpoints */

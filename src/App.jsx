@@ -10,6 +10,7 @@ import soundService from './services/SoundService';
 import LoadingScreen from './components/LoadingScreen';
 import NoiseTexture from './components/NoiseTexture';
 import ParticipantsList from './components/ParticipantsList';
+import VoiceParticipants from './components/VoiceParticipants';
 
 // Import components
 import HomePage from './components/HomePage';
@@ -39,6 +40,8 @@ function App({ discordStatus = 'disconnected', discordParticipants = [] }) {
   const [playerData, setPlayerData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showParticipants, setShowParticipants] = useState(false);
+  const [showVoiceParticipants, setShowVoiceParticipants] = useState(false);
+  const [sharedGameState, setSharedGameState] = useState(null);
   
   // Check if running in Discord environment
   const isInDiscord = useMemo(() => {
@@ -88,6 +91,18 @@ function App({ discordStatus = 'disconnected', discordParticipants = [] }) {
       console.log('Discord participants updated:', discordParticipants);
     }
   }, [discordParticipants]);
+
+  // Set up game state sharing for multiplayer
+  useEffect(() => {
+    if (!isInDiscord) return;
+    
+    // Listen for game state updates from other participants
+    discordService.onGameStateUpdate((state) => {
+      if (state && state.gameType === gameType) {
+        setSharedGameState(state);
+      }
+    });
+  }, [isInDiscord, gameType]);
 
   // Track viewport size changes
   useEffect(() => {
@@ -151,6 +166,14 @@ function App({ discordStatus = 'disconnected', discordParticipants = [] }) {
       // If in Discord, start activity
       if (isInDiscord) {
         discordService.startActivity(gameType);
+        
+        // Share initial game state
+        discordService.shareGameState({
+          gameType,
+          state: 'starting',
+          hostId: playerData?.id,
+          timestamp: Date.now()
+        });
       }
     } else if (page !== 'game') {
       setIsInGame(false);
@@ -158,12 +181,21 @@ function App({ discordStatus = 'disconnected', discordParticipants = [] }) {
       // If in Discord and was in game, end activity
       if (isInDiscord && isInGame) {
         discordService.endActivity({ score });
+        
+        // Share end game state
+        discordService.shareGameState({
+          gameType,
+          state: 'ended',
+          hostId: playerData?.id,
+          finalScore: score,
+          timestamp: Date.now()
+        });
       }
     }
     
     // Scroll to top when changing pages
     window.scrollTo(0, 0);
-  }, [isInGame, isInDiscord, gameType, score]);
+  }, [isInGame, isInDiscord, gameType, score, playerData]);
   
   // Handle confirmation response - optimized with useCallback
   const handleConfirmNavigation = useCallback((confirmed) => {
@@ -180,6 +212,15 @@ function App({ discordStatus = 'disconnected', discordParticipants = [] }) {
         // If in Discord, end activity
         if (isInDiscord) {
           discordService.endActivity({ score });
+          
+          // Share end game state
+          discordService.shareGameState({
+            gameType,
+            state: 'ended',
+            hostId: playerData?.id,
+            finalScore: score,
+            timestamp: Date.now()
+          });
         }
       }
     } else {
@@ -187,7 +228,7 @@ function App({ discordStatus = 'disconnected', discordParticipants = [] }) {
     }
     
     setPendingNavigation(null);
-  }, [pendingNavigation, isInDiscord, score]);
+  }, [pendingNavigation, isInDiscord, score, gameType, playerData]);
 
   // Handle volume change for sound effects - optimized with useCallback
   const handleVolumeChange = useCallback((type, value) => {
@@ -203,6 +244,26 @@ function App({ discordStatus = 'disconnected', discordParticipants = [] }) {
     setShowParticipants(prev => !prev);
     soundService.play('buttonClick');
   }, []);
+  
+  // Toggle voice participants list visibility
+  const toggleVoiceParticipants = useCallback(() => {
+    setShowVoiceParticipants(prev => !prev);
+    soundService.play('buttonClick');
+  }, []);
+
+  // Update shared game state
+  const updateSharedGameState = useCallback((newState) => {
+    if (!isInDiscord) return;
+    
+    const gameState = {
+      ...newState,
+      gameType,
+      hostId: playerData?.id,
+      timestamp: Date.now()
+    };
+    
+    discordService.shareGameState(gameState);
+  }, [isInDiscord, gameType, playerData]);
 
   // Render the appropriate page based on state
   return (
@@ -220,7 +281,28 @@ function App({ discordStatus = 'disconnected', discordParticipants = [] }) {
             {/* Routes */}
             <Routes>
               {/* Discord OAuth Callback Route */}
-              <Route path="/auth/discord/callback" element={<DiscordCallback />} />
+              <Route path="/auth/discord/callback" element={
+                <DiscordCallback 
+                  onSuccess={() => {
+                    console.log('Discord authentication successful');
+                    // Update player data with Discord user info
+                    if (discordService.getCurrentUser()) {
+                      const discordUser = discordService.getCurrentUser();
+                      const updatedPlayer = {
+                        ...playerData,
+                        name: discordUser.username,
+                        avatar: discordUser.avatarUrl,
+                        id: discordUser.id
+                      };
+                      playerDataService.updatePlayer(updatedPlayer);
+                      setPlayerData(updatedPlayer);
+                    }
+                  }}
+                  onError={(error) => {
+                    console.error('Discord authentication error:', error);
+                  }}
+                />
+              } />
               
               {/* Main App Routes */}
               <Route path="/*" element={
@@ -280,6 +362,8 @@ function App({ discordStatus = 'disconnected', discordParticipants = [] }) {
                         gameType={gameType}
                         isInDiscord={isInDiscord}
                         discordParticipants={discordParticipants}
+                        sharedGameState={sharedGameState}
+                        updateSharedGameState={updateSharedGameState}
                       />
                     )}
                     {currentPage === 'dashboard' && (
@@ -306,25 +390,51 @@ function App({ discordStatus = 'disconnected', discordParticipants = [] }) {
                     )}
                   </main>
                   
-                  {/* Discord status indicators */}
-                  {isInDiscord && (
-                    <div className="discord-badge">
-                      <i className="fab fa-discord"></i> Connected
-                      {discordParticipants.length > 0 && (
-                        <span className="participant-count" onClick={toggleParticipants}>
-                          {discordParticipants.length} {discordParticipants.length === 1 ? 'player' : 'players'}
-                        </span>
-                      )}
-                    </div>
-                  )}
-                  
-                  {/* Participants list */}
-                  {showParticipants && discordParticipants.length > 0 && (
-                    <ParticipantsList 
-                      participants={discordParticipants} 
-                      onClose={() => setShowParticipants(false)} 
-                    />
-                  )}
+                  {/* Discord UI elements container - separate from main content */}
+                  <div className="discord-ui-container">
+                    {/* Discord status indicators */}
+                    {isInDiscord && (
+                      <>
+                        <div 
+                          className="discord-badge" 
+                          aria-label="Discord connection status"
+                          onClick={toggleParticipants}
+                          title="Discord Participants"
+                        >
+                          <i className="fab fa-discord" aria-hidden="true"></i>
+                          {discordParticipants.length > 0 && (
+                            <span className="participant-count">{discordParticipants.length}</span>
+                          )}
+                        </div>
+                        
+                        {/* Voice channel button - separate from Discord badge */}
+                        <div 
+                          className="discord-badge voice-button" 
+                          onClick={toggleVoiceParticipants}
+                          title="Voice Channel"
+                          style={{ top: '5px', right: '30px' }}
+                        >
+                          <i className="fas fa-microphone" aria-hidden="true"></i>
+                        </div>
+                        
+                        {/* Participants list */}
+                        {showParticipants && discordParticipants.length > 0 && (
+                          <ParticipantsList 
+                            participants={discordParticipants} 
+                            onClose={() => setShowParticipants(false)} 
+                          />
+                        )}
+                        
+                        {/* Voice participants list */}
+                        {showVoiceParticipants && (
+                          <VoiceParticipants 
+                            isInDiscord={isInDiscord}
+                            onClose={() => setShowVoiceParticipants(false)}
+                          />
+                        )}
+                      </>
+                    )}
+                  </div>
                 </>
               } />
             </Routes>

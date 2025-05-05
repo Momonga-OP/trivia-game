@@ -121,26 +121,119 @@ body.in-discord {
   color: var(--discord-text-normal);
 }
 
-/* Fix for Discord badge visibility */
+/* Fix for Discord badge visibility - make it a compact button */
 .discord-badge {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   position: fixed;
-  bottom: 10px;
-  right: 10px;
-  background-color: rgba(47, 49, 54, 0.9);
+  top: 5px;
+  right: 5px;
+  background-color: rgba(47, 49, 54, 0.5);
   color: #fff;
-  padding: 6px 12px;
-  border-radius: 16px;
-  font-size: 12px;
-  z-index: 1000;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(79, 84, 92, 0.3);
+  padding: 3px;
+  border-radius: 4px;
+  font-size: 0; /* Hide text */
+  z-index: 100;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(79, 84, 92, 0.2);
+  width: auto;
+  max-width: auto;
+  transition: opacity 0.3s, background-color 0.2s;
+  height: 16px;
+  line-height: 1;
+  opacity: 0.6;
+}
+
+.discord-badge:hover {
+  opacity: 1;
+  background-color: rgba(47, 49, 54, 0.8);
+}
+
+/* Ensure Discord icons are visible */
+.discord-badge i.fab,
+.discord-badge i.fas {
+  display: inline-block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  font-family: "Font Awesome 5 Free", "Font Awesome 5 Brands" !important;
+  font-size: 10px;
 }
 
 .discord-badge .fa-discord {
-  margin-right: 6px;
   color: #5865f2;
+}
+
+/* Make participant count a tooltip on hover */
+.participant-count {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #5865f2;
+  color: white;
+  padding: 0 3px;
+  border-radius: 10px;
+  font-size: 8px;
+  min-width: 12px;
+  height: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.voice-badge {
+  margin-left: 5px;
+  color: #43b581;
+  display: inline-block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.voice-badge i.fa-microphone {
+  color: #43b581;
+  display: inline-block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  font-size: 10px;
+}
+
+/* Position the participants and voice panels */
+.participants-container,
+.voice-participants-container {
+  position: fixed;
+  top: 30px;
+  right: 5px;
+  width: 140px;
+  max-height: 200px;
+  overflow-y: auto;
+  background-color: rgba(32, 34, 37, 0.95);
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+  z-index: 99;
+  border: 1px solid rgba(79, 84, 92, 0.4);
+  animation: slide-in 0.2s ease-out;
+  color: #fff;
+}
+
+/* Responsive adjustments for Discord badge */
+@media (max-width: 500px) {
+  .discord-badge {
+    padding: 2px;
+    top: 3px;
+    right: 3px;
+    height: 14px;
+  }
+  
+  .discord-badge i.fab,
+  .discord-badge i.fas {
+    font-size: 8px;
+  }
+  
+  .participant-count {
+    font-size: 7px;
+    min-width: 10px;
+    height: 10px;
+  }
 }
 
 /* Fix for icons not displaying in Discord */

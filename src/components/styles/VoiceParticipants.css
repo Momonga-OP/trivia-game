@@ -1,4 +1,4 @@
-.participants-container {
+.voice-participants-container {
   position: fixed;
   top: 30px;
   right: 5px;
@@ -26,7 +26,7 @@
   }
 }
 
-.participants-header {
+.voice-participants-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -36,39 +36,85 @@
   height: 16px;
 }
 
-.participants-header h3 {
+.voice-participants-header h3 {
   margin: 0;
   font-size: 9px;
   font-weight: 600;
   color: #fff;
 }
 
-.close-button {
+.invite-button {
+  background-color: #5865f2;
+  border: none;
+  color: #fff;
+  padding: 1px 3px;
+  border-radius: 3px;
+  font-size: 7px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 12px;
+}
+
+.invite-button:hover {
+  background-color: #4752c4;
+}
+
+.invite-button:disabled {
+  background-color: #4752c4;
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.invite-link-container {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+  max-width: 80px;
+}
+
+.invite-link-input {
+  background-color: rgba(79, 84, 92, 0.3);
+  border: 1px solid rgba(79, 84, 92, 0.6);
+  color: #fff;
+  padding: 1px 2px;
+  border-radius: 3px;
+  font-size: 7px;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 10px;
+}
+
+.copy-button {
   background: none;
   border: none;
   color: #b9bbbe;
   cursor: pointer;
-  font-size: 9px;
+  font-size: 8px;
   padding: 0;
+  transition: color 0.2s;
   width: 12px;
   height: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.2s;
 }
 
-.close-button:hover {
+.copy-button:hover {
   color: #fff;
 }
 
-.participants-list {
+.voice-participants-list {
   max-height: 120px;
   overflow-y: auto;
   padding: 0;
 }
 
-.participant-item {
+.voice-participant-item {
   display: flex;
   align-items: center;
   padding: 3px 5px;
@@ -76,11 +122,11 @@
   height: 16px;
 }
 
-.participant-item:hover {
+.voice-participant-item:hover {
   background-color: rgba(79, 84, 92, 0.3);
 }
 
-.participant-avatar {
+.voice-participant-avatar {
   width: 12px;
   height: 12px;
   border-radius: 50%;
@@ -92,7 +138,7 @@
   justify-content: center;
 }
 
-.participant-avatar img {
+.voice-participant-avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -101,16 +147,17 @@
 .default-avatar {
   color: #b9bbbe;
   font-size: 6px;
+  font-weight: bold;
 }
 
-.participant-info {
+.voice-participant-info {
   display: flex;
   flex-direction: column;
   flex: 1;
   overflow: hidden;
 }
 
-.participant-name {
+.voice-participant-name {
   font-size: 8px;
   font-weight: 500;
   color: #fff;
@@ -122,19 +169,33 @@
   max-width: 80px;
 }
 
-.host-badge {
-  margin-left: 2px;
-  color: #faa61a;
+.voice-participant-status {
+  margin-left: auto;
   font-size: 6px;
 }
 
-.participant-status {
-  font-size: 6px;
+.speaking {
+  color: #43b581;
+  animation: pulse 1.5s infinite;
+}
+
+.not-speaking {
   color: #b9bbbe;
-  margin-top: 0;
 }
 
-.no-participants {
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+
+.no-voice-participants {
   padding: 5px;
   text-align: center;
   color: #b9bbbe;
@@ -143,17 +204,17 @@
 
 /* Discord-specific optimizations */
 @media (max-width: 500px) {
-  .participants-container {
+  .voice-participants-container {
     width: 100px;
     right: 5px;
     top: 30px;
   }
   
-  .participants-list {
+  .voice-participants-list {
     max-height: 100px;
   }
   
-  .participant-name {
+  .voice-participant-name {
     max-width: 60px;
   }
 }

@@ -13,6 +13,9 @@ class DiscordService {
     this.isActivity = false;
     this.participants = [];
     this.activityState = 'idle'; // idle, starting, active, ended
+    this.voiceChannelId = null;
+    this.voiceParticipants = [];
+    this.isSpeaking = {};
     
     // Check if we have a token in localStorage
     if (this.token) {
@@ -128,6 +131,36 @@ class DiscordService {
         detail: { state }
       }));
     });
+    
+    // Listen for voice channel changes
+    if (this.sdk.voice) {
+      // Get current voice channel
+      this.sdk.voice.getVoiceChannel()
+        .then(channelId => {
+          this.voiceChannelId = channelId;
+          console.log('Current voice channel:', channelId);
+        })
+        .catch(err => console.error('Failed to get voice channel:', err));
+      
+      // Listen for voice channel participants
+      this.sdk.voice.onVoiceChannelParticipantsChange(participants => {
+        this.voiceParticipants = participants;
+        console.log('Voice participants updated:', participants);
+        
+        window.dispatchEvent(new CustomEvent('discord:voice-participants-changed', {
+          detail: { participants }
+        }));
+      });
+      
+      // Listen for speaking state changes
+      this.sdk.voice.onSpeakingChange(speakingState => {
+        this.isSpeaking = speakingState;
+        
+        window.dispatchEvent(new CustomEvent('discord:speaking-changed', {
+          detail: { speakingState }
+        }));
+      });
+    }
   }
   
   // Get all current participants
@@ -294,6 +327,60 @@ class DiscordService {
     this.token = null;
     this.currentUser = null;
     window.location.href = '/';
+  }
+  
+  // Get voice channel participants
+  getVoiceParticipants() {
+    return this.voiceParticipants;
+  }
+  
+  // Check if a user is speaking
+  isUserSpeaking(userId) {
+    return this.isSpeaking[userId] || false;
+  }
+  
+  // Create an invite link that others can use to join the activity
+  async createInviteLink() {
+    if (!this.sdk || !this.isActivity) return null;
+    
+    try {
+      const invite = await this.sdk.activities.createInvite({
+        type: 'activity',
+        max_age: 86400, // 24 hours
+        max_uses: 0, // Unlimited uses
+        temporary: false
+      });
+      
+      return invite.code;
+    } catch (error) {
+      console.error('Failed to create invite link:', error);
+      return null;
+    }
+  }
+  
+  // Share the current game state with other participants
+  async shareGameState(gameState) {
+    if (!this.sdk || !this.isActivity) return;
+    
+    try {
+      await this.sdk.activities.shareState({
+        state: gameState
+      });
+      
+      console.log('Game state shared with participants');
+    } catch (error) {
+      console.error('Failed to share game state:', error);
+    }
+  }
+  
+  // Listen for game state updates from other participants
+  onGameStateUpdate(callback) {
+    if (!this.sdk || !this.isActivity) return;
+    
+    this.sdk.activities.onStateChange(state => {
+      console.log('Received game state update:', state);
+      callback(state);
+    });
   }
 }
 
