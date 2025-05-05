@@ -7,6 +7,7 @@ import BackgroundAnimation from './components/BackgroundAnimation';
 import discordService from './services/DiscordService';
 import playerDataService from './services/PlayerDataService';
 import soundService from './services/SoundService';
+import richPresenceService from './services/RichPresenceService';
 import LoadingScreen from './components/LoadingScreen';
 import NoiseTexture from './components/NoiseTexture';
 import ParticipantsList from './components/ParticipantsList';
@@ -76,6 +77,19 @@ function App({ discordStatus = 'disconnected', discordParticipants = [] }) {
     }).catch(error => {
       console.error('Failed to initialize sound service:', error);
     });
+    
+    // Initialize Rich Presence service
+    try {
+      richPresenceService.initialize().then(success => {
+        if (success) {
+          console.log('Rich Presence service initialized successfully');
+        }
+      }).catch(error => {
+        console.warn('Rich Presence initialization error:', error);
+      });
+    } catch (error) {
+      console.warn('Failed to initialize Rich Presence service:', error);
+    }
     
     // Safety timeout to ensure loading screen doesn't get stuck
     const safetyTimeout = setTimeout(() => {
@@ -174,6 +188,16 @@ function App({ discordStatus = 'disconnected', discordParticipants = [] }) {
           hostId: playerData?.id,
           timestamp: Date.now()
         });
+        
+        // Update Rich Presence
+        try {
+          richPresenceService.updatePresence({
+            state: 'Starting game',
+            details: `${gameType || 'Dofus'} Trivia`,
+          });
+        } catch (error) {
+          console.warn('Rich Presence update error:', error);
+        }
       }
     } else if (page !== 'game') {
       setIsInGame(false);
@@ -190,13 +214,23 @@ function App({ discordStatus = 'disconnected', discordParticipants = [] }) {
           finalScore: score,
           timestamp: Date.now()
         });
+        
+        // Update Rich Presence
+        try {
+          richPresenceService.updatePresence({
+            state: 'In menu',
+            details: 'Browsing trivia options',
+          });
+        } catch (error) {
+          console.warn('Rich Presence update error:', error);
+        }
       }
     }
     
     // Scroll to top when changing pages
     window.scrollTo(0, 0);
   }, [isInGame, isInDiscord, gameType, score, playerData]);
-  
+
   // Handle confirmation response - optimized with useCallback
   const handleConfirmNavigation = useCallback((confirmed) => {
     setShowExitConfirmation(false);
@@ -221,6 +255,16 @@ function App({ discordStatus = 'disconnected', discordParticipants = [] }) {
             finalScore: score,
             timestamp: Date.now()
           });
+          
+          // Update Rich Presence
+          try {
+            richPresenceService.updatePresence({
+              state: 'In menu',
+              details: 'Browsing trivia options',
+            });
+          } catch (error) {
+            console.warn('Rich Presence update error:', error);
+          }
         }
       }
     } else {

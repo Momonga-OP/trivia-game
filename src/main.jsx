@@ -7,6 +7,7 @@ import './utils/fontAwesome';
 // Import Font Awesome CSS
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import discordService from './services/DiscordService';
+import richPresenceService from './services/RichPresenceService';
 
 // Try to import the Discord SDK - this won't crash if the package isn't installed
 let DiscordSDK;
@@ -39,6 +40,19 @@ function RootApp() {
     
     if (!isDiscordEnvironment) {
       console.log('Not running in Discord environment - skipping SDK initialization');
+      
+      // Initialize Rich Presence if we're not in Discord
+      // This is for standalone web app usage
+      try {
+        richPresenceService.initialize().then(() => {
+          console.log('Rich Presence initialized successfully');
+        }).catch(error => {
+          console.warn('Could not initialize Rich Presence:', error);
+        });
+      } catch (error) {
+        console.warn('Rich Presence initialization error:', error);
+      }
+      
       return;
     }
 
@@ -80,6 +94,9 @@ function RootApp() {
     return () => {
       window.removeEventListener('discord:participants-changed', () => {});
       window.removeEventListener('discord:activity-state-changed', () => {});
+      
+      // Clean up Rich Presence when component unmounts
+      richPresenceService.destroy();
     };
   }, []);
 
@@ -103,10 +120,10 @@ try {
   console.error('Failed to render application:', err);
   // Fallback error display
   rootElement.innerHTML = `
-    <div style="color: red; padding: 20px;">
-      <h2>Application Error</h2>
+    <div style="color: red; padding: 20px; text-align: center;">
+      <h1>Application Error</h1>
       <p>${err.message}</p>
-      <p>Please refresh the page or contact support if the issue persists.</p>
+      <button onclick="location.reload()">Reload</button>
     </div>
   `;
 }

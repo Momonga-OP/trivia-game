@@ -6,6 +6,7 @@ import QuestionOverlay from './QuestionOverlay';
 import AnimatedOptions from './AnimatedOptions';
 import ResultsModal from './ResultsModal';
 import { useSound } from '../contexts/SoundContext.jsx';
+import richPresenceService from '../services/RichPresenceService';
 import './styles/GameScreen.css';
 
 // Utility function to shuffle an array
@@ -19,7 +20,7 @@ function shuffleArray(array) {
 }
 
 // Memoized GameScreen component to prevent unnecessary re-renders
-const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, totalAnswered, setTotalAnswered, gameType }) {
+const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, totalAnswered, setTotalAnswered, gameType, isInDiscord, updateSharedGameState }) {
   const [showResults, setShowResults] = useState(false);
   // Set the game type to 'dofus' by default if not provided
   const currentGameType = gameType || 'dofus';
@@ -38,6 +39,8 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
   const [showQuestion, setShowQuestion] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
   const [shuffledOptions, setShuffledOptions] = useState([]);
+  const [startTime, setStartTime] = useState(null);
+  const [answeredQuestions, setAnsweredQuestions] = useState([]);
   
   // Shuffle questions when component mounts based on game type
   useEffect(() => {
@@ -52,6 +55,7 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
     setShowCountdown(false);
     setShowQuestion(true);
     setGameStarted(true);
+    setStartTime(Date.now());
   }, []);
   
   const currentQuestion = shuffledQuestions[currentQuestionIndex];
@@ -92,6 +96,7 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
     }
     setTotalAnswered(totalAnswered + 1);
     setShowNextButton(true);
+    setAnsweredQuestions([...answeredQuestions, { question: currentQuestion, isCorrect: selectedOption === currentQuestion.correctAnswer }]);
   }, [currentQuestion, selectedOption, score, totalAnswered, setScore, setTotalAnswered, timeLeft]);
 
   // Timer effect
@@ -156,8 +161,61 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
       }
       setTotalAnswered(totalAnswered + 1);
       setShowNextButton(true);
+      setAnsweredQuestions([...answeredQuestions, { question: currentQuestion, isCorrect: option === currentQuestion.correctAnswer }]);
     }
   }, [currentQuestion, showNextButton, score, totalAnswered, setScore, setTotalAnswered]);
+
+  // Update game state
+  useEffect(() => {
+    if (currentQuestion && shuffledQuestions.length > 0) {
+      // Update shared game state for Discord Activities
+      if (isInDiscord && typeof updateSharedGameState === 'function') {
+        updateSharedGameState({
+          currentQuestionIndex,
+          score,
+          selectedOption,
+          showNextButton,
+          timeLeft
+        });
+      }
+      
+      // Update Rich Presence with detailed game information
+      try {
+        richPresenceService.updateGamePresence({
+          score,
+          currentQuestion: currentQuestionIndex + 1,
+          totalQuestions: shuffledQuestions.length,
+          category: gameType || 'Dofus Lore',
+          difficulty: currentQuestion.difficulty || 'Normal'
+        });
+      } catch (error) {
+        console.warn('Rich Presence update failed:', error);
+      }
+    }
+  }, [currentQuestion, currentQuestionIndex, score, selectedOption, showNextButton, timeLeft, isInDiscord, updateSharedGameState, shuffledQuestions.length, gameType]);
+
+  // Handle game completion
+  const handleGameComplete = useCallback(() => {
+    // Calculate final results
+    const correctAnswersCount = answeredQuestions.filter(q => q.isCorrect).length;
+    const finalResults = {
+      score,
+      totalQuestions: shuffledQuestions.length,
+      correctAnswers: correctAnswersCount,
+      incorrectAnswers: answeredQuestions.length - correctAnswersCount,
+      timeTaken: Math.floor((Date.now() - startTime) / 1000)
+    };
+    
+    // Update Rich Presence with game results
+    try {
+      richPresenceService.updateResultsPresence(finalResults);
+    } catch (error) {
+      console.warn('Rich Presence results update failed:', error);
+    }
+    
+    // Navigate to dashboard with results
+    navigateTo('dashboard');
+  }, [answeredQuestions, navigateTo, shuffledQuestions.length, score, startTime]);
 
   // If questions aren't loaded yet
   if (!currentQuestion) {
@@ -191,6 +249,8 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
             setShowCountdown(true);
             setShowQuestion(false);
             setGameStarted(false);
+            setAnsweredQuestions([]);
+            setStartTime(null);
           }}
           gameType={currentGameType}
         />
