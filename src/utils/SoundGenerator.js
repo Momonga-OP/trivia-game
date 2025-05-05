@@ -4,28 +4,39 @@
  */
 
 // Generate and export sound files as data URLs
-export const generateSoundEffects = () => {
-  // Check if running in Discord
-  const isInDiscord = typeof window !== 'undefined' && (
-    window.location.href.includes('discord') || 
-    navigator.userAgent.includes('Discord') ||
-    window.innerWidth <= 600
-  );
+export const generateSoundEffects = (isInDiscord) => {
+  // Check if running in Discord if not explicitly provided
+  if (isInDiscord === undefined) {
+    isInDiscord = typeof window !== 'undefined' && (
+      window.location.href.includes('discord') || 
+      navigator.userAgent.includes('Discord') ||
+      window.innerWidth <= 600
+    );
+  }
   
   // Use simpler sounds in Discord
   return {
+    // Basic UI sounds
     buttonClick: generateButtonClickSound(isInDiscord),
     buttonHover: generateButtonHoverSound(isInDiscord),
+    primaryButton: generatePrimaryButtonSound(isInDiscord),
+    secondaryButton: generateSecondaryButtonSound(isInDiscord),
+    closeButton: generateCloseButtonSound(isInDiscord),
+    socialButton: generateSocialButtonSound(isInDiscord),
+    
+    // Game-specific sounds
     success: generateSuccessSound(isInDiscord),
     error: generateErrorSound(isInDiscord),
     notification: generateNotificationSound(isInDiscord),
     cardFlip: generateCardFlipSound(isInDiscord),
     gameStart: generateGameStartSound(isInDiscord),
     gameEnd: generateGameEndSound(isInDiscord),
-    primaryButton: generatePrimaryButtonSound(isInDiscord),
-    secondaryButton: generateSecondaryButtonSound(isInDiscord),
-    closeButton: generateCloseButtonSound(isInDiscord),
-    socialButton: generateSocialButtonSound(isInDiscord)
+    
+    // Trivia-specific sounds
+    optionSelect: generateOptionSelectSound(isInDiscord),   // When selecting an option
+    correctAnswer: generateCorrectAnswerSound(isInDiscord), // When answer is correct
+    wrongAnswer: generateWrongAnswerSound(isInDiscord),     // When answer is wrong
+    nextQuestion: generateNextQuestionSound(isInDiscord)    // When clicking Next Question
   };
 };
 
@@ -374,4 +385,93 @@ const generateSocialButtonSound = (isInDiscord = false) => {
     { frequency: 523.25, duration: isInDiscord ? 0.03 : 0.05, type: 'sine' },
     { frequency: 659.25, duration: isInDiscord ? 0.04 : 0.06, type: 'sine' }
   ], 0.01, isInDiscord ? 0.12 : 0.18);
+};
+
+// Generate sound for selecting an option in the trivia game
+const generateOptionSelectSound = (isInDiscord = false) => {
+  return playSequence([
+    { frequency: 440, duration: isInDiscord ? 0.03 : 0.05, type: 'sine' },
+    { frequency: 523.25, duration: isInDiscord ? 0.04 : 0.06, type: 'sine' }
+  ], 0.01, isInDiscord ? 0.15 : 0.25);
+};
+
+// Generate sound for correct answer
+const generateCorrectAnswerSound = (isInDiscord = false) => {
+  // More elaborate sound for correct answers
+  return playSequence([
+    { frequency: 523.25, duration: isInDiscord ? 0.06 : 0.1, type: 'sine' },
+    { frequency: 659.25, duration: isInDiscord ? 0.06 : 0.1, type: 'sine' },
+    { frequency: 783.99, duration: isInDiscord ? 0.08 : 0.15, type: 'sine' }
+  ], 0.01, isInDiscord ? 0.2 : 0.3);
+};
+
+// Generate sound for wrong answer
+const generateWrongAnswerSound = (isInDiscord = false) => {
+  // Distinctive sound for wrong answers
+  return playSequence([
+    { frequency: 392.00, duration: isInDiscord ? 0.06 : 0.1, type: 'square' },
+    { frequency: 349.23, duration: isInDiscord ? 0.08 : 0.12, type: 'square' }
+  ], 0.01, isInDiscord ? 0.15 : 0.2);
+};
+
+// Generate sound for clicking the Next Question button
+const generateNextQuestionSound = (isInDiscord = false) => {
+  return playSequence([
+    { frequency: 587.33, duration: isInDiscord ? 0.04 : 0.06, type: 'sine' },
+    { frequency: 659.25, duration: isInDiscord ? 0.04 : 0.06, type: 'sine' },
+    { frequency: 783.99, duration: isInDiscord ? 0.05 : 0.08, type: 'sine' }
+  ], 0.01, isInDiscord ? 0.12 : 0.18);
+};
+
+/**
+ * Play a sequence of notes with specified parameters
+ * @param {Array} notes - Array of note objects with frequency, duration, and type
+ * @param {number} delay - Delay between notes in seconds
+ * @param {number} volume - Volume level (0.0 to 1.0)
+ * @returns {Function} Function that plays the sequence when called
+ */
+const playSequence = (notes, delay = 0.01, volume = 0.3) => {
+  return () => {
+    // Return a function that will be called when the sound is played
+    if (typeof window === 'undefined' || !window.AudioContext) {
+      return; // No audio context available
+    }
+    
+    try {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      let startTime = audioContext.currentTime;
+      
+      notes.forEach((note, index) => {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        // Configure oscillator
+        oscillator.type = note.type || 'sine';
+        oscillator.frequency.value = note.frequency;
+        
+        // Configure gain with attack and release
+        const duration = note.duration || 0.1;
+        const attackTime = Math.min(0.01, duration * 0.1);
+        const releaseTime = Math.min(0.05, duration * 0.5);
+        
+        gainNode.gain.setValueAtTime(0.001, startTime);
+        gainNode.gain.exponentialRampToValueAtTime(volume, startTime + attackTime);
+        gainNode.gain.setValueAtTime(volume, startTime + duration - releaseTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+        
+        // Connect nodes
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        // Play note
+        oscillator.start(startTime);
+        oscillator.stop(startTime + duration);
+        
+        // Update start time for next note
+        startTime += duration + delay;
+      });
+    } catch (error) {
+      console.error('Error playing sound sequence:', error);
+    }
+  };
 };

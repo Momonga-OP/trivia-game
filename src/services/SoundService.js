@@ -2,13 +2,16 @@
  * Sound Service for managing game sounds
  * Handles loading, playing, and controlling sound effects
  */
+import { generateSoundEffects } from '../utils/SoundGenerator';
 
 class SoundService {
   constructor() {
     this.isMuted = false;
     this.volume = 0.4; // Default volume (0.0 to 1.0)
-    this.initialized = true; // Set to true immediately
+    this.initialized = false;
     this.audioContext = null;
+    this.sounds = {};
+    this.isInDiscord = false;
     
     // Try to create audio context right away
     try {
@@ -21,10 +24,37 @@ class SoundService {
   }
 
   /**
-   * Initialize the sound service - now just a stub for compatibility
+   * Initialize the sound service
+   * @param {boolean} isInDiscord - Whether the app is running in Discord
    */
-  async initialize() {
-    return Promise.resolve();
+  async initialize(isInDiscord = false) {
+    if (this.initialized) {
+      return Promise.resolve();
+    }
+    
+    this.isInDiscord = isInDiscord;
+    
+    try {
+      // Apply Discord class to body if in Discord
+      if (isInDiscord) {
+        document.body.classList.add('in-discord');
+      }
+      
+      // Generate sound effects based on environment
+      this.sounds = generateSoundEffects(isInDiscord);
+      
+      // Lower volume in Discord by default
+      if (isInDiscord) {
+        this.volume = 0.3;
+      }
+      
+      this.initialized = true;
+      console.log(`Sound service initialized (Discord: ${isInDiscord})`);
+      return Promise.resolve();
+    } catch (error) {
+      console.error('Failed to initialize sound service:', error);
+      return Promise.reject(error);
+    }
   }
 
   /**
@@ -37,6 +67,14 @@ class SoundService {
     }
     
     try {
+      // Skip some sounds in Discord for better performance
+      if (this.isInDiscord) {
+        // Skip less important sounds in Discord
+        if (['buttonHover', 'socialButton'].includes(soundName)) {
+          return;
+        }
+      }
+      
       // Create sound on-demand instead of storing references
       const currentTime = this.audioContext.currentTime;
       
@@ -49,58 +87,22 @@ class SoundService {
       let duration = 0.1; // Default duration in seconds
       let type = 'sine'; // Default waveform
       
-      // Configure sound based on name
-      switch(soundName) {
-        case 'buttonClick':
-          frequency = 800;
-          duration = 0.05;
-          break;
-        case 'buttonHover':
-          frequency = 1200;
-          duration = 0.03;
-          break;
-        case 'primaryButton':
-          frequency = 880;
-          duration = 0.06;
-          break;
-        case 'secondaryButton':
-          frequency = 660;
-          duration = 0.05;
-          break;
-        case 'success':
-          frequency = 1046.5;
-          duration = 0.1;
-          break;
-        case 'error':
-          frequency = 400;
-          duration = 0.1;
-          type = 'square';
-          break;
-        case 'notification':
-          frequency = 900;
-          duration = 0.08;
-          break;
-        case 'cardFlip':
-          frequency = 600;
-          duration = 0.07;
-          break;
-        case 'gameStart':
-          frequency = 523.25;
-          duration = 0.15;
-          break;
-        case 'gameEnd':
-          frequency = 493.88;
-          duration = 0.15;
-          break;
-        case 'closeButton':
-          frequency = 330;
-          duration = 0.07;
-          type = 'triangle';
-          break;
-        case 'socialButton':
-          frequency = 700;
-          duration = 0.07;
-          break;
+      // Use predefined sounds if available
+      if (this.sounds[soundName]) {
+        const soundData = this.sounds[soundName];
+        
+        if (Array.isArray(soundData)) {
+          // For complex sounds (arrays of notes)
+          this.playComplexSound(soundData);
+          return;
+        } else {
+          // For simple sounds (single oscillator)
+          frequency = soundData.frequency || frequency;
+          duration = soundData.duration || duration;
+          type = soundData.type || type;
+        }
+      } else {
+        console.warn(`Sound '${soundName}' not found, using default sound`);
       }
       
       // Configure oscillator
@@ -108,10 +110,9 @@ class SoundService {
       oscillator.frequency.value = frequency;
       
       // Configure gain (volume)
-      const volume = this.volume * 0.3; // Keep volume low
-      gainNode.gain.setValueAtTime(0, currentTime);
-      gainNode.gain.linearRampToValueAtTime(volume, currentTime + 0.005);
-      gainNode.gain.linearRampToValueAtTime(0, currentTime + duration);
+      gainNode.gain.value = this.volume;
+      gainNode.gain.setValueAtTime(this.volume, currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, currentTime + duration);
       
       // Connect nodes
       oscillator.connect(gainNode);
@@ -120,61 +121,85 @@ class SoundService {
       // Play sound
       oscillator.start(currentTime);
       oscillator.stop(currentTime + duration);
-      
     } catch (error) {
-      // Silently fail - don't log errors to avoid console spam
+      console.error('Error playing sound:', error);
     }
   }
-
+  
   /**
-   * Set the volume for all sounds
-   * @param {number} volume - Volume level (0.0 to 1.0)
+   * Play a complex sound (multiple notes)
+   * @param {Array} notes - Array of note objects with frequency, duration, and type
    */
-  setVolume(volume) {
-    this.volume = Math.max(0, Math.min(1, volume));
-    // Volume is applied when sounds are played
+  playComplexSound(notes) {
+    if (this.isMuted || !this.audioContext || !notes || !notes.length) {
+      return;
+    }
     
-    // Save to localStorage for persistence
     try {
-      localStorage.setItem('soundVolume', this.volume.toString());
-    } catch (e) {
-      // Ignore storage errors
+      const currentTime = this.audioContext.currentTime;
+      let noteStartTime = currentTime;
+      
+      // Play each note in sequence
+      notes.forEach(note => {
+        const oscillator = this.audioContext.createOscillator();
+        const gainNode = this.audioContext.createGain();
+        
+        // Configure oscillator
+        oscillator.type = note.type || 'sine';
+        oscillator.frequency.value = note.frequency || 440;
+        
+        // Configure gain with attack and release
+        const noteDuration = note.duration || 0.1;
+        const attackTime = Math.min(0.01, noteDuration * 0.1);
+        const releaseTime = Math.min(0.05, noteDuration * 0.5);
+        
+        gainNode.gain.setValueAtTime(0.001, noteStartTime);
+        gainNode.gain.exponentialRampToValueAtTime(this.volume, noteStartTime + attackTime);
+        gainNode.gain.setValueAtTime(this.volume, noteStartTime + noteDuration - releaseTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, noteStartTime + noteDuration);
+        
+        // Connect nodes
+        oscillator.connect(gainNode);
+        gainNode.connect(this.audioContext.destination);
+        
+        // Play note
+        oscillator.start(noteStartTime);
+        oscillator.stop(noteStartTime + noteDuration);
+        
+        // Update start time for next note
+        noteStartTime += noteDuration;
+      });
+    } catch (error) {
+      console.error('Error playing complex sound:', error);
     }
   }
 
   /**
-   * Mute or unmute all sounds
-   * @param {boolean} muted - Whether sounds should be muted
+   * Set the volume level
+   * @param {number} level - Volume level from 0.0 to 1.0
+   */
+  setVolume(level) {
+    this.volume = Math.max(0, Math.min(1, level));
+  }
+
+  /**
+   * Set muted state
+   * @param {boolean} muted - Whether sound should be muted
    */
   setMuted(muted) {
     this.isMuted = muted;
-    
-    // Save to localStorage for persistence
-    try {
-      localStorage.setItem('soundMuted', this.isMuted.toString());
-    } catch (e) {
-      // Ignore storage errors
-    }
   }
 
   /**
-   * Toggle mute state
-   * @returns {boolean} New mute state
+   * Toggle muted state
+   * @returns {boolean} New muted state
    */
   toggleMute() {
     this.isMuted = !this.isMuted;
-    
-    // Save to localStorage for persistence
-    try {
-      localStorage.setItem('soundMuted', this.isMuted.toString());
-    } catch (e) {
-      // Ignore storage errors
-    }
-    
     return this.isMuted;
   }
 }
 
-// Create and export a singleton instance
+// Create a singleton instance
 const soundService = new SoundService();
 export default soundService;

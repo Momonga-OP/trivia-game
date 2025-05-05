@@ -6,12 +6,15 @@ import App from './App.jsx';
 import './utils/fontAwesome';
 // Import Font Awesome CSS
 import '@fortawesome/fontawesome-svg-core/styles.css';
+import discordService from './services/DiscordService';
 
 // Try to import the Discord SDK - this won't crash if the package isn't installed
 let DiscordSDK;
 try {
   const discord = require('@discord/embedded-app-sdk');
   DiscordSDK = discord.DiscordSDK;
+  // Make it available globally for our service to use
+  window.DiscordSDK = DiscordSDK;
 } catch (err) {
   console.warn('Discord SDK not available:', err.message);
 }
@@ -19,6 +22,7 @@ try {
 function RootApp() {
   // Track Discord connection status
   const [discordStatus, setDiscordStatus] = useState('idle');
+  const [discordParticipants, setDiscordParticipants] = useState([]);
 
   useEffect(() => {
     // Skip Discord integration if SDK isn't available
@@ -38,40 +42,31 @@ function RootApp() {
       return;
     }
 
-    const discordSdk = new DiscordSDK('1367687677092167770');
-    
+    // Initialize Discord Activity SDK
     const initDiscord = async () => {
       try {
         setDiscordStatus('connecting');
-        console.log('Initializing Discord SDK...');
+        console.log('Initializing Discord Activity SDK...');
         
-        // Wait for SDK to be ready with timeout
-        const readyPromise = discordSdk.ready();
-        const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Discord SDK ready timeout')), 5000)
-        );
+        // Initialize Discord Activity SDK through our service
+        const success = await discordService.initializeActivitySDK();
         
-        await Promise.race([readyPromise, timeoutPromise]);
-        
-        // Attempt authorization with fallback
-        try {
-          const { code } = await discordSdk.commands.authorize({
-            client_id: '1367687677092167770',
-            response_type: 'code',
-            state: '',
-            prompt: 'none', // Don't force login prompt
-            scope: ['identify', 'guilds'],
+        if (success) {
+          setDiscordStatus('connected');
+          console.log('✅ Discord Activity SDK initialized successfully');
+          
+          // Set up event listeners for Discord Activity events
+          window.addEventListener('discord:participants-changed', (event) => {
+            setDiscordParticipants(event.detail.participants);
           });
-
-          await discordSdk.commands.authenticate({ code });
-          console.log('✅ Discord SDK authenticated successfully');
-        } catch (authErr) {
-          console.warn('Discord authentication skipped:', authErr.message);
-          // Continue app execution even without authentication
+          
+          window.addEventListener('discord:activity-state-changed', (event) => {
+            console.log('Activity state changed:', event.detail.state);
+          });
+        } else {
+          setDiscordStatus('limited');
+          console.log('⚠️ Discord SDK initialized with limited functionality');
         }
-        
-        setDiscordStatus('connected');
-        console.log('✅ Discord SDK initialized successfully');
       } catch (err) {
         console.error('❌ Discord SDK init failed:', err);
         setDiscordStatus('failed');
@@ -83,12 +78,16 @@ function RootApp() {
     
     // Cleanup function
     return () => {
-      // Any cleanup needed for Discord SDK
+      window.removeEventListener('discord:participants-changed', () => {});
+      window.removeEventListener('discord:activity-state-changed', () => {});
     };
   }, []);
 
-  // App now manages its own Discord status internally
-  return <App />;
+  // Pass Discord status and participants to App
+  return <App 
+    discordStatus={discordStatus} 
+    discordParticipants={discordParticipants} 
+  />;
 }
 
 // Handle rendering errors at the root level

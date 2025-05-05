@@ -9,6 +9,7 @@ import playerDataService from './services/PlayerDataService';
 import soundService from './services/SoundService';
 import LoadingScreen from './components/LoadingScreen';
 import NoiseTexture from './components/NoiseTexture';
+import ParticipantsList from './components/ParticipantsList';
 
 // Import components
 import HomePage from './components/HomePage';
@@ -22,7 +23,7 @@ import Lore from './components/Lore';
 import DiscordCallback from './components/DiscordCallback';
 
 // Main App component that handles routing and viewport adjustments
-function App() {
+function App({ discordStatus = 'disconnected', discordParticipants = [] }) {
   const [currentPage, setCurrentPage] = useState('home');
   const [score, setScore] = useState(0);
   const [totalAnswered, setTotalAnswered] = useState(0);
@@ -36,10 +37,14 @@ function App() {
   const [showExitConfirmation, setShowExitConfirmation] = useState(false);
   const [pendingNavigation, setPendingNavigation] = useState(null);
   const [playerData, setPlayerData] = useState(null);
-  const [discordStatus, setDiscordStatus] = useState('disconnected');
   const [isLoading, setIsLoading] = useState(true);
-
+  const [showParticipants, setShowParticipants] = useState(false);
   
+  // Check if running in Discord environment
+  const isInDiscord = useMemo(() => {
+    return discordStatus !== 'disconnected' && discordStatus !== 'failed';
+  }, [discordStatus]);
+
   // Initialize player data, check Discord login status, and initialize sounds
   useEffect(() => {
     // Load player data
@@ -48,11 +53,22 @@ function App() {
     
     // Check Discord login status
     if (discordService.isLoggedIn()) {
-      setDiscordStatus('connected');
+      // If we're in Discord, update player data with Discord user info
+      if (isInDiscord && discordService.getCurrentUser()) {
+        const discordUser = discordService.getCurrentUser();
+        const updatedPlayer = {
+          ...player,
+          name: discordUser.username,
+          avatar: discordUser.avatarUrl,
+          id: discordUser.id
+        };
+        playerDataService.updatePlayer(updatedPlayer);
+        setPlayerData(updatedPlayer);
+      }
     }
     
-    // Initialize sound service
-    soundService.initialize().then(() => {
+    // Initialize sound service with Discord-specific optimizations
+    soundService.initialize(isInDiscord).then(() => {
       console.log('Sound service initialized in App component');
     }).catch(error => {
       console.error('Failed to initialize sound service:', error);
@@ -64,11 +80,14 @@ function App() {
     }, 8000); // Force exit loading after 8 seconds max
     
     return () => clearTimeout(safetyTimeout);
-  }, []);
+  }, [isInDiscord]);
 
-
-
-
+  // Track Discord participants
+  useEffect(() => {
+    if (discordParticipants.length > 0) {
+      console.log('Discord participants updated:', discordParticipants);
+    }
+  }, [discordParticipants]);
 
   // Track viewport size changes
   useEffect(() => {
@@ -128,13 +147,23 @@ function App() {
       setTotalAnswered(0);
       // Play game start sound
       soundService.play('gameStart');
+      
+      // If in Discord, start activity
+      if (isInDiscord) {
+        discordService.startActivity(gameType);
+      }
     } else if (page !== 'game') {
       setIsInGame(false);
+      
+      // If in Discord and was in game, end activity
+      if (isInDiscord && isInGame) {
+        discordService.endActivity({ score });
+      }
     }
     
     // Scroll to top when changing pages
     window.scrollTo(0, 0);
-  }, [isInGame]);
+  }, [isInGame, isInDiscord, gameType, score]);
   
   // Handle confirmation response - optimized with useCallback
   const handleConfirmNavigation = useCallback((confirmed) => {
@@ -147,13 +176,18 @@ function App() {
         setCurrentPage(pendingNavigation);
         setIsInGame(false);
         soundService.play('gameEnd');
+        
+        // If in Discord, end activity
+        if (isInDiscord) {
+          discordService.endActivity({ score });
+        }
       }
     } else {
       soundService.play('buttonHover');
     }
     
     setPendingNavigation(null);
-  }, [pendingNavigation]);
+  }, [pendingNavigation, isInDiscord, score]);
 
   // Handle volume change for sound effects - optimized with useCallback
   const handleVolumeChange = useCallback((type, value) => {
@@ -162,6 +196,12 @@ function App() {
     } else if (type === 'mute') {
       soundService.setMuted(value);
     }
+  }, []);
+
+  // Toggle participants list visibility
+  const toggleParticipants = useCallback(() => {
+    setShowParticipants(prev => !prev);
+    soundService.play('buttonClick');
   }, []);
 
   // Render the appropriate page based on state
@@ -175,7 +215,7 @@ function App() {
             <NoiseTexture />
             <div className="animated-bg"></div>
             {/* Background Animation */}
-            <BackgroundAnimation />
+            <BackgroundAnimation isInDiscord={isInDiscord} />
             
             {/* Routes */}
             <Routes>
@@ -191,6 +231,7 @@ function App() {
                     currentPage={currentPage} 
                     isInGame={isInGame}
                     playerData={playerData}
+                    isInDiscord={isInDiscord}
                   />
                   
                   {/* Exit confirmation dialog */}
@@ -224,6 +265,7 @@ function App() {
                         navigateTo={navigateTo} 
                         windowSize={windowSize} 
                         playerData={playerData}
+                        isInDiscord={isInDiscord}
                       />
                     )}
                     {currentPage === 'game' && (
@@ -236,6 +278,8 @@ function App() {
                         windowSize={windowSize}
                         playerData={playerData}
                         gameType={gameType}
+                        isInDiscord={isInDiscord}
+                        discordParticipants={discordParticipants}
                       />
                     )}
                     {currentPage === 'dashboard' && (
@@ -245,27 +289,41 @@ function App() {
                         totalAnswered={totalAnswered}
                         windowSize={windowSize}
                         playerData={playerData}
+                        isInDiscord={isInDiscord}
                       />
                     )}
                     {currentPage === 'about' && (
-                      <About navigateTo={navigateTo} windowSize={windowSize} />
+                      <About navigateTo={navigateTo} windowSize={windowSize} isInDiscord={isInDiscord} />
                     )}
                     {currentPage === 'credits' && (
-                      <Credits navigateTo={navigateTo} windowSize={windowSize} />
+                      <Credits navigateTo={navigateTo} windowSize={windowSize} isInDiscord={isInDiscord} />
                     )}
                     {currentPage === 'howtoplay' && (
-                      <HowToPlay navigateTo={navigateTo} windowSize={windowSize} />
+                      <HowToPlay navigateTo={navigateTo} windowSize={windowSize} isInDiscord={isInDiscord} />
                     )}
                     {currentPage === 'lore' && (
-                      <Lore navigateTo={navigateTo} windowSize={windowSize} />
+                      <Lore navigateTo={navigateTo} windowSize={windowSize} isInDiscord={isInDiscord} />
                     )}
                   </main>
                   
-                  {/* Discord connection badge */}
-                  {discordStatus === 'connected' && (
+                  {/* Discord status indicators */}
+                  {isInDiscord && (
                     <div className="discord-badge">
                       <i className="fab fa-discord"></i> Connected
+                      {discordParticipants.length > 0 && (
+                        <span className="participant-count" onClick={toggleParticipants}>
+                          {discordParticipants.length} {discordParticipants.length === 1 ? 'player' : 'players'}
+                        </span>
+                      )}
                     </div>
+                  )}
+                  
+                  {/* Participants list */}
+                  {showParticipants && discordParticipants.length > 0 && (
+                    <ParticipantsList 
+                      participants={discordParticipants} 
+                      onClose={() => setShowParticipants(false)} 
+                    />
                   )}
                 </>
               } />

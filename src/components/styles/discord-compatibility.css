@@ -1,5 +1,147 @@
-/* Discord compatibility styles */
-/* This file contains styles to ensure proper display in Discord activity */
+/* Discord Compatibility Styles
+   These styles ensure the trivia game displays correctly when embedded in Discord
+   as an Activity, following Discord's UI guidelines */
+
+/* Base adjustments for Discord environment */
+.discord-optimized {
+  --discord-bg-primary: #36393f;
+  --discord-bg-secondary: #2f3136;
+  --discord-text-normal: #dcddde;
+  --discord-interactive: #b9bbbe;
+  --discord-interactive-hover: #dcddde;
+  --discord-brand: #5865f2;
+}
+
+/* Adjust font sizes for Discord */
+body.in-discord {
+  font-size: 14px;
+}
+
+body.in-discord h1 {
+  font-size: 24px;
+}
+
+body.in-discord h2 {
+  font-size: 20px;
+}
+
+body.in-discord h3 {
+  font-size: 16px;
+}
+
+/* Adjust spacing for Discord's compact UI */
+body.in-discord .main-content {
+  padding: 12px;
+  max-width: 100%;
+}
+
+/* Fix for icon visibility in Discord */
+body.in-discord .fa-youtube,
+body.in-discord .fa-discord,
+body.in-discord .fa-times {
+  display: inline-block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Ensure buttons are properly sized and visible */
+body.in-discord button {
+  min-height: 32px;
+  padding: 4px 16px;
+}
+
+/* Adjust game container for Discord */
+body.in-discord .game-container {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+/* Ensure question text is readable */
+body.in-discord .question-text {
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+/* Make answer options more compact */
+body.in-discord .option-item {
+  padding: 8px 12px;
+  margin-bottom: 8px;
+}
+
+/* Adjust modal dialogs */
+body.in-discord .modal-content {
+  max-width: 90%;
+  max-height: 80vh;
+}
+
+/* Ensure proper spacing in player profiles */
+body.in-discord .player-profile {
+  padding: 8px;
+}
+
+body.in-discord .player-avatar {
+  width: 32px;
+  height: 32px;
+}
+
+/* Optimize animations for performance */
+body.in-discord .animated {
+  animation-duration: 0.5s !important;
+}
+
+/* Reduce motion for better performance */
+@media (prefers-reduced-motion) {
+  body.in-discord .animated {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Ensure proper display on mobile Discord */
+@media (max-width: 500px) {
+  body.in-discord .game-container {
+    padding: 8px;
+  }
+  
+  body.in-discord .option-item {
+    padding: 6px 10px;
+    margin-bottom: 6px;
+    font-size: 14px;
+  }
+  
+  body.in-discord .question-text {
+    font-size: 15px;
+  }
+}
+
+/* Fix for Discord dark theme compatibility */
+body.in-discord {
+  color-scheme: dark;
+  background-color: var(--discord-bg-primary);
+  color: var(--discord-text-normal);
+}
+
+/* Fix for Discord badge visibility */
+.discord-badge {
+  display: flex;
+  align-items: center;
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  background-color: rgba(47, 49, 54, 0.9);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(79, 84, 92, 0.3);
+}
+
+.discord-badge .fa-discord {
+  margin-right: 6px;
+  color: #5865f2;
+}
 
 /* Fix for icons not displaying in Discord */
 .fa,
