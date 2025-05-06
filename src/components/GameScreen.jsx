@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo, memo } from 'react';
 import { questions } from '../questionsData.js';
+import { questionsDofusTouch } from '../QuestionDofustouch.js';
 import CountdownAnimation from './CountdownAnimation';
 import QuestionOverlay from './QuestionOverlay';
 import AnimatedOptions from './AnimatedOptions';
@@ -21,7 +22,7 @@ function shuffleArray(array) {
 }
 
 // Memoized GameScreen component to prevent unnecessary re-renders
-const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, totalAnswered, setTotalAnswered, gameType, isInDiscord, updateSharedGameState }) {
+const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, totalAnswered, setTotalAnswered, gameType, isInDiscord, updateSharedGameState, questionCount = 40 }) {
   const [showResults, setShowResults] = useState(false);
   // Set the game type to 'dofus' by default if not provided
   const currentGameType = gameType || 'dofus';
@@ -45,13 +46,21 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
   // Detect if running in Discord
   const [inDiscordEnv, setInDiscordEnv] = useState(isInDiscord || false);
 
-  // Shuffle questions when component mounts based on game type
+  // Shuffle questions when component mounts based on game type and limit by question count
   useEffect(() => {
     // Select the appropriate question set based on game type
-    const questionSet = questions;
+    const questionSet = currentGameType === 'dofusTouch' ? questionsDofusTouch : questions;
+    
+    // Shuffle the questions
     const shuffled = [...questionSet].sort(() => Math.random() - 0.5);
-    setShuffledQuestions(shuffled);
-  }, [currentGameType]);
+    
+    // Limit the number of questions based on the questionCount parameter
+    const limitedQuestions = shuffled.slice(0, questionCount);
+    
+    setShuffledQuestions(limitedQuestions);
+    
+    console.log(`Loaded ${limitedQuestions.length} questions for ${currentGameType} game mode`);
+  }, [currentGameType, questionCount]);
 
   // Handle countdown completion - optimized with useCallback
   const handleCountdownComplete = useCallback(() => {
@@ -103,12 +112,8 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
       const answer = selectedAnswer || selectedOption;
       const isCorrect = answer === currentQuestion.correctAnswer;
       
-      // Play sound based on answer correctness
-      if (isCorrect) {
-        playSound('correct');
-      } else {
-        playSound('wrong');
-      }
+      // Play correct or wrong answer sound
+      playSound(isCorrect ? 'correctAnswer' : 'wrongAnswer');
       
       if (isCorrect) {
         setFeedback('Correct! 🎉');
@@ -345,11 +350,7 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
           {showNextButton && (
             <button 
               className={`next-button large-button ${inDiscordEnv ? 'discord-next-button' : ''}`} 
-              onClick={() => {
-                playSound('nextQuestion');
-                handleNextQuestion();
-              }}
-              onMouseEnter={() => playSound('buttonHover')}
+              onClick={handleNextQuestion}
             >
               {currentQuestionIndex < shuffledQuestions.length - 1 ? 'Next Question' : 'See Results'}
             </button>

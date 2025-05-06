@@ -100,38 +100,10 @@ export const optimizeAudioPlayback = (audioElement) => {
 // Detect if running in Discord for performance optimizations
 export const isRunningInDiscord = () => {
   return typeof window !== 'undefined' && (
-    window.discord !== undefined || 
-    window.__DISCORD__ !== undefined || 
-    window.location.hostname.includes('discord.com') ||
-    navigator.userAgent.includes('Discord')
+    window.location.href.includes('discord') || 
+    navigator.userAgent.includes('Discord') ||
+    window.innerWidth <= 600
   );
-};
-
-// Memory management to prevent memory leaks
-export const cleanupMemory = () => {
-  // Clear any unused image caches
-  if (window.caches) {
-    try {
-      caches.keys().then(cacheNames => {
-        cacheNames.forEach(cacheName => {
-          if (cacheName.includes('image-cache')) {
-            caches.delete(cacheName);
-          }
-        });
-      });
-    } catch (e) {
-      console.warn('Cache cleanup failed:', e);
-    }
-  }
-  
-  // Force garbage collection hint (not guaranteed but can help)
-  if (window.gc) {
-    try {
-      window.gc();
-    } catch (e) {
-      // Garbage collection not available
-    }
-  }
 };
 
 // Apply performance optimizations based on environment
@@ -152,22 +124,6 @@ export const applyPerformanceOptimizations = () => {
     animations.forEach(animation => {
       animation.classList.add('simplified');
     });
-    
-    // Reduce shadow effects
-    const shadowElements = document.querySelectorAll('.card-glow, .logo-glow, .button-shine');
-    shadowElements.forEach(element => {
-      element.style.opacity = '0.3';
-      element.style.filter = 'blur(3px)';
-    });
-    
-    // Optimize background animations
-    const bgAnimations = document.querySelectorAll('.background-animation');
-    bgAnimations.forEach(bg => {
-      bg.style.opacity = '0.4';
-    });
-    
-    // Reduce transition effects
-    document.documentElement.style.setProperty('--transition-speed', '0.2s');
   }
   
   // Optimize scrolling
@@ -179,37 +135,4 @@ export const applyPerformanceOptimizations = () => {
   window.addEventListener('resize', debounce(() => {
     // Any resize-based updates can go here
   }, 150));
-  
-  // Periodically clean up memory
-  setInterval(cleanupMemory, 60000); // Every minute
-  
-  // Optimize rendering by using passive event listeners
-  window.addEventListener('touchstart', () => {}, { passive: true });
-  window.addEventListener('touchmove', () => {}, { passive: true });
-};
-
-// Optimize font loading
-export const optimizeFontLoading = () => {
-  // Use font-display: swap to prevent FOIT (Flash of Invisible Text)
-  const style = document.createElement('style');
-  style.textContent = `
-    @font-face {
-      font-display: swap !important;
-    }
-  `;
-  document.head.appendChild(style);
-};
-
-// Initialize all performance optimizations
-export const initializeOptimizations = () => {
-  applyPerformanceOptimizations();
-  optimizeFontLoading();
-  
-  // Add event listener for when the page becomes visible again
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) {
-      // Re-apply optimizations when tab becomes visible again
-      applyPerformanceOptimizations();
-    }
-  });
 };

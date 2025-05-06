@@ -1,21 +1,37 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './styles/GameSelectionModal.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faGamepad, faMobileAlt, faInfoCircle, faClock } from '@fortawesome/free-solid-svg-icons';
 import { useSound } from '../contexts/SoundContext.jsx';
+import QuestionCountSelector from './QuestionCountSelector';
 
 function GameSelectionModal({ onClose, onSelectGame }) {
   const { playSound } = useSound();
+  const [selectedGame, setSelectedGame] = useState(null);
+  const [showQuestionCount, setShowQuestionCount] = useState(false);
 
   const handleGameSelect = (game) => {
     // Play button click sound
     playSound('buttonClick');
-    onSelectGame(game);
+    setSelectedGame(game);
+    setShowQuestionCount(true);
+  };
+  
+  const handleQuestionCountSelect = (count) => {
+    // Pass both the game type and question count to the parent component
+    onSelectGame(selectedGame, count);
   };
 
   return (
     <div className="game-selection-modal-overlay">
-      <div className="game-selection-modal">
+      {showQuestionCount ? (
+        <QuestionCountSelector 
+          onSelect={handleQuestionCountSelect} 
+          onClose={() => setShowQuestionCount(false)}
+          gameType={selectedGame}
+        />
+      ) : (
+        <div className="game-selection-modal">
         <div className="modal-particles">
           {[...Array(5)].map((_, i) => (
             <div key={i} className={`particle particle-${i+1}`}></div>
@@ -93,7 +109,8 @@ function GameSelectionModal({ onClose, onSelectGame }) {
         <div className="modal-footer">
           <p>Both games feature challenging questions to test your knowledge!</p>
         </div>
-      </div>
+        </div>
+      )}
     </div>
   );
 }

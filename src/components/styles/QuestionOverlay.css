@@ -69,17 +69,58 @@
 
 @keyframes timerAnimation {
   0% {
-    transform: scaleX(1) translateZ(0);
+    width: 100%;
   }
   100% {
-    transform: scaleX(0) translateZ(0);
+    width: 0%;
+  }
+}
+
+/* Fallback animation for browsers that don't support width animations well */
+@supports (transform: scaleX(1)) and (not (-ms-ime-align: auto)) {
+  @keyframes timerAnimation {
+    0% {
+      transform: scaleX(1) translateZ(0);
+      width: 100%;
+    }
+    100% {
+      transform: scaleX(0) translateZ(0);
+      width: 0%;
+    }
   }
 }
 
 /* Reset animation when timer resets */
 .timer-bar.reset {
-  animation: none;
-  transform: scaleX(1);
+  animation: none !important;
+  width: 100% !important;
+  transform: none !important;
+}
+
+/* Add timer text styling */
+.timer-text {
+  position: absolute;
+  right: 10px;
+  top: -20px;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* Low time warning */
+.timer-container.low-time .timer-bar {
+  background: linear-gradient(90deg, #ff5252, #ff0000);
+  animation-timing-function: cubic-bezier(0.1, 0.7, 1.0, 0.1) !important;
+}
+
+.timer-container.low-time .timer-text {
+  color: #ff5252;
+  animation: pulse 0.5s infinite alternate;
+}
+
+@keyframes pulse {
+  from { opacity: 0.7; }
+  to { opacity: 1; }
 }
 
 .question-header {
@@ -106,8 +147,10 @@
   border-radius: 5px;
   margin-top: 20px;
   overflow: hidden;
-  position: relative;
-  will-change: transform; /* Performance optimization */
+  /* Remove duplicate position declaration */
+  /* Performance optimizations */
+  contain: content;
+  z-index: 1;
 }
 
 .timer-bar {
@@ -115,16 +158,28 @@
   background: linear-gradient(90deg, #8c52ff, #5e17eb);
   width: 100%;
   transform-origin: left;
-  animation: timerAnimation 15s linear forwards;
-  /* Basic performance optimizations */
+  animation: timerAnimation 30s linear forwards;
+  /* Enhanced performance optimizations */
   transform: translateZ(0);
-  backface-visibility: hidden;
+  will-change: transform, width;
+  contain: strict;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
-/* Ensure timer works in Discord */
+/* Specific optimizations for Discord and mobile */
 @media (max-width: 600px) {
   .timer-bar {
     animation-timing-function: linear !important; /* Ensure linear timing in Discord */
+    will-change: width; /* Simpler animation property for mobile */
+    transform: none; /* Disable transforms on mobile for better performance */
+  }
+  
+  /* Use simpler animation for Discord */
+  @keyframes timerAnimation {
+    0% { width: 100%; }
+    100% { width: 0%; }
   }
 }
 
@@ -143,7 +198,7 @@
   width: 100%;
 }
 
-/* Animation for timer when time is running low */
+/* Animation for timer when time is running low - optimized */
 @keyframes pulse {
   0% {
     box-shadow: 0 0 0 0 rgba(255, 77, 141, 0.7);
@@ -159,6 +214,14 @@
 .timer-container.low-time .timer-bar {
   background: linear-gradient(to right, #ff4d8d, #ff6b6b);
   animation: pulse 1s infinite;
+}
+
+/* Optimized pulse animation for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .timer-container.low-time .timer-bar {
+    animation: none;
+    background: #ff4d8d;
+  }
 }
 
 /* Optimize pulse animation for Discord */

@@ -1,0 +1,227 @@
+.question-count-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+/* Discord-specific styles */
+.question-count-overlay.discord-mode {
+  background-color: rgba(0, 0, 0, 0.9);
+  /* No backdrop filter in Discord mode as it's not well supported */
+}
+
+.question-count-modal {
+  background-color: rgba(30, 30, 47, 0.95);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  padding: 20px;
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+  border: 1px solid rgba(140, 82, 255, 0.3);
+  animation: scaleIn 0.3s ease;
+}
+
+/* Discord-specific styles */
+.question-count-modal.discord-mode {
+  background-color: rgb(30, 30, 47);
+  padding: 15px;
+  width: 95%;
+  max-width: 450px;
+  border: 2px solid rgba(140, 82, 255, 0.5);
+}
+
+.question-count-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  gap: 10px;
+}
+
+.question-icon {
+  color: #8c52ff;
+  font-size: 24px;
+}
+
+.question-count-header h2 {
+  color: white;
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.question-count-description {
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.question-count-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.question-count-button {
+  background: linear-gradient(135deg, rgba(140, 82, 255, 0.2), rgba(94, 23, 235, 0.2));
+  border: 2px solid rgba(140, 82, 255, 0.3);
+  border-radius: 10px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: white;
+}
+
+/* Discord-specific styles */
+.question-count-button.discord-mode {
+  padding: 12px;
+  border: 2px solid rgba(140, 82, 255, 0.5);
+  /* Simpler background for Discord */
+  background: rgba(94, 23, 235, 0.3);
+  /* No transitions in Discord mode as they can be laggy */
+  transition: none;
+}
+
+/* Active state for touch devices */
+.question-count-button.discord-mode:active {
+  background: rgba(140, 82, 255, 0.5);
+  transform: scale(0.98);
+}
+
+/* Only apply hover effects for non-Discord environments */
+.question-count-button:hover:not(.discord-mode) {
+  transform: translateY(-3px);
+  background: linear-gradient(135deg, rgba(140, 82, 255, 0.3), rgba(94, 23, 235, 0.3));
+  border-color: rgba(140, 82, 255, 0.5);
+  box-shadow: 0 5px 15px rgba(140, 82, 255, 0.2);
+}
+
+.count-number {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #8c52ff;
+  margin-bottom: 5px;
+}
+
+.count-text {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.close-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Media queries for better mobile support */
+@media (max-width: 480px) {
+  .question-count-options {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  
+  .count-number {
+    font-size: 1.7rem;
+  }
+  
+  .count-text {
+    font-size: 0.8rem;
+  }
+  
+  .question-count-header h2 {
+    font-size: 1.3rem;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 480px) {
+  .question-count-modal {
+    padding: 15px;
+    width: 95%;
+  }
+  
+  .question-count-options {
+    grid-template-columns: 1fr;
+  }
+  
+  .question-count-header h2 {
+    font-size: 1.2rem;
+  }
+  
+  .count-number {
+    font-size: 1.5rem;
+  }
+}
+
+/* Discord mode optimizations */
+.in-discord .question-count-modal {
+  padding: 15px;
+  max-width: 450px;
+}
+
+.in-discord .question-count-options {
+  gap: 10px;
+}
+
+.in-discord .count-number {
+  font-size: 1.8rem;
+}

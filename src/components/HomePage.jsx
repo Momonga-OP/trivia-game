@@ -5,13 +5,13 @@ import PlayerProfile from './PlayerProfile';
 import SettingsModal from './SettingsModal';
 import GameSelectionModal from './GameSelectionModal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDiscord, faTwitter, faGithub } from '@fortawesome/free-brands-svg-icons';
+import { faDiscord, faTwitter, faGithub, faYoutube } from '@fortawesome/free-brands-svg-icons';
 import { faPlay, faInfoCircle, faTrophy, faQuestion, faUsers, faBook, faCog, faTimes, faArrowRight, faStar, faClock } from '@fortawesome/free-solid-svg-icons';
 import discordService from '../services/DiscordService';
 import playerDataService from '../services/PlayerDataService';
 import { useSound } from '../contexts/SoundContext.jsx';
 
-function HomePage({ navigateTo, windowSize, playerData: propPlayerData }) {
+function HomePage({ navigateTo, windowSize, playerData: propPlayerData, setQuestionCount }) {
   const [showSettings, setShowSettings] = useState(false);
   const [showGameSelection, setShowGameSelection] = useState(false);
   const [hoverCard, setHoverCard] = useState(false);
@@ -160,7 +160,7 @@ function HomePage({ navigateTo, windowSize, playerData: propPlayerData }) {
           onClick={() => playSound('socialButton')}
           onMouseEnter={() => playSound('buttonHover')}
         >
-          <i className="fab fa-discord"></i>
+          <FontAwesomeIcon icon={faDiscord} />
           <span className="tooltip">Join Discord</span>
         </a>
         <a 
@@ -172,7 +172,7 @@ function HomePage({ navigateTo, windowSize, playerData: propPlayerData }) {
           onClick={() => playSound('socialButton')}
           onMouseEnter={() => playSound('buttonHover')}
         >
-          <i className="fab fa-youtube"></i>
+          <FontAwesomeIcon icon={faYoutube} />
           <span className="tooltip">YouTube Channel</span>
         </a>
       </div>
@@ -198,9 +198,9 @@ function HomePage({ navigateTo, windowSize, playerData: propPlayerData }) {
       {showGameSelection && (
         <GameSelectionModal 
           onClose={() => setShowGameSelection(false)} 
-          onSelectGame={(game) => {
+          onSelectGame={(game, count) => {
             setShowGameSelection(false);
-            navigateTo('game', { gameType: game });
+            navigateTo('game', { gameType: game, questionCount: count });
           }}
         />
       )}

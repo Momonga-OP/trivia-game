@@ -31,6 +31,7 @@ function App({ discordStatus = 'disconnected', discordParticipants = [] }) {
   const [score, setScore] = useState(0);
   const [totalAnswered, setTotalAnswered] = useState(0);
   const [gameType, setGameType] = useState('dofus');
+  const [questionCount, setQuestionCount] = useState(40); // Default to 40 questions
   const [windowSize, setWindowSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight
@@ -85,20 +86,6 @@ function App({ discordStatus = 'disconnected', discordParticipants = [] }) {
     } catch (error) {
       console.warn('Failed to initialize Rich Presence service:', error);
     }
-    
-    // Apply performance optimizations
-    import('./utils/PerformanceOptimizer').then(module => {
-      // Apply all performance optimizations
-      module.initializeOptimizations();
-      
-      // Apply Discord-specific optimizations
-      if (isInDiscord) {
-        import('./utils/DiscordUtils').then(discordUtils => {
-          discordUtils.optimizeForDiscord();
-          discordUtils.enhanceIconsForDiscord();
-        });
-      }
-    });
     
     // Safety timeout to ensure loading screen doesn't get stuck
     const safetyTimeout = setTimeout(() => {
@@ -160,6 +147,11 @@ function App({ discordStatus = 'disconnected', discordParticipants = [] }) {
     // Set game type if provided
     if (options.gameType) {
       setGameType(options.gameType);
+    }
+    
+    // Set question count if provided
+    if (options.questionCount) {
+      setQuestionCount(options.questionCount);
     }
     // If player is in game and trying to navigate away
     if (isInGame && page !== 'game') {
@@ -405,6 +397,7 @@ function App({ discordStatus = 'disconnected', discordParticipants = [] }) {
                         windowSize={windowSize}
                         playerData={playerData}
                         gameType={gameType}
+                        questionCount={questionCount}
                         isInDiscord={isInDiscord}
                         discordParticipants={discordParticipants}
                         sharedGameState={sharedGameState}
