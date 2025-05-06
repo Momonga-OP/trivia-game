@@ -86,6 +86,20 @@ function App({ discordStatus = 'disconnected', discordParticipants = [] }) {
       console.warn('Failed to initialize Rich Presence service:', error);
     }
     
+    // Apply performance optimizations
+    import('./utils/PerformanceOptimizer').then(module => {
+      // Apply all performance optimizations
+      module.initializeOptimizations();
+      
+      // Apply Discord-specific optimizations
+      if (isInDiscord) {
+        import('./utils/DiscordUtils').then(discordUtils => {
+          discordUtils.optimizeForDiscord();
+          discordUtils.enhanceIconsForDiscord();
+        });
+      }
+    });
+    
     // Safety timeout to ensure loading screen doesn't get stuck
     const safetyTimeout = setTimeout(() => {
       setIsLoading(false);

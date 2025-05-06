@@ -1,0 +1,35 @@
+/* Animation for new high scores */
+@keyframes highlight {
+  0% { background-color: rgba(255, 204, 0, 0.5); }
+  100% { background-color: rgba(255, 204, 0, 0.2); }
+}
+
+.new-high-score {
+  animation: highlight 1s ease-in-out infinite alternate;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .leaderboard-container {
+    padding: 1rem;
+  }
+  
+  .leaderboard-title {
+    font-size: 1.8rem;
+  }
+  
+  .tab-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .player-avatar {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .rank-column,
+  .score-column {
+    font-size: 1rem;
+  }
+}

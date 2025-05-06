@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo, memo } from 'react';
 import { questions } from '../questionsData.js';
-import { questionsDofusTouch } from '../QuestionDofustouch.js';
 import CountdownAnimation from './CountdownAnimation';
 import QuestionOverlay from './QuestionOverlay';
 import AnimatedOptions from './AnimatedOptions';
@@ -49,7 +48,7 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
   // Shuffle questions when component mounts based on game type
   useEffect(() => {
     // Select the appropriate question set based on game type
-    const questionSet = currentGameType === 'dofusTouch' ? questionsDofusTouch : questions;
+    const questionSet = questions;
     const shuffled = [...questionSet].sort(() => Math.random() - 0.5);
     setShuffledQuestions(shuffled);
   }, [currentGameType]);
@@ -104,8 +103,12 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
       const answer = selectedAnswer || selectedOption;
       const isCorrect = answer === currentQuestion.correctAnswer;
       
-      // Play correct or wrong answer sound
-      playSound(isCorrect ? 'correctAnswer' : 'wrongAnswer');
+      // Play sound based on answer correctness
+      if (isCorrect) {
+        playSound('correct');
+      } else {
+        playSound('wrong');
+      }
       
       if (isCorrect) {
         setFeedback('Correct! 🎉');
@@ -342,7 +345,11 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
           {showNextButton && (
             <button 
               className={`next-button large-button ${inDiscordEnv ? 'discord-next-button' : ''}`} 
-              onClick={handleNextQuestion}
+              onClick={() => {
+                playSound('nextQuestion');
+                handleNextQuestion();
+              }}
+              onMouseEnter={() => playSound('buttonHover')}
             >
               {currentQuestionIndex < shuffledQuestions.length - 1 ? 'Next Question' : 'See Results'}
             </button>
