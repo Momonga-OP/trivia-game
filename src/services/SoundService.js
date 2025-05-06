@@ -7,11 +7,12 @@ import { generateSoundEffects } from '../utils/SoundGenerator';
 class SoundService {
   constructor() {
     this.isMuted = false;
-    this.volume = 0.4; // Default volume (0.0 to 1.0)
+    this.volume = 0.3; // Default volume at 30%
     this.initialized = false;
     this.audioContext = null;
     this.sounds = {};
     this.isInDiscord = false;
+    this.preloadedSounds = new Map(); // Store preloaded sounds
     
     // Try to create audio context right away
     try {
@@ -20,16 +21,51 @@ class SoundService {
       console.warn('Could not create AudioContext:', error);
     }
     
+    // Load saved preferences
+    this.loadPreferences();
+    
     console.log('SoundService constructor called');
+  }
+
+  /**
+   * Load user preferences from localStorage
+   */
+  loadPreferences() {
+    try {
+      const savedVolume = localStorage.getItem('soundVolume');
+      const savedMuted = localStorage.getItem('soundMuted');
+      
+      if (savedVolume !== null) {
+        this.volume = parseFloat(savedVolume);
+      }
+      
+      if (savedMuted !== null) {
+        this.isMuted = savedMuted === 'true';
+      }
+    } catch (error) {
+      console.warn('Error loading sound preferences:', error);
+    }
+  }
+
+  /**
+   * Save user preferences to localStorage
+   */
+  savePreferences() {
+    try {
+      localStorage.setItem('soundVolume', this.volume.toString());
+      localStorage.setItem('soundMuted', this.isMuted.toString());
+    } catch (error) {
+      console.warn('Error saving sound preferences:', error);
+    }
   }
 
   /**
    * Initialize the sound service
    * @param {boolean} isInDiscord - Whether the app is running in Discord
    */
-  async initialize(isInDiscord = false) {
+  init(isInDiscord = false) {
     if (this.initialized) {
-      return Promise.resolve();
+      return true;
     }
     
     this.isInDiscord = isInDiscord;
@@ -43,16 +79,74 @@ class SoundService {
       // Generate sound effects based on environment
       this.sounds = generateSoundEffects(isInDiscord);
       
-      // Lower volume in Discord by default
-      if (isInDiscord) {
-        this.volume = 0.3;
-      }
+      // Preload common sounds
+      this.preloadCommonSounds();
       
       this.initialized = true;
       console.log(`Sound service initialized (Discord: ${isInDiscord})`);
-      return Promise.resolve();
+      return true;
     } catch (error) {
       console.error('Failed to initialize sound service:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Preload commonly used sounds
+   */
+  async preloadCommonSounds() {
+    const commonSounds = [
+      'buttonClick', 
+      'optionSelect', 
+      'correctAnswer', 
+      'wrongAnswer', 
+      'nextQuestion'
+    ];
+    
+    return Promise.all(commonSounds.map(sound => this.preload(sound)));
+  }
+
+  /**
+   * Preload a sound for faster playback
+   * @param {string} soundName - Name of the sound to preload
+   * @returns {Promise} A promise that resolves when the sound is preloaded
+   */
+  async preload(soundName) {
+    if (!this.audioContext || !this.sounds[soundName]) {
+      return Promise.reject(new Error(`Cannot preload sound '${soundName}'`));
+    }
+
+    // If already preloaded, return the existing promise
+    if (this.preloadedSounds.has(soundName)) {
+      return this.preloadedSounds.get(soundName);
+    }
+
+    try {
+      const soundData = this.sounds[soundName];
+      
+      // For complex sounds (arrays of notes), we'll precompute the oscillator parameters
+      if (Array.isArray(soundData)) {
+        // Store the precomputed parameters
+        const preloadPromise = Promise.resolve({
+          type: 'complex',
+          notes: soundData
+        });
+        this.preloadedSounds.set(soundName, preloadPromise);
+        return preloadPromise;
+      } 
+      // For simple sounds, we'll just store the parameters
+      else {
+        const preloadPromise = Promise.resolve({
+          type: 'simple',
+          frequency: soundData.frequency || 440,
+          duration: soundData.duration || 0.1,
+          waveType: soundData.type || 'sine'
+        });
+        this.preloadedSounds.set(soundName, preloadPromise);
+        return preloadPromise;
+      }
+    } catch (error) {
+      console.error(`Error preloading sound '${soundName}':`, error);
       return Promise.reject(error);
     }
   }
@@ -61,7 +155,7 @@ class SoundService {
    * Play a sound by name
    * @param {string} soundName - Name of the sound to play
    */
-  play(soundName) {
+  async play(soundName) {
     if (this.isMuted || !this.audioContext) {
       return;
     }
@@ -75,35 +169,67 @@ class SoundService {
         }
       }
       
-      // Create sound on-demand instead of storing references
+      // Check if the sound is preloaded
+      if (this.preloadedSounds.has(soundName)) {
+        const preloadedSound = await this.preloadedSounds.get(soundName);
+        
+        if (preloadedSound.type === 'complex') {
+          this.playComplexSound(preloadedSound.notes);
+          return;
+        } else {
+          // Play the preloaded simple sound
+          this.playSimpleSound(
+            preloadedSound.frequency,
+            preloadedSound.duration,
+            preloadedSound.waveType
+          );
+          return;
+        }
+      }
+      
+      // If not preloaded, play directly
+      const soundData = this.sounds[soundName];
+      
+      if (soundData) {
+        // For complex sounds (arrays of notes)
+        if (Array.isArray(soundData)) {
+          this.playComplexSound(soundData);
+          return;
+        } else {
+          // For simple sounds (single oscillator)
+          this.playSimpleSound(
+            soundData.frequency || 440,
+            soundData.duration || 0.1,
+            soundData.type || 'sine'
+          );
+          return;
+        }
+      } else {
+        console.warn(`Sound '${soundName}' not found, using default sound`);
+        this.playSimpleSound(440, 0.1, 'sine');
+      }
+    } catch (error) {
+      console.error('Error playing sound:', error);
+    }
+  }
+  
+  /**
+   * Play a simple sound with a single oscillator
+   * @param {number} frequency - Frequency in Hz
+   * @param {number} duration - Duration in seconds
+   * @param {string} type - Oscillator type (sine, square, etc.)
+   */
+  playSimpleSound(frequency, duration, type) {
+    if (this.isMuted || !this.audioContext) {
+      return;
+    }
+    
+    try {
       const currentTime = this.audioContext.currentTime;
       
       // Create oscillator
       const oscillator = this.audioContext.createOscillator();
       const gainNode = this.audioContext.createGain();
-      
-      // Set sound parameters based on sound name
-      let frequency = 440; // Default A4 note
-      let duration = 0.1; // Default duration in seconds
-      let type = 'sine'; // Default waveform
-      
-      // Use predefined sounds if available
-      if (this.sounds[soundName]) {
-        const soundData = this.sounds[soundName];
-        
-        if (Array.isArray(soundData)) {
-          // For complex sounds (arrays of notes)
-          this.playComplexSound(soundData);
-          return;
-        } else {
-          // For simple sounds (single oscillator)
-          frequency = soundData.frequency || frequency;
-          duration = soundData.duration || duration;
-          type = soundData.type || type;
-        }
-      } else {
-        console.warn(`Sound '${soundName}' not found, using default sound`);
-      }
       
       // Configure oscillator
       oscillator.type = type;
@@ -122,7 +248,7 @@ class SoundService {
       oscillator.start(currentTime);
       oscillator.stop(currentTime + duration);
     } catch (error) {
-      console.error('Error playing sound:', error);
+      console.error('Error playing simple sound:', error);
     }
   }
   
@@ -175,31 +301,35 @@ class SoundService {
   }
 
   /**
-   * Set the volume level
+   * Set the volume level for sound effects
    * @param {number} level - Volume level from 0.0 to 1.0
    */
   setVolume(level) {
     this.volume = Math.max(0, Math.min(1, level));
+    this.savePreferences();
   }
 
   /**
-   * Set muted state
-   * @param {boolean} muted - Whether sound should be muted
+   * Set muted state for sound effects
+   * @param {boolean} muted - Whether sound effects should be muted
    */
   setMuted(muted) {
     this.isMuted = muted;
+    this.savePreferences();
   }
 
   /**
-   * Toggle muted state
+   * Toggle muted state for sound effects
    * @returns {boolean} New muted state
    */
   toggleMute() {
     this.isMuted = !this.isMuted;
+    this.savePreferences();
     return this.isMuted;
   }
 }
 
 // Create a singleton instance
 const soundService = new SoundService();
+
 export default soundService;

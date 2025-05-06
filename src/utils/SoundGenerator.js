@@ -389,7 +389,7 @@ const generateSocialButtonSound = (isInDiscord = false) => {
 
 // Generate sound for selecting an option in the trivia game
 const generateOptionSelectSound = (isInDiscord = false) => {
-  return playSequence([
+  return generateSequence([
     { frequency: 440, duration: isInDiscord ? 0.03 : 0.05, type: 'sine' },
     { frequency: 523.25, duration: isInDiscord ? 0.04 : 0.06, type: 'sine' }
   ], 0.01, isInDiscord ? 0.15 : 0.25);
@@ -398,7 +398,7 @@ const generateOptionSelectSound = (isInDiscord = false) => {
 // Generate sound for correct answer
 const generateCorrectAnswerSound = (isInDiscord = false) => {
   // More elaborate sound for correct answers
-  return playSequence([
+  return generateSequence([
     { frequency: 523.25, duration: isInDiscord ? 0.06 : 0.1, type: 'sine' },
     { frequency: 659.25, duration: isInDiscord ? 0.06 : 0.1, type: 'sine' },
     { frequency: 783.99, duration: isInDiscord ? 0.08 : 0.15, type: 'sine' }
@@ -408,7 +408,7 @@ const generateCorrectAnswerSound = (isInDiscord = false) => {
 // Generate sound for wrong answer
 const generateWrongAnswerSound = (isInDiscord = false) => {
   // Distinctive sound for wrong answers
-  return playSequence([
+  return generateSequence([
     { frequency: 392.00, duration: isInDiscord ? 0.06 : 0.1, type: 'square' },
     { frequency: 349.23, duration: isInDiscord ? 0.08 : 0.12, type: 'square' }
   ], 0.01, isInDiscord ? 0.15 : 0.2);
@@ -416,7 +416,7 @@ const generateWrongAnswerSound = (isInDiscord = false) => {
 
 // Generate sound for clicking the Next Question button
 const generateNextQuestionSound = (isInDiscord = false) => {
-  return playSequence([
+  return generateSequence([
     { frequency: 587.33, duration: isInDiscord ? 0.04 : 0.06, type: 'sine' },
     { frequency: 659.25, duration: isInDiscord ? 0.04 : 0.06, type: 'sine' },
     { frequency: 783.99, duration: isInDiscord ? 0.05 : 0.08, type: 'sine' }

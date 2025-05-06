@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import soundService from '../services/SoundService';
+import musicService from '../services/MusicService';
 
 // Create a context for sound management
 const SoundContext = createContext();
@@ -16,33 +17,21 @@ export const useSound = () => {
 // Sound Provider component
 export const SoundProvider = ({ children }) => {
   const [isMuted, setIsMuted] = useState(false);
-  const [volume, setVolume] = useState(0.7); // Default volume (0-1)
+  const [volume, setVolume] = useState(0.3); // Default volume (30%)
   const [isInitialized, setIsInitialized] = useState(false);
 
   // Initialize sound service on component mount
   useEffect(() => {
-    const initSounds = async () => {
-      await soundService.initialize();
-      setIsInitialized(true);
+    const initSounds = () => {
+      const initialized = soundService.init();
+      setIsInitialized(initialized);
+      
+      // Sync state with service
+      setIsMuted(soundService.isMuted);
+      setVolume(soundService.volume);
     };
     
     initSounds();
-    
-    // Try to load saved preferences
-    const savedMuted = localStorage.getItem('soundMuted');
-    const savedVolume = localStorage.getItem('soundVolume');
-    
-    if (savedMuted !== null) {
-      const muted = savedMuted === 'true';
-      setIsMuted(muted);
-      soundService.setMuted(muted);
-    }
-    
-    if (savedVolume !== null) {
-      const vol = parseFloat(savedVolume);
-      setVolume(vol);
-      soundService.setVolume(vol);
-    }
   }, []);
 
   // Play a sound effect
@@ -52,29 +41,29 @@ export const SoundProvider = ({ children }) => {
     }
   };
 
-  // Toggle mute state
+  // Toggle mute state for sound effects
   const toggleMute = () => {
-    const newMuted = !isMuted;
+    const newMuted = soundService.toggleMute();
     setIsMuted(newMuted);
-    soundService.setMuted(newMuted);
-    localStorage.setItem('soundMuted', newMuted.toString());
     return newMuted;
   };
 
-  // Update volume
+  // Update sound effects volume
   const updateVolume = (newVolume) => {
     setVolume(newVolume);
     soundService.setVolume(newVolume);
-    localStorage.setItem('soundVolume', newVolume.toString());
   };
 
   // Context value
   const value = {
+    // Sound effects
     isMuted,
     volume,
     playSound,
     toggleMute,
     updateVolume,
+    
+    // General
     isInitialized
   };
 

@@ -1,0 +1,183 @@
+.sound-settings {
+  background: rgba(20, 10, 40, 0.7);
+  border-radius: 10px;
+  padding: 1.5rem;
+  color: #fff;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(140, 82, 255, 0.3);
+}
+
+.sound-settings h3 {
+  font-size: 20px;
+  margin-bottom: 15px;
+  color: #fff;
+  text-align: center;
+  font-weight: 600;
+}
+
+.sound-control {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  border: 1px solid rgba(140, 82, 255, 0.2);
+}
+
+.sound-control:last-child {
+  margin-bottom: 0;
+}
+
+.sound-control-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.sound-control-header span {
+  font-size: 16px;
+  font-weight: 500;
+  color: #fff;
+}
+
+.mute-button {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(140, 82, 255, 0.3);
+  transition: all 0.2s ease;
+}
+
+.mute-button:hover {
+  background-color: rgba(140, 82, 255, 0.5);
+}
+
+.mute-button.muted, .mute-button .muted {
+  color: #ff6b6b;
+}
+
+.volume-slider-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.volume-slider {
+  flex: 1;
+  height: 6px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: linear-gradient(to right, rgba(140, 82, 255, 0.8), rgba(140, 82, 255, 0.3));
+  border-radius: 3px;
+  outline: none;
+}
+
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.volume-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.volume-slider:disabled {
+  opacity: 0.5;
+}
+
+.volume-value {
+  min-width: 40px;
+  font-size: 14px;
+  color: #fff;
+  text-align: right;
+}
+
+.music-note {
+  background: rgba(20, 10, 40, 0.5);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1rem;
+  border: 1px dashed rgba(140, 82, 255, 0.3);
+  text-align: center;
+}
+
+.music-note p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+}
+
+.music-note svg {
+  color: #8c52ff;
+  margin-right: 5px;
+}
+
+.music-note small {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.8rem;
+}
+
+/* Discord-specific styles */
+.in-discord .sound-control {
+  border-color: rgba(114, 137, 218, 0.2);
+}
+
+.in-discord .mute-button {
+  background-color: rgba(114, 137, 218, 0.3);
+}
+
+.in-discord .mute-button:hover {
+  background-color: rgba(114, 137, 218, 0.5);
+}
+
+.in-discord .volume-slider {
+  background: linear-gradient(to right, rgba(114, 137, 218, 0.8), rgba(114, 137, 218, 0.3));
+}
+
+/* Music note animation for music control */
+@keyframes musicPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.sound-control:nth-child(2) .mute-button svg {
+  animation: musicPulse 2s infinite;
+}
+
+/* Animation for volume changes */
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(140, 82, 255, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(140, 82, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(140, 82, 255, 0); }
+}
+
+.volume-slider:active::-webkit-slider-thumb {
+  animation: pulse 1s infinite;
+}
+
+.volume-slider:active::-moz-range-thumb {
+  animation: pulse 1s infinite;
+}

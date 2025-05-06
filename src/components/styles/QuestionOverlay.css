@@ -292,6 +292,10 @@
   padding: 5px !important;
   overflow: visible !important;
   max-height: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  width: 100% !important;
 }
 
 .discord-mode .discord-question-wrapper {
@@ -300,7 +304,8 @@
   padding: 10px !important;
   margin-bottom: 5px !important;
   overflow: visible !important;
-  word-break: break-word !important;
+  word-break: normal !important;
+  width: 100% !important;
 }
 
 .discord-mode .question-text {
@@ -309,18 +314,41 @@
   margin-bottom: 5px !important;
   color: white !important;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
-  word-wrap: break-word !important;
+  word-wrap: normal !important;
   white-space: normal !important;
   overflow: visible !important;
   text-overflow: clip !important;
   display: block !important;
   visibility: visible !important;
   max-height: none !important;
-  word-break: break-word !important;
-  hyphens: auto !important;
+  word-break: normal !important;
+  hyphens: none !important;
+  width: 100% !important;
+}
+
+/* Ensure proper text rendering on mobile Discord */
+@media screen and (max-width: 480px) {
+  .discord-mode .question-text {
+    font-size: 1rem !important;
+    padding: 5px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    text-align: center !important;
+  }
+  
+  .discord-mode .discord-question-wrapper {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 8px !important;
+  }
 }
 
 /* Make sure the question is always visible in Discord mode */
+.discord-mode .question-container {
+  overflow: visible !important;
+  max-height: none !important;
+  position: relative !important;
+}
 .discord-mode .question-container {
   overflow: visible !important;
   max-height: none !important;

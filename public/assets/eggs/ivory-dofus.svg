@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 130">
+  <defs>
+    <radialGradient id="eggGradient" cx="50%" cy="40%" r="60%" fx="30%" fy="30%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="70%" stop-color="#ecf0f1" />
+      <stop offset="100%" stop-color="#bdc3c7" />
+    </radialGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="5" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  <ellipse cx="50" cy="65" rx="40" ry="55" fill="url(#eggGradient)" filter="url(#glow)" />
+  <path d="M50 10 Q70 40 70 70 Q70 100 50 120 Q30 100 30 70 Q30 40 50 10" fill="none" stroke="#fff" stroke-width="1" stroke-opacity="0.3" />
+  <ellipse cx="35" cy="45" rx="10" ry="15" fill="#ffffff" fill-opacity="0.2" />
+</svg>

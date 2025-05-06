@@ -81,27 +81,51 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
   }, [currentQuestionIndex]);
 
   // Check answer function - optimized with useCallback
-  const checkAnswer = useCallback(() => {
+  const checkAnswer = useCallback((selectedAnswer) => {
     setIsTimerActive(false);
-    if (timeLeft === 0 && !selectedOption) {
+    if (timeLeft === 0 && !selectedOption && !selectedAnswer) {
       // Time's up and no option selected
       playSound('error');
       setFeedback(`Time's up! ⏱️ The correct answer is ${currentQuestion.correctAnswer}.`);
       setShowTimesUp(true);
-    } else if (currentQuestion && selectedOption === currentQuestion.correctAnswer) {
-      // Play success sound for correct answer
-      playSound('success');
-      setFeedback("Correct! 🎉");
-      setScore(score + 1);
-    } else if (currentQuestion) {
-      // Play error sound for wrong answer
-      playSound('error');
-      setFeedback(`Wrong! ❌ The correct answer is ${currentQuestion.correctAnswer}.`);
+      setShowNextButton(true);
+      setTotalAnswered(prev => prev + 1);
+      
+      // Track answered question
+      setAnsweredQuestions(prev => [...prev, {
+        question: currentQuestion.question,
+        selectedAnswer: null,
+        correctAnswer: currentQuestion.correctAnswer,
+        isCorrect: false
+      }]);
+      
+    } else {
+      // Use the passed selectedAnswer parameter or the state value
+      const answer = selectedAnswer || selectedOption;
+      const isCorrect = answer === currentQuestion.correctAnswer;
+      
+      // Play correct or wrong answer sound
+      playSound(isCorrect ? 'correctAnswer' : 'wrongAnswer');
+      
+      if (isCorrect) {
+        setFeedback('Correct! 🎉');
+        setScore(prev => prev + 1);
+      } else {
+        setFeedback(`Incorrect. The correct answer is ${currentQuestion.correctAnswer}.`);
+      }
+      
+      setShowNextButton(true);
+      setTotalAnswered(prev => prev + 1);
+      
+      // Track answered question
+      setAnsweredQuestions(prev => [...prev, {
+        question: currentQuestion.question,
+        selectedAnswer: answer,
+        correctAnswer: currentQuestion.correctAnswer,
+        isCorrect
+      }]);
     }
-    setTotalAnswered(totalAnswered + 1);
-    setShowNextButton(true);
-    setAnsweredQuestions([...answeredQuestions, { question: currentQuestion, isCorrect: selectedOption === currentQuestion.correctAnswer }]);
-  }, [currentQuestion, selectedOption, score, totalAnswered, setScore, setTotalAnswered, timeLeft]);
+  }, [currentQuestion, selectedOption, setScore, setTotalAnswered, timeLeft, playSound]);
 
   // Timer effect
   useEffect(() => {
@@ -125,9 +149,9 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
 
   // Handle next question - optimized with useCallback
   const handleNextQuestion = useCallback(() => {
-    // Play button click sound when clicking next question
-    playSound('primaryButton');
-
+    // Play next question sound
+    playSound('nextQuestion');
+    
     if (currentQuestionIndex < shuffledQuestions.length - 1) {
       // Update to next question immediately without animation
       setCurrentQuestionIndex(currentQuestionIndex + 1);
@@ -142,32 +166,20 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
       setIsTimerActive(false);
       setShowResults(true);
     }
-  }, [currentQuestionIndex, shuffledQuestions.length, navigateTo]);
+  }, [currentQuestionIndex, shuffledQuestions.length, navigateTo, playSound]);
 
   // Handle option selection and auto-submit - optimized with useCallback
   const handleOptionSelect = useCallback((option) => {
     if (!showNextButton) {
-      // Play button click sound when selecting an option
-      playSound('buttonClick');
+      // Play option select sound
+      playSound('optionSelect');
 
       setSelectedOption(option);
-      // Auto-submit the answer when an option is selected
-      setIsTimerActive(false);
-      if (currentQuestion && option === currentQuestion.correctAnswer) {
-        // Play success sound for correct answer
-        playSound('success');
-        setFeedback("Correct! 🎉");
-        setScore(score + 1);
-      } else if (currentQuestion) {
-        // Play error sound for wrong answer
-        playSound('error');
-        setFeedback(`Wrong! ❌ The correct answer is ${currentQuestion.correctAnswer}.`);
-      }
-      setTotalAnswered(totalAnswered + 1);
-      setShowNextButton(true);
-      setAnsweredQuestions([...answeredQuestions, { question: currentQuestion, isCorrect: option === currentQuestion.correctAnswer }]);
+      
+      // Check answer immediately instead of using setTimeout
+      checkAnswer(option);
     }
-  }, [currentQuestion, showNextButton, score, totalAnswered, setScore, setTotalAnswered, playSound]);
+  }, [checkAnswer, showNextButton, playSound]);
 
   // Apply Discord optimizations when in Discord environment
   useEffect(() => {
@@ -341,7 +353,7 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
       <button 
         className="exit-button" 
         onClick={() => {
-          playSound('secondaryButton');
+          playSound('closeButton');
           navigateTo('home');
         }}
         onMouseEnter={() => playSound('buttonHover')}

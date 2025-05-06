@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLightbulb } from '@fortawesome/free-solid-svg-icons';
 import './styles/LoadingScreen.css';
@@ -8,6 +8,8 @@ const LoadingScreen = ({ onLoadingComplete }) => {
   const [loadingText, setLoadingText] = useState('Initializing');
   const [showContent, setShowContent] = useState(true);
   const [didYouKnowIndex, setDidYouKnowIndex] = useState(0);
+  const [rotationAngle, setRotationAngle] = useState(0);
+  const requestRef = useRef();
   
   // Loading messages to cycle through
   const loadingMessages = [
@@ -35,21 +37,38 @@ const LoadingScreen = ({ onLoadingComplete }) => {
     "Ecaflips are cat-like beings who love gambling and games of chance."
   ];
   
+  // Dofus eggs data
+  const dofusEggs = [
+    { name: "Emerald Dofus", color: "#2ecc71", power: "Time", image: "/assets/eggs/emerald-dofus.svg" },
+    { name: "Crimson Dofus", color: "#e74c3c", power: "Fire", image: "/assets/eggs/crimson-dofus.svg" },
+    { name: "Turquoise Dofus", color: "#1abc9c", power: "Water", image: "/assets/eggs/turquoise-dofus.svg" },
+    { name: "Ivory Dofus", color: "#ecf0f1", power: "Life", image: "/assets/eggs/ivory-dofus.svg" },
+    { name: "Ochre Dofus", color: "#f39c12", power: "Earth", image: "/assets/eggs/ochre-dofus.svg" },
+    { name: "Abyssal Dofus", color: "#34495e", power: "Shadow", image: "/assets/eggs/abyssal-dofus.svg" }
+  ];
+
+  // Animation loop for rotating eggs
+  const animate = () => {
+    setRotationAngle(prevAngle => (prevAngle + 0.2) % 360);
+    requestRef.current = requestAnimationFrame(animate);
+  };
+
+  useEffect(() => {
+    requestRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(requestRef.current);
+  }, []);
+
   useEffect(() => {
     // Check if running in Discord
     const isInDiscord = window.location.href.includes('discord') || 
-                        navigator.userAgent.includes('Discord') ||
-                        window.innerWidth <= 600;
-    
-    // Shorter loading for Discord and faster overall
-    const loadingDuration = isInDiscord ? 2000 : 3000;
-    const progressStep = isInDiscord ? 15 : 8;
-    const messageInterval = isInDiscord ? 800 : 1200;
+      navigator.userAgent.includes('DiscordApp');
     
     // Simulate loading progress
     const progressInterval = setInterval(() => {
       setProgress(prevProgress => {
-        const newProgress = prevProgress + (Math.random() * progressStep);
+        // Make progress more consistent and ensure it reaches 100%
+        const increment = Math.random() * 2 + 0.5; // Between 0.5 and 2.5
+        const newProgress = prevProgress + increment;
         return newProgress >= 100 ? 100 : newProgress;
       });
     }, 80);
@@ -61,9 +80,9 @@ const LoadingScreen = ({ onLoadingComplete }) => {
         const nextIndex = (currentIndex + 1) % loadingMessages.length;
         return loadingMessages[nextIndex];
       });
-    }, messageInterval);
+    }, isInDiscord ? 1500 : 2500);
     
-    // Cycle through Did You Know facts
+    // Cycle through facts
     const factInterval = setInterval(() => {
       setDidYouKnowIndex(prevIndex => (prevIndex + 1) % didYouKnowFacts.length);
     }, isInDiscord ? 3000 : 5000);
@@ -71,40 +90,28 @@ const LoadingScreen = ({ onLoadingComplete }) => {
     // Ensure we reach 100% before completing
     const ensureProgressTimeout = setTimeout(() => {
       setProgress(100);
-    }, loadingDuration - 500);
+    }, 7000); // Force 100% after 7 seconds
     
-    // Complete loading after animation
+    // Fade out and call onLoadingComplete
     const completeTimeout = setTimeout(() => {
-      clearInterval(progressInterval);
-      clearInterval(textInterval);
-      setProgress(100);
-      setLoadingText('Ready!');
-      
-      // Fade out animation - faster in Discord
-      const fadeTimeout = setTimeout(() => {
+      if (progress >= 95) {
         setShowContent(false);
         
-        // Notify parent component that loading is complete
-        const completeCallback = setTimeout(() => {
+        // Call onLoadingComplete after fade out animation
+        setTimeout(() => {
           if (onLoadingComplete) {
-            console.log('Loading complete, triggering callback');
             onLoadingComplete();
           }
-        }, isInDiscord ? 200 : 300);
-        
-        return () => clearTimeout(completeCallback);
-      }, isInDiscord ? 300 : 500);
-      
-      return () => clearTimeout(fadeTimeout);
-    }, loadingDuration);
+        }, 500);
+      }
+    }, 7500);
     
-    // Direct callback as a fallback
+    // Safety fallback in case something goes wrong
     const directCallbackTimeout = setTimeout(() => {
       if (onLoadingComplete) {
-        console.log('Direct callback triggered as fallback');
         onLoadingComplete();
       }
-    }, loadingDuration + 2000); // 2 seconds after expected completion
+    }, 10000); // Force callback after 10 seconds max
     
     return () => {
       clearInterval(progressInterval);
@@ -113,13 +120,14 @@ const LoadingScreen = ({ onLoadingComplete }) => {
       clearTimeout(ensureProgressTimeout);
       clearTimeout(completeTimeout);
       clearTimeout(directCallbackTimeout);
+      cancelAnimationFrame(requestRef.current);
     };
-  }, [onLoadingComplete, loadingMessages]);
+  }, [onLoadingComplete, progress]);
   
   // Check if running in Discord for simpler rendering
   const isInDiscord = typeof window !== 'undefined' && (
     window.location.href.includes('discord') || 
-    navigator.userAgent.includes('Discord') ||
+    navigator.userAgent.includes('DiscordApp') ||
     window.innerWidth <= 600
   );
   
@@ -127,22 +135,38 @@ const LoadingScreen = ({ onLoadingComplete }) => {
     <div className={`loading-screen ${!showContent ? 'fade-out' : ''} ${isInDiscord ? 'discord-mode' : ''}`}>
       <div className="loading-content">
         <div className="loading-logo">
-          <h1>Dofus Lore Trivia</h1>
+          <h1>DOFUS LORE TRIVIA</h1>
           <div className="logo-glow"></div>
         </div>
         
-        <div className="hexagon-container">
-          {/* Reduced hexagons for Discord */}
-          {[...Array(isInDiscord ? 6 : 12)].map((_, index) => (
-            <div 
-              key={index} 
-              className="hexagon"
-              style={{
-                animationDelay: `${index * 0.2}s`,
-                opacity: Math.min(1, progress / (100 - index * 5))
-              }}
-            ></div>
-          ))}
+        {/* Dofus Eggs Rotating Circle */}
+        <div className="dofus-eggs-container">
+          {dofusEggs.map((egg, index) => {
+            const angle = (index * (360 / dofusEggs.length) + rotationAngle) * (Math.PI / 180);
+            const radius = 100; // Radius of the circle
+            const x = Math.cos(angle) * radius;
+            const y = Math.sin(angle) * radius;
+            
+            return (
+              <div 
+                key={index}
+                className="dofus-egg"
+                style={{ 
+                  transform: `translate(${x}px, ${y}px) rotate(${rotationAngle}deg)`,
+                  backgroundColor: egg.color,
+                }}
+                title={`${egg.name}: ${egg.power}`}
+              >
+                <div 
+                  className="egg-image"
+                  style={{ 
+                    backgroundImage: `url(${egg.image})`,
+                    transform: `rotate(${-rotationAngle}deg)` // Counter-rotate to keep image upright
+                  }}
+                ></div>
+              </div>
+            );
+          })}
           
           {/* Central loading circle */}
           <div className="loading-circle">
@@ -179,24 +203,20 @@ const LoadingScreen = ({ onLoadingComplete }) => {
         </div>
         
         {/* Reduced particles for Discord */}
-        {!isInDiscord && (
-          <div className="loading-particles">
-            {[...Array(12)].map((_, index) => (
-              <div 
-                key={index} 
-                className="particle"
-                style={{
-                  top: `${Math.random() * 100}%`,
-                  left: `${Math.random() * 100}%`,
-                  width: `${Math.random() * 4 + 2}px`,
-                  height: `${Math.random() * 4 + 2}px`,
-                  animationDuration: `${Math.random() * 3 + 2}s`,
-                  animationDelay: `${Math.random() * 2}s`
-                }}
-              ></div>
-            ))}
-          </div>
-        )}
+        <div className="loading-particles">
+          {[...Array(isInDiscord ? 20 : 50)].map((_, index) => (
+            <div 
+              key={index}
+              className="particle"
+              style={{
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 5}s`,
+                animationDuration: `${3 + Math.random() * 7}s`
+              }}
+            ></div>
+          ))}
+        </div>
       </div>
     </div>
   );

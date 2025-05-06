@@ -7,6 +7,7 @@ import BackgroundAnimation from './components/BackgroundAnimation';
 import discordService from './services/DiscordService';
 import playerDataService from './services/PlayerDataService';
 import soundService from './services/SoundService';
+import musicService from './services/MusicService';
 import richPresenceService from './services/RichPresenceService';
 import LoadingScreen from './components/LoadingScreen';
 import NoiseTexture from './components/NoiseTexture';
@@ -72,21 +73,15 @@ function App({ discordStatus = 'disconnected', discordParticipants = [] }) {
     }
     
     // Initialize sound service with Discord-specific optimizations
-    soundService.initialize(isInDiscord).then(() => {
-      console.log('Sound service initialized in App component');
-    }).catch(error => {
-      console.error('Failed to initialize sound service:', error);
-    });
+    soundService.init(isInDiscord);
+    
+    // Initialize music service and start playing background music
+    musicService.init(isInDiscord);
+    musicService.playBackgroundMusic('main');
     
     // Initialize Rich Presence service
     try {
-      richPresenceService.initialize().then(success => {
-        if (success) {
-          console.log('Rich Presence service initialized successfully');
-        }
-      }).catch(error => {
-        console.warn('Rich Presence initialization error:', error);
-      });
+      richPresenceService.init(isInDiscord);
     } catch (error) {
       console.warn('Failed to initialize Rich Presence service:', error);
     }
@@ -94,9 +89,22 @@ function App({ discordStatus = 'disconnected', discordParticipants = [] }) {
     // Safety timeout to ensure loading screen doesn't get stuck
     const safetyTimeout = setTimeout(() => {
       setIsLoading(false);
-    }, 8000); // Force exit loading after 8 seconds max
+    }, 3000); // Reduced from 8000 to 3000ms
     
-    return () => clearTimeout(safetyTimeout);
+    // Set up event listener for user interaction to enable autoplay
+    const handleInteraction = () => {
+      musicService.handleUserInteraction();
+    };
+    
+    window.addEventListener('click', handleInteraction);
+    window.addEventListener('keydown', handleInteraction);
+    
+    return () => {
+      clearTimeout(safetyTimeout);
+      window.removeEventListener('click', handleInteraction);
+      window.removeEventListener('keydown', handleInteraction);
+      musicService.stopBackgroundMusic();
+    };
   }, [isInDiscord]);
 
   // Track Discord participants
@@ -169,6 +177,15 @@ function App({ discordStatus = 'disconnected', discordParticipants = [] }) {
     // If not in game or confirmed navigation
     setCurrentPage(page);
     
+    // Update background music based on screen
+    if (page === 'game') {
+      musicService.playBackgroundMusic('game');
+    } else if (page === 'dashboard') {
+      musicService.playBackgroundMusic('results');
+    } else {
+      musicService.playBackgroundMusic('main');
+    }
+    
     // Set game state when entering or leaving game
     if (page === 'game') {
       setIsInGame(true);
@@ -188,16 +205,6 @@ function App({ discordStatus = 'disconnected', discordParticipants = [] }) {
           hostId: playerData?.id,
           timestamp: Date.now()
         });
-        
-        // Update Rich Presence
-        try {
-          richPresenceService.updatePresence({
-            state: 'Starting game',
-            details: `${gameType || 'Dofus'} Trivia`,
-          });
-        } catch (error) {
-          console.warn('Rich Presence update error:', error);
-        }
       }
     } else if (page !== 'game') {
       setIsInGame(false);
@@ -214,16 +221,6 @@ function App({ discordStatus = 'disconnected', discordParticipants = [] }) {
           finalScore: score,
           timestamp: Date.now()
         });
-        
-        // Update Rich Presence
-        try {
-          richPresenceService.updatePresence({
-            state: 'In menu',
-            details: 'Browsing trivia options',
-          });
-        } catch (error) {
-          console.warn('Rich Presence update error:', error);
-        }
       }
     }
     
@@ -255,16 +252,6 @@ function App({ discordStatus = 'disconnected', discordParticipants = [] }) {
             finalScore: score,
             timestamp: Date.now()
           });
-          
-          // Update Rich Presence
-          try {
-            richPresenceService.updatePresence({
-              state: 'In menu',
-              details: 'Browsing trivia options',
-            });
-          } catch (error) {
-            console.warn('Rich Presence update error:', error);
-          }
         }
       }
     } else {

@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDiscord, faTwitter } from '@fortawesome/free-brands-svg-icons';
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { 
+  faTimes, 
+  faHome, 
+  faQuestionCircle, 
+  faBook, 
+  faCog 
+} from '@fortawesome/free-solid-svg-icons';
 import { useSound } from '../contexts/SoundContext.jsx';
 import { isInDiscord } from '../utils/DiscordUtils';
 import './styles/Header.css';
 import './styles/Logo.css';
+import SettingsModal from './SettingsModal';
 
 function Header({ navigateTo, currentPage, isInGame, isInDiscord: propIsInDiscord }) {
   const [showSettings, setShowSettings] = useState(false);
@@ -51,7 +58,7 @@ function Header({ navigateTo, currentPage, isInGame, isInDiscord: propIsInDiscor
           onClick={() => handleNavigation('home')}
           onMouseEnter={() => playSound('buttonHover')}
         >
-          <FontAwesomeIcon icon="home" />
+          <FontAwesomeIcon icon={faHome} />
           <span>Exit Game</span>
         </div>
       </div>
@@ -117,7 +124,7 @@ function Header({ navigateTo, currentPage, isInGame, isInDiscord: propIsInDiscor
           onClick={() => handleNavigation('home')}
           onMouseEnter={() => playSound('buttonHover')}
         >
-          <FontAwesomeIcon icon="home" />
+          <FontAwesomeIcon icon={faHome} />
           <span>Home</span>
         </div>
         
@@ -126,7 +133,7 @@ function Header({ navigateTo, currentPage, isInGame, isInDiscord: propIsInDiscor
           onClick={() => handleNavigation('howtoplay')}
           onMouseEnter={() => playSound('buttonHover')}
         >
-          <FontAwesomeIcon icon="question-circle" />
+          <FontAwesomeIcon icon={faQuestionCircle} />
           <span>How to Play</span>
         </div>
         
@@ -135,7 +142,7 @@ function Header({ navigateTo, currentPage, isInGame, isInDiscord: propIsInDiscor
           onClick={() => handleNavigation('lore')}
           onMouseEnter={() => playSound('buttonHover')}
         >
-          <FontAwesomeIcon icon="book" />
+          <FontAwesomeIcon icon={faBook} />
           <span>Lore</span>
         </div>
         
@@ -147,91 +154,14 @@ function Header({ navigateTo, currentPage, isInGame, isInDiscord: propIsInDiscor
           }}
           onMouseEnter={() => playSound('buttonHover')}
         >
-          <FontAwesomeIcon icon="cog" />
+          <FontAwesomeIcon icon={faCog} />
           <span>Settings</span>
         </div>
       </div>
       
-      {/* Settings Panel (shown when settings tab is clicked) */}
+      {/* Settings Modal */}
       {showSettings && (
-        <div className="settings-overlay">
-          <div className="settings-panel">
-            <h2>Settings</h2>
-            
-            <div className="settings-content">
-              <div className="settings-section">
-                <h3>Sound Settings</h3>
-                <div className="setting-item">
-                  <label>Sound Effects:</label>
-                  <button 
-                    className={`toggle-button ${isMuted ? '' : 'active'}`}
-                    onClick={() => {
-                      toggleMute();
-                      playSound('buttonClick');
-                    }}
-                    onMouseEnter={() => playSound('buttonHover')}
-                  >
-                    {isMuted ? 'Off' : 'On'}
-                  </button>
-                </div>
-                
-                <div className="setting-item">
-                  <label>Volume:</label>
-                  <div className="volume-control">
-                    <input 
-                      type="range" 
-                      min="0" 
-                      max="1" 
-                      step="0.1" 
-                      value={volume}
-                      disabled={isMuted}
-                      onChange={(e) => {
-                        const newVolume = parseFloat(e.target.value);
-                        updateVolume(newVolume);
-                        // Play a sound to demonstrate the new volume
-                        if (!isMuted && newVolume > 0) {
-                          playSound('buttonClick');
-                        }
-                      }}
-                    />
-                    <span>{Math.round(volume * 100)}%</span>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="settings-section">
-                <h3>Support</h3>
-                <p>Have feedback or found a bug?</p>
-                <p>Join our Discord community!</p>
-                
-                <button 
-                  className="discord-button"
-                  onClick={() => {
-                    playSound('socialButton');
-                    window.open('https://discord.gg/rKb3Zp7AQ2', '_blank');
-                  }}
-                  onMouseEnter={() => playSound('buttonHover')}
-                >
-                  <FontAwesomeIcon icon={faDiscord} />
-                  <span>Join Discord</span>
-                </button>
-              </div>
-            </div>
-            
-            <button 
-              className="close-button"
-              onClick={() => {
-                playSound('closeButton');
-                setShowSettings(false);
-              }}
-              onMouseEnter={() => playSound('buttonHover')}
-              aria-label="Close settings"
-              data-fallback="X"
-            >
-              <FontAwesomeIcon icon={faTimes} />
-            </button>
-          </div>
-        </div>
+        <SettingsModal onClose={() => setShowSettings(false)} />
       )}
     </>
   );

@@ -20,8 +20,8 @@
   color: white;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), 0 0 20px rgba(140, 82, 255, 0.2);
   position: relative;
-  width: 320px;
-  max-width: 320px;
+  width: 350px;
+  max-width: 90vw;
   border: 1px solid rgba(140, 82, 255, 0.3);
   backdrop-filter: blur(10px);
   animation: fadeIn 0.3s ease forwards;
@@ -52,8 +52,8 @@
 
 .settings-modal-content {
   padding: 0 10px;
-  max-height: 400px;
-  overflow-y: auto;
+  max-height: none;
+  overflow-y: visible;
 }
 
 .settings-modal-content p {
@@ -212,10 +212,40 @@
   }
 }
 
-/* Mobile responsiveness */
-@media (max-width: 480px) {
+/* Responsive adjustments */
+@media (max-height: 600px) {
   .settings-modal {
-    width: 90%;
-    max-width: 300px;
+    padding: 15px;
   }
+  
+  .settings-modal h2 {
+    font-size: 24px;
+    margin-bottom: 15px;
+  }
+}
+
+/* Discord-specific styles */
+.in-discord .settings-modal {
+  background-color: rgba(47, 49, 54, 0.95);
+  border-color: rgba(114, 137, 218, 0.3);
+}
+
+.in-discord .settings-modal h2::after {
+  background: linear-gradient(to right, rgba(114, 137, 218, 0.3), rgba(114, 137, 218, 0.8), rgba(114, 137, 218, 0.3));
+}
+
+.in-discord .settings-section {
+  border-color: rgba(114, 137, 218, 0.3);
+}
+
+.in-discord .settings-section h3 {
+  color: rgba(114, 137, 218, 0.9);
+}
+
+.in-discord .toggle-button.active {
+  background-color: rgba(114, 137, 218, 0.8);
+}
+
+.in-discord .volume-control input[type="range"]::-webkit-slider-thumb {
+  background: rgba(114, 137, 218, 0.8);
 }

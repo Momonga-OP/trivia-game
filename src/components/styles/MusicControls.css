@@ -1,0 +1,93 @@
+.music-controls {
+  margin: 1rem 0;
+  padding: 1rem;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+}
+
+.music-controls h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  color: #f0f0f0;
+  font-size: 1.2rem;
+}
+
+.music-control-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.mute-button {
+  background: none;
+  border: none;
+  color: #f0f0f0;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.1);
+  transition: background-color 0.2s ease;
+}
+
+.mute-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.mute-button.muted {
+  color: #ff6b6b;
+}
+
+.volume-slider {
+  flex: 1;
+  height: 8px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: linear-gradient(to right, #4a90e2, #8e44ad);
+  border-radius: 4px;
+  outline: none;
+}
+
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #f0f0f0;
+  cursor: pointer;
+}
+
+.volume-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #f0f0f0;
+  cursor: pointer;
+  border: none;
+}
+
+.volume-slider:disabled {
+  opacity: 0.5;
+}
+
+.volume-value {
+  min-width: 3rem;
+  text-align: right;
+  color: #f0f0f0;
+  font-size: 0.9rem;
+}
+
+/* Discord-specific styles */
+.in-discord .music-controls {
+  background-color: rgba(47, 49, 54, 0.6);
+  border: 1px solid rgba(79, 84, 92, 0.6);
+}
+
+.in-discord .volume-slider {
+  background: linear-gradient(to right, #5865f2, #7289da);
+}
