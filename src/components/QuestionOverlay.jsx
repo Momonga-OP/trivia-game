@@ -48,58 +48,39 @@ const QuestionOverlay = memo(function QuestionOverlay({ question, timeLeft, ques
     };
   }, [handleQuestionChange]);
 
-  // Reset and restart timer animation when timeLeft or questionId changes - optimized
+  // Simplified timer bar approach: directly set the width based on timeLeft
+  // Calculate percentage for timer bar width
+  const timerPercentage = Math.max((timeLeft / 30) * 100, 0);
+  
+  // Track question changes
   useEffect(() => {
-    // If this is a new question, reset the animation
-    if (questionId !== prevQuestionIdRef.current) {
-      if (timerBarRef.current) {
-        // Use requestAnimationFrame for smoother animation reset
-        requestAnimationFrame(() => {
-          // Reset animation
-          timerBarRef.current.style.animation = 'none';
-          timerBarRef.current.style.width = '100%';
-          // Force reflow in a performance-optimized way
-          timerBarRef.current.offsetHeight; // Force reflow
-          // Restart animation
-          timerBarRef.current.style.animation = `timerAnimation ${timeLeft}s linear forwards`;
-        });
-      }
-      prevQuestionIdRef.current = questionId;
-    } 
-    // If timeLeft changed but not because of a new question
-    else if (timeLeft !== prevTimeLeftRef.current) {
-      if (timerBarRef.current) {
-        // First stop the current animation
-        const currentWidth = timerBarRef.current.offsetWidth / timerBarRef.current.parentNode.offsetWidth * 100;
-        timerBarRef.current.style.animation = 'none';
-        timerBarRef.current.style.width = `${currentWidth}%`;
-        timerBarRef.current.offsetHeight; // Force reflow
-        
-        // Then restart with new duration
-        timerBarRef.current.style.animation = `timerAnimation ${timeLeft}s linear forwards`;
-        timerBarRef.current.style.animationDuration = `${timeLeft}s`;
-      }
-    }
-
+    prevQuestionIdRef.current = questionId;
+    // No need to manipulate DOM directly, we use inline styles
+  }, [questionId]);
+  
+  // Track timeLeft changes
+  useEffect(() => {
     prevTimeLeftRef.current = timeLeft;
-  }, [timeLeft, questionId]);
+  }, [timeLeft]);
 
-  // Memoize the timer bar to prevent unnecessary re-renders
-  const TimerBar = memo(({ timeLeft, isTimeLow, timerBarRef }) => (
-    <div className={`timer-container ${isTimeLow ? 'low-time' : ''}`}>
-      <div 
-        ref={timerBarRef}
-        className="timer-bar" 
-        style={{
-          animationDuration: `${timeLeft}s`,
-          animationTimingFunction: 'linear',
-          animationFillMode: 'forwards',
-          animationName: 'timerAnimation'
-        }}
-      ></div>
-      <span className="timer-text">{timeLeft}s</span>
-    </div>
-  ));
+  // Simplified TimerBar with direct inline styles
+  const TimerBar = memo(({ timeLeft, isTimeLow }) => {
+    // Calculate percentage directly in the component
+    const percentage = Math.max((timeLeft / 30) * 100, 0);
+    
+    return (
+      <div className={`timer-container ${isTimeLow ? 'low-time' : ''}`}>
+        <div 
+          className="timer-bar"
+          style={{
+            width: `${percentage}%`,
+            transition: 'width 0.9s linear'
+          }}
+        ></div>
+        <span className="timer-text">{timeLeft}s</span>
+      </div>
+    );
+  });
 
   // Memoize the question text to prevent unnecessary re-renders
   const QuestionText = memo(({ isInDiscord, displayedQuestion }) => (
@@ -119,7 +100,6 @@ const QuestionOverlay = memo(function QuestionOverlay({ question, timeLeft, ques
           <TimerBar 
             timeLeft={timeLeft} 
             isTimeLow={isTimeLow} 
-            timerBarRef={timerBarRef} 
           />
         </div>
         

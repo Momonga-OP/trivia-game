@@ -32,6 +32,8 @@
   /* Performance optimizations */
   transform: translateZ(0);
   backface-visibility: hidden;
+  position: relative; /* Ensure proper stacking context */
+  z-index: 1; /* Ensure proper stacking context */
 }
 
 /* Slide animations - GPU accelerated */
@@ -67,27 +69,16 @@
   }
 }
 
-@keyframes timerAnimation {
-  0% {
-    width: 100%;
-  }
-  100% {
-    width: 0%;
-  }
-}
+/* No animation keyframes - we'll control the width directly */
 
-/* Fallback animation for browsers that don't support width animations well */
-@supports (transform: scaleX(1)) and (not (-ms-ime-align: auto)) {
-  @keyframes timerAnimation {
-    0% {
-      transform: scaleX(1) translateZ(0);
-      width: 100%;
-    }
-    100% {
-      transform: scaleX(0) translateZ(0);
-      width: 0%;
-    }
-  }
+/* Simple timer bar that doesn't use animations */
+.timer-bar-container {
+  position: relative;
+  width: 100%;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+  overflow: hidden;
 }
 
 /* Reset animation when timer resets */
@@ -156,30 +147,22 @@
 .timer-bar {
   height: 100%;
   background: linear-gradient(90deg, #8c52ff, #5e17eb);
-  width: 100%;
   transform-origin: left;
-  animation: timerAnimation 30s linear forwards;
-  /* Enhanced performance optimizations */
   transform: translateZ(0);
-  will-change: transform, width;
-  contain: strict;
+  will-change: width;
   position: absolute;
   top: 0;
   left: 0;
+  /* No transition here - it's applied inline */
+  /* Width is controlled by inline styles */
 }
 
 /* Specific optimizations for Discord and mobile */
 @media (max-width: 600px) {
   .timer-bar {
-    animation-timing-function: linear !important; /* Ensure linear timing in Discord */
     will-change: width; /* Simpler animation property for mobile */
     transform: none; /* Disable transforms on mobile for better performance */
-  }
-  
-  /* Use simpler animation for Discord */
-  @keyframes timerAnimation {
-    0% { width: 100%; }
-    100% { width: 0%; }
+    /* No transition here - it's applied inline */
   }
 }
 

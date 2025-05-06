@@ -62,6 +62,8 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
     console.log(`Loaded ${limitedQuestions.length} questions for ${currentGameType} game mode`);
   }, [currentGameType, questionCount]);
 
+  // No debug code in production
+
   // Handle countdown completion - optimized with useCallback
   const handleCountdownComplete = useCallback(() => {
     setShowCountdown(false);
@@ -135,46 +137,50 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
     }
   }, [currentQuestion, selectedOption, setScore, setTotalAnswered, timeLeft, playSound]);
 
-  // Timer effect
-  useEffect(() => {
-    let timer;
-    if (gameStarted && !isTimerActive) {
-      // Start the timer when the game starts (after countdown)
-      setIsTimerActive(true);
-      setTimeLeft(30);
-    }
-
-    if (isTimerActive && timeLeft > 0) {
-      timer = setTimeout(() => {
-        setTimeLeft(timeLeft - 1);
+  // Optimized timer using setInterval for consistent timing
+  useEffect(() => {    
+    // Only run timer when game is started and timer should be active
+    if (gameStarted && isTimerActive) {      
+      // Use setInterval for consistent timing
+      const interval = setInterval(() => {        
+        if (timeLeft <= 1) {
+          // Time's up
+          clearInterval(interval);
+          setTimeLeft(0);
+          setIsTimerActive(false);
+          setShowTimesUp(true);
+          setShowNextButton(true);
+          checkAnswer();
+        } else {
+          // Decrement time
+          setTimeLeft(prevTime => prevTime - 1);
+        }
       }, 1000);
-    } else if (timeLeft === 0 && isTimerActive) {
-      checkAnswer();
+      
+      // Clean up interval on unmount or when dependencies change
+      return () => {
+        clearInterval(interval);
+      };
     }
+  }, [gameStarted, isTimerActive, timeLeft, checkAnswer]);
 
-    return () => clearTimeout(timer);
-  }, [timeLeft, isTimerActive, gameStarted]);
-
-  // Handle next question - optimized with useCallback
+  // Reset timer atomically when moving to next question
   const handleNextQuestion = useCallback(() => {
-    // Play next question sound
     playSound('nextQuestion');
-    
     if (currentQuestionIndex < shuffledQuestions.length - 1) {
-      // Update to next question immediately without animation
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
+      setCurrentQuestionIndex((idx) => idx + 1);
       setSelectedOption(null);
       setFeedback('');
       setShowNextButton(false);
+      setShowTimesUp(false);
+      setIsTimerActive(false);
       setTimeLeft(30);
       setIsTimerActive(true);
-      setShowTimesUp(false);
     } else {
-      // Show results modal instead of going to dashboard
       setIsTimerActive(false);
       setShowResults(true);
     }
-  }, [currentQuestionIndex, shuffledQuestions.length, navigateTo, playSound]);
+  }, [currentQuestionIndex, shuffledQuestions.length, playSound]);
 
   // Handle option selection and auto-submit - optimized with useCallback
   const handleOptionSelect = useCallback((option) => {
