@@ -1,0 +1,94 @@
+/**
+ * Discord Optimization CSS
+ * 
+ * This file contains CSS optimizations specifically for Discord activity
+ * to prevent flickering and improve performance.
+ */
+
+/* Prevent flickering in Discord activity */
+.discord-mode .option-button {
+  /* Force hardware acceleration to prevent flickering */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  will-change: transform, opacity;
+}
+
+/* Optimize animations for Discord */
+.discord-mode .option-button,
+.discord-mode .timer-bar,
+.discord-mode .question-card {
+  /* Smoother transitions in Discord */
+  transition-duration: 0.3s !important;
+  animation-duration: 0.3s !important;
+}
+
+/* Reduce visual complexity in Discord to improve performance */
+.discord-mode .option-button {
+  /* Simplify box-shadow for better performance */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Optimize hover effects for Discord */
+.discord-mode .option-button:hover {
+  /* Use transform instead of box-shadow for better performance */
+  transform: translateY(-2px) translateZ(0);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Prevent text rendering issues in Discord */
+.discord-mode .option-button,
+.discord-mode .question-text,
+.discord-mode .timer-text {
+  /* Improve text rendering */
+  text-rendering: optimizeSpeed;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Optimize animations for Discord mobile */
+@media (max-width: 768px) {
+  .discord-mode .option-button,
+  .discord-mode .timer-bar,
+  .discord-mode .question-card {
+    /* Reduce animation complexity on mobile */
+    animation: none !important;
+    transition: opacity 0.2s ease-in-out !important;
+  }
+  
+  .discord-mode .option-button {
+    /* Simplify mobile rendering */
+    box-shadow: none !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  }
+}
+
+/* Force GPU acceleration for critical elements */
+.discord-mode .options-container,
+.discord-mode .timer-container,
+.discord-mode .question-overlay {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Prevent layout shifts in Discord */
+.discord-mode .game-container {
+  contain: layout;
+}
+
+/* Optimize for Discord's dark theme */
+.discord-mode .option-button {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Prevent flickering in Discord when timer updates */
+.discord-mode .timer-bar {
+  transition: width 0.9s linear !important;
+  will-change: width;
+}
+
+/* Optimize option button animations */
+.discord-mode .option-button.selected,
+.discord-mode .option-button.correct,
+.discord-mode .option-button.incorrect {
+  transition: background-color 0.3s ease-in-out !important;
+}

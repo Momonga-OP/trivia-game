@@ -6,7 +6,8 @@ import {
   faHome, 
   faQuestionCircle, 
   faBook, 
-  faCog 
+  faCog,
+  faUsers
 } from '@fortawesome/free-solid-svg-icons';
 import { useSound } from '../contexts/SoundContext.jsx';
 import { isInDiscord } from '../utils/DiscordUtils';
@@ -108,12 +109,16 @@ function Header({ navigateTo, currentPage, isInGame, isInDiscord: propIsInDiscor
                 Lore
               </button>
             </li>
+            <li className={currentPage === 'credits' ? 'active' : ''}>
+              <button 
+                onClick={() => handleNavigation('credits')}
+                className={isInGame ? 'in-game' : ''}
+                onMouseEnter={() => playSound('buttonHover')}
+              >
+                Credits
+              </button>
+            </li>
           </ul>
-          
-          {/* Creator Credits */}
-          <div className="creator-credits">
-            <span>Created by Momonga</span>
-          </div>
         </nav>
       </header>
       
@@ -144,6 +149,15 @@ function Header({ navigateTo, currentPage, isInGame, isInDiscord: propIsInDiscor
         >
           <FontAwesomeIcon icon={faBook} />
           <span>Lore</span>
+        </div>
+        
+        <div 
+          className={`tab-item ${currentPage === 'credits' ? 'active' : ''} ${isInGame ? 'in-game' : ''}`}
+          onClick={() => handleNavigation('credits')}
+          onMouseEnter={() => playSound('buttonHover')}
+        >
+          <FontAwesomeIcon icon={faUsers} />
+          <span>Credits</span>
         </div>
         
         <div 

@@ -7,7 +7,7 @@ import { generateSoundEffects } from '../utils/SoundGenerator';
 class SoundService {
   constructor() {
     this.isMuted = false;
-    this.volume = 0.3; // Default volume at 30%
+    this.volume = 0.05; // Default volume at 5%
     this.initialized = false;
     this.audioContext = null;
     this.sounds = {};
@@ -74,6 +74,25 @@ class SoundService {
       // Apply Discord class to body if in Discord
       if (isInDiscord) {
         document.body.classList.add('in-discord');
+        document.body.classList.add('discord-audio-enabled');
+      }
+      
+      // Create audio context if it doesn't exist
+      if (!this.audioContext) {
+        try {
+          // Use a timeout to create the AudioContext after a user interaction
+          // This helps with autoplay policies in browsers
+          setTimeout(() => {
+            try {
+              this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+              console.log('AudioContext created successfully');
+            } catch (e) {
+              console.warn('Delayed AudioContext creation failed:', e);
+            }
+          }, 1000);
+        } catch (e) {
+          console.warn('Initial AudioContext creation failed:', e);
+        }
       }
       
       // Generate sound effects based on environment
@@ -81,6 +100,25 @@ class SoundService {
       
       // Preload common sounds
       this.preloadCommonSounds();
+      
+      // Add event listeners for user interaction to enable audio
+      if (isInDiscord) {
+        const enableAudio = () => {
+          if (!this.audioContext) {
+            try {
+              this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+              console.log('AudioContext created after user interaction');
+            } catch (e) {
+              console.warn('AudioContext creation after interaction failed:', e);
+            }
+          } else if (this.audioContext.state === 'suspended') {
+            this.audioContext.resume();
+          }
+        };
+        
+        document.addEventListener('click', enableAudio, { once: false });
+        document.addEventListener('touchstart', enableAudio, { once: false });
+      }
       
       this.initialized = true;
       console.log(`Sound service initialized (Discord: ${isInDiscord})`);

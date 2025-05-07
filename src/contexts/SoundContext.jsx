@@ -17,7 +17,7 @@ export const useSound = () => {
 // Sound Provider component
 export const SoundProvider = ({ children }) => {
   const [isMuted, setIsMuted] = useState(false);
-  const [volume, setVolume] = useState(0.3); // Default volume (30%)
+  const [volume, setVolume] = useState(0.05); // Default volume (5%)
   const [isInitialized, setIsInitialized] = useState(false);
 
   // Initialize sound service on component mount

@@ -75,20 +75,62 @@ const AnimatedOptions = memo(function AnimatedOptions({ options, selectedOption,
   }, [onOptionSelect, playSound]);
 
   // Memoize the option button to prevent unnecessary re-renders
-  const OptionButton = memo(({ option, index, isSelected, isCorrect, isIncorrect, disabled }) => (
-    <button
-      key={index}
-      className={`option-button ${isSelected ? 'selected' : ''} 
-        ${isCorrect ? 'correct' : ''}
-        ${isIncorrect ? 'incorrect' : ''}`}
-      onClick={() => handleOptionClick(option)}
-      onMouseEnter={() => playSound('buttonHover')}
-      disabled={disabled}
-      style={{ animationDelay: `${index * 0.1}s` }}
-    >
-      {option}
-    </button>
-  ));
+  const OptionButton = memo(({ option, index, isSelected, isCorrect, isIncorrect, disabled }) => {
+    // Create a memoized click handler for each button to prevent re-renders
+    const memoizedClickHandler = useCallback(() => {
+      handleOptionClick(option);
+    }, [option]);
+    
+    // Create a memoized hover handler for each button
+    const memoizedHoverHandler = useCallback(() => {
+      playSound('buttonHover');
+    }, []);
+    
+    // Use refs to directly manipulate the DOM for class changes without re-rendering
+    const buttonRef = useRef(null);
+    
+    // Update button classes directly via DOM to avoid re-renders
+    useEffect(() => {
+      if (buttonRef.current) {
+        // Reset all state classes
+        buttonRef.current.classList.remove('selected', 'correct', 'incorrect');
+        
+        // Apply current state classes
+        if (isSelected) buttonRef.current.classList.add('selected');
+        if (isCorrect) buttonRef.current.classList.add('correct');
+        if (isIncorrect) buttonRef.current.classList.add('incorrect');
+        
+        // Update disabled state
+        buttonRef.current.disabled = disabled;
+      }
+    }, [isSelected, isCorrect, isIncorrect, disabled]);
+    
+    return (
+      <button
+        ref={buttonRef}
+        className="option-button"
+        onClick={memoizedClickHandler}
+        onMouseEnter={memoizedHoverHandler}
+        disabled={disabled}
+        style={{ animationDelay: `${index * 0.1}s` }}
+      >
+        {option}
+      </button>
+    );
+  }, (prevProps, nextProps) => {
+    // Always return true in Discord mode to prevent re-renders completely
+    // All updates are handled via direct DOM manipulation
+    if (isInDiscord) return true;
+    
+    // In regular mode, only re-render if these specific props change
+    return (
+      prevProps.option === nextProps.option &&
+      prevProps.isSelected === nextProps.isSelected &&
+      prevProps.isCorrect === nextProps.isCorrect &&
+      prevProps.isIncorrect === nextProps.isIncorrect &&
+      prevProps.disabled === nextProps.disabled
+    );
+  });
 
   return (
     <div className={`animated-options-container ${animationClass}`}>

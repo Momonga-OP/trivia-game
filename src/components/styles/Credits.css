@@ -1,0 +1,303 @@
+/* Credits Page Styling */
+:root {
+  --credits-primary: #8c52ff;
+  --credits-secondary: #5865f2;
+  --credits-bg: linear-gradient(135deg, #1a1a2e, #16213e);
+  --credits-card-bg: rgba(30, 30, 60, 0.7);
+  --credits-text: #ffffff;
+  --credits-text-muted: #a0a0c0;
+  --credits-creator-gradient: linear-gradient(135deg, #8B0000, #A52A2A);
+  --credits-ux-gradient: linear-gradient(135deg, #4B0082, #8A2BE2);
+  --credits-border-radius: 16px;
+  --credits-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  --credits-transition: all 0.3s ease;
+}
+
+.credits-page {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--credits-bg);
+  padding: 2rem;
+  font-family: 'Poppins', sans-serif;
+  color: var(--credits-text);
+}
+
+.credits-container {
+  max-width: 900px;
+  width: 100%;
+  background: rgba(20, 20, 40, 0.8);
+  border-radius: var(--credits-border-radius);
+  box-shadow: var(--credits-shadow);
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(140, 82, 255, 0.3);
+}
+
+.credits-header {
+  text-align: center;
+  padding: 2.5rem 2rem 1.5rem;
+  background: linear-gradient(to bottom, rgba(140, 82, 255, 0.2), transparent);
+  border-bottom: 1px solid rgba(140, 82, 255, 0.2);
+}
+
+.gradient-text {
+  background: linear-gradient(to right, #ff8a00, #e52e71, #8c52ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-size: 3rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.credits-subtitle {
+  color: var(--credits-text-muted);
+  font-size: 1.2rem;
+  margin-top: 0.5rem;
+  font-weight: 300;
+  letter-spacing: 1px;
+}
+
+.credits-content {
+  padding: 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.credit-card {
+  background: var(--credits-card-bg);
+  border-radius: var(--credits-border-radius);
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  transition: var(--credits-transition);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.credit-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+.credit-card.creator {
+  border-top: 4px solid gold;
+}
+
+.credit-card.ux {
+  border-top: 4px solid silver;
+}
+
+.credit-card-header {
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.credit-card-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: white;
+}
+
+.credit-icon {
+  font-size: 1.8rem;
+}
+
+.credit-card.creator .credit-icon {
+  color: gold;
+}
+
+.credit-card.ux .credit-icon {
+  color: silver;
+}
+
+.credit-card-body {
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.credit-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.creator-avatar {
+  background: var(--credits-creator-gradient);
+  border: 3px solid gold;
+}
+
+.ux-avatar {
+  background: var(--credits-ux-gradient);
+  border: 3px solid silver;
+}
+
+.credit-details {
+  flex: 1;
+}
+
+.credit-name {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: white;
+}
+
+.credit-role, .credit-discord {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--credits-text-muted);
+  font-size: 0.95rem;
+}
+
+.credit-discord {
+  color: #7289DA;
+}
+
+.credits-footer {
+  padding: 2rem;
+  text-align: center;
+  border-top: 1px solid rgba(140, 82, 255, 0.2);
+  background: linear-gradient(to top, rgba(140, 82, 255, 0.2), transparent);
+}
+
+.credits-footer p {
+  margin-bottom: 1.5rem;
+  color: var(--credits-text-muted);
+  font-size: 1.1rem;
+}
+
+.back-button {
+  background: linear-gradient(135deg, var(--credits-primary), var(--credits-secondary));
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: var(--credits-transition);
+  box-shadow: 0 5px 15px rgba(88, 101, 242, 0.4);
+}
+
+.back-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(88, 101, 242, 0.6);
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.credit-card {
+  animation: fadeIn 0.6s ease forwards;
+}
+
+.credit-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .credits-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .gradient-text {
+    font-size: 2.5rem;
+  }
+  
+  .credits-container {
+    margin: 1rem;
+  }
+}
+
+/* Discord mode specific styles */
+.credits-page.discord-mode {
+  padding: 0.5rem;
+  min-height: calc(100vh - 20px);
+}
+
+.credits-page.discord-mode .credits-container {
+  max-width: 100%;
+  margin: 0.5rem;
+  border-radius: 12px;
+}
+
+.credits-page.discord-mode .gradient-text {
+  font-size: 2.2rem;
+}
+
+.credits-page.discord-mode .credits-header {
+  padding: 1.5rem 1rem 1rem;
+}
+
+.credits-page.discord-mode .credits-content {
+  padding: 1rem;
+  gap: 1rem;
+}
+
+.credits-page.discord-mode .credit-card-body {
+  padding: 1rem;
+}
+
+.credits-page.discord-mode .credit-avatar {
+  width: 60px;
+  height: 60px;
+  font-size: 2rem;
+}
+
+.credits-page.discord-mode .back-button {
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 480px) {
+  .credit-card-body {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .credit-details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .gradient-text {
+    font-size: 2rem;
+  }
+  
+  .credits-header {
+    padding: 1.5rem 1rem;
+  }
+  
+  .credits-content {
+    padding: 1rem;
+  }
+}

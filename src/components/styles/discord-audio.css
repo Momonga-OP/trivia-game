@@ -1,0 +1,101 @@
+/* Discord Audio Compatibility Styles */
+
+/* Ensure audio controls are visible and properly styled in Discord */
+.discord-audio-enabled .volume-slider {
+  appearance: none;
+  -webkit-appearance: none;
+  height: 6px;
+  background: rgba(88, 101, 242, 0.3);
+  border-radius: 3px;
+  outline: none;
+  margin: 8px 0;
+  cursor: pointer;
+}
+
+.discord-audio-enabled .volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  background: #5865f2;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 5px rgba(88, 101, 242, 0.8);
+}
+
+.discord-audio-enabled .volume-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  background: #5865f2;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 5px rgba(88, 101, 242, 0.8);
+  border: none;
+}
+
+/* Ensure mute buttons are properly styled */
+.discord-audio-enabled .mute-button {
+  background: rgba(88, 101, 242, 0.2);
+  border: 1px solid rgba(88, 101, 242, 0.3);
+  color: white;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.discord-audio-enabled .mute-button:hover {
+  background: rgba(88, 101, 242, 0.4);
+  transform: scale(1.05);
+}
+
+.discord-audio-enabled .mute-button.muted {
+  background: rgba(255, 77, 77, 0.2);
+  border-color: rgba(255, 77, 77, 0.3);
+}
+
+.discord-audio-enabled .mute-button.muted:hover {
+  background: rgba(255, 77, 77, 0.4);
+}
+
+/* Ensure volume value is visible */
+.discord-audio-enabled .volume-value {
+  color: white;
+  font-size: 12px;
+  min-width: 36px;
+  text-align: right;
+}
+
+/* Ensure sound settings are properly styled */
+.discord-audio-enabled .sound-settings {
+  background: rgba(47, 49, 54, 0.9);
+  border: 1px solid rgba(88, 101, 242, 0.3);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.discord-audio-enabled .sound-control {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.discord-audio-enabled .sound-control:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+/* Fix icon visibility in Discord */
+.discord-audio-enabled .fa-volume-up,
+.discord-audio-enabled .fa-volume-mute,
+.discord-audio-enabled .fa-volume-down,
+.discord-audio-enabled .fa-music {
+  display: inline-block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}

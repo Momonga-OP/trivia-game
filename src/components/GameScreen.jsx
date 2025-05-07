@@ -140,29 +140,39 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
   // Optimized timer using setInterval for consistent timing
   useEffect(() => {    
     // Only run timer when game is started and timer should be active
-    if (gameStarted && isTimerActive) {      
-      // Use setInterval for consistent timing
-      const interval = setInterval(() => {        
-        if (timeLeft <= 1) {
-          // Time's up
-          clearInterval(interval);
-          setTimeLeft(0);
+    if (gameStarted && isTimerActive) {
+      // Use a ref to store the current time to avoid re-renders
+      const currentTimeRef = { value: timeLeft };
+      
+      const timer = setInterval(() => {
+        // Decrement the time in the ref
+        currentTimeRef.value -= 1;
+        
+        // If time is up, handle it
+        if (currentTimeRef.value <= 0) {
+          clearInterval(timer);
           setIsTimerActive(false);
           setShowTimesUp(true);
-          setShowNextButton(true);
-          checkAnswer();
+          setTimeLeft(0);
+          
+          // Auto-submit after time's up
+          if (!selectedOption) {
+            // Play error sound for time's up
+            playSound('error');
+            // Check answer with null to indicate time's up
+            checkAnswer(null);
+          }
         } else {
-          // Decrement time
-          setTimeLeft(prevTime => prevTime - 1);
+          // Only update the state every second, but minimize re-renders
+          // This is especially important for Discord activity
+          setTimeLeft(currentTimeRef.value);
         }
       }, 1000);
       
-      // Clean up interval on unmount or when dependencies change
-      return () => {
-        clearInterval(interval);
-      };
+      // Clean up interval on unmount
+      return () => clearInterval(timer);
     }
-  }, [gameStarted, isTimerActive, timeLeft, checkAnswer]);
+  }, [gameStarted, isTimerActive, selectedOption, checkAnswer, playSound, timeLeft]);
 
   // Reset timer atomically when moving to next question
   const handleNextQuestion = useCallback(() => {
@@ -320,49 +330,49 @@ const GameScreen = memo(function GameScreen({ navigateTo, score, setScore, total
 
       {/* Question overlay - always visible after countdown */}
       {!showCountdown && currentQuestion && (
-        <QuestionOverlay 
-          question={currentQuestion} 
-          timeLeft={timeLeft}
-          questionId={currentQuestionIndex} 
-          isInDiscord={inDiscordEnv}
-        />
-      )}
-
-      <div className="question-container">
-        <div className="options-section">
-          {/* Only show title if not in Discord mode to save space */}
-          {!inDiscordEnv && <h3 className="options-title">Choose your answer:</h3>}
-          
-          <AnimatedOptions 
-            options={shuffledOptions.length > 0 ? shuffledOptions : (currentQuestion ? currentQuestion.options : [])}
-            selectedOption={selectedOption}
-            correctAnswer={currentQuestion ? currentQuestion.correctAnswer : ''}
-            showNextButton={showNextButton}
-            onOptionSelect={handleOptionSelect}
-            questionId={currentQuestionIndex}
-            isInDiscord={inDiscordEnv}
-          />
-          
-          {feedback && <div className="feedback">{feedback}</div>}
-          
-          {showTimesUp && !selectedOption && (
-            <div className="times-up-message">
-              <div className="times-up-icon">⏱️</div>
-              <div className="times-up-text">Time's Up!</div>
-            </div>
-          )}
-          
-          {/* Make Next Question button more prominent in Discord mode */}
-          {showNextButton && (
-            <button 
-              className={`next-button large-button ${inDiscordEnv ? 'discord-next-button' : ''}`} 
-              onClick={handleNextQuestion}
-            >
-              {currentQuestionIndex < shuffledQuestions.length - 1 ? 'Next Question' : 'See Results'}
-            </button>
-          )}
+        <div className="question-container">
+          <div className="options-section">
+            {/* Only show title if not in Discord mode to save space */}
+            {!inDiscordEnv && <h3 className="options-title">Choose your answer:</h3>}
+            
+            <QuestionOverlay 
+              question={currentQuestion} 
+              timeLeft={timeLeft}
+              questionId={currentQuestionIndex} 
+              isInDiscord={inDiscordEnv}
+            />
+            
+            <AnimatedOptions 
+              options={shuffledOptions.length > 0 ? shuffledOptions : (currentQuestion ? currentQuestion.options : [])}
+              selectedOption={selectedOption}
+              correctAnswer={currentQuestion ? currentQuestion.correctAnswer : ''}
+              showNextButton={showNextButton}
+              onOptionSelect={handleOptionSelect}
+              questionId={currentQuestionIndex}
+              isInDiscord={inDiscordEnv}
+            />
+            
+            {feedback && <div className="feedback">{feedback}</div>}
+            
+            {showTimesUp && !selectedOption && (
+              <div className="times-up-message">
+                <div className="times-up-icon">⏱️</div>
+                <div className="times-up-text">Time's Up!</div>
+              </div>
+            )}
+            
+            {/* Make Next Question button more prominent in Discord mode */}
+            {showNextButton && (
+              <button 
+                className={`next-button large-button ${inDiscordEnv ? 'discord-next-button' : ''}`} 
+                onClick={handleNextQuestion}
+              >
+                {currentQuestionIndex < shuffledQuestions.length - 1 ? 'Next Question' : 'See Results'}
+              </button>
+            )}
+          </div>
         </div>
-      </div>
+      )}
       
       <button 
         className="exit-button" 

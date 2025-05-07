@@ -1,50 +1,79 @@
 import React from 'react';
+import './styles/Credits.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDiscord } from '@fortawesome/free-brands-svg-icons';
+import { faCrown, faPalette, faGamepad, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { useSound } from '../contexts/SoundContext.jsx';
 
-function Credits({ navigateTo }) {
+function Credits({ navigateTo, windowSize, isInDiscord }) {
+  // Get sound functions from context
+  const { playSound } = useSound();
   return (
-    <div className="credits-page">
-      <h1>Credits</h1>
-      
-      <div className="credits-content">
-        <section className="credit-section">
-          <h2>Development</h2>
-          <ul>
-            <li>Game Design & Development: Your Name</li>
-            <li>Question Database: Your Name & Contributors</li>
-          </ul>
-        </section>
+    <div className={`credits-page ${isInDiscord ? 'discord-mode' : ''}`}>
+      <div className="credits-container">
+        <div className="credits-header">
+          <h1><span className="gradient-text">Credits</span></h1>
+          <p className="credits-subtitle">The amazing people who made this possible</p>
+        </div>
         
-        <section className="credit-section">
-          <h2>Artwork & Assets</h2>
-          <ul>
-            <li>Background Images: Various Artists (with permission)</li>
-            <li>UI Design: Your Name</li>
-            <li>Sound Effects: Various Sources (royalty-free)</li>
-          </ul>
-        </section>
+        <div className="credits-content">
+          <div className="credit-card creator">
+            <div className="credit-card-header">
+              <FontAwesomeIcon icon={faCrown} className="credit-icon" />
+              <h2>Creator</h2>
+            </div>
+            <div className="credit-card-body">
+              <div className="credit-avatar creator-avatar">
+                <span>M</span>
+              </div>
+              <div className="credit-details">
+                <div className="credit-name">Momonga</div>
+                <div className="credit-role">
+                  <FontAwesomeIcon icon={faGamepad} /> Momonga
+                </div>
+                <div className="credit-discord">
+                  <FontAwesomeIcon icon={faDiscord} /> Latif
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="credit-card ux">
+            <div className="credit-card-header">
+              <FontAwesomeIcon icon={faPalette} className="credit-icon" />
+              <h2>UX Design</h2>
+            </div>
+            <div className="credit-card-body">
+              <div className="credit-avatar ux-avatar">
+                <span>Z</span>
+              </div>
+              <div className="credit-details">
+                <div className="credit-name">Zubic Vila</div>
+                <div className="credit-role">
+                  <FontAwesomeIcon icon={faGamepad} /> Zubic Vila
+                </div>
+                <div className="credit-discord">
+                  <FontAwesomeIcon icon={faDiscord} /> Zubic Vila
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         
-        <section className="credit-section">
-          <h2>Special Thanks</h2>
-          <ul>
-            <li>Ankama Games for creating the wonderful world of Dofus</li>
-            <li>The Dofus community for their passion and knowledge</li>
-            <li>All beta testers who helped improve the game</li>
-          </ul>
-        </section>
-        
-        <section className="credit-section">
-          <h2>Contact</h2>
-          <p>
-            For questions, feedback, or bug reports, please contact:
-            <br />
-            <a href="mailto:your.email@example.com">your.email@example.com</a>
-          </p>
-        </section>
+        <div className="credits-footer">
+          <p>Thank you for playing our trivia game!</p>
+          <button 
+            className="back-button" 
+            onClick={() => {
+              playSound('primaryButton');
+              navigateTo('home');
+            }}
+            onMouseEnter={() => playSound('buttonHover')}
+          >
+            <FontAwesomeIcon icon={faArrowLeft} /> Back to Home
+          </button>
+        </div>
       </div>
-      
-      <button className="btn btn-secondary" onClick={() => navigateTo('home')}>
-        Back to Home
-      </button>
     </div>
   );
 }

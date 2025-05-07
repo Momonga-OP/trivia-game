@@ -63,23 +63,50 @@ const QuestionOverlay = memo(function QuestionOverlay({ question, timeLeft, ques
     prevTimeLeftRef.current = timeLeft;
   }, [timeLeft]);
 
-  // Simplified TimerBar with direct inline styles
+  // Completely isolated TimerBar with DOM manipulation to prevent any re-renders
   const TimerBar = memo(({ timeLeft, isTimeLow }) => {
     // Calculate percentage directly in the component
     const percentage = Math.max((timeLeft / 30) * 100, 0);
     
+    // Use useRef to store the DOM elements and avoid re-renders
+    const timerBarElementRef = useRef(null);
+    const timerTextRef = useRef(null);
+    const timerContainerRef = useRef(null);
+    
+    // Update the timer bar width and text directly using DOM manipulation to avoid re-renders
+    useEffect(() => {
+      if (timerBarElementRef.current) {
+        timerBarElementRef.current.style.width = `${percentage}%`;
+      }
+      if (timerTextRef.current) {
+        timerTextRef.current.textContent = `${timeLeft}s`;
+      }
+      if (timerContainerRef.current) {
+        if (isTimeLow) {
+          timerContainerRef.current.classList.add('low-time');
+        } else {
+          timerContainerRef.current.classList.remove('low-time');
+        }
+      }
+    }, [percentage, timeLeft, isTimeLow]);
+    
     return (
-      <div className={`timer-container ${isTimeLow ? 'low-time' : ''}`}>
+      <div className="timer-container" ref={timerContainerRef}>
         <div 
+          ref={timerBarElementRef}
           className="timer-bar"
           style={{
             width: `${percentage}%`,
             transition: 'width 0.9s linear'
           }}
         ></div>
-        <span className="timer-text">{timeLeft}s</span>
+        <span className="timer-text" ref={timerTextRef}>{timeLeft}s</span>
       </div>
     );
+  }, () => {
+    // Always return true to prevent re-renders completely
+    // All updates are handled via direct DOM manipulation
+    return true;
   });
 
   // Memoize the question text to prevent unnecessary re-renders

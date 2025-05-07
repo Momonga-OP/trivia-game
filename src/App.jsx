@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './components/styles/App.css';
 import './components/styles/discord-compatibility.css';
+import './components/styles/discord-audio.css';
+import './components/styles/discord-optimization.css';
 import { SoundProvider } from './contexts/SoundContext.jsx';
 import BackgroundAnimation from './components/BackgroundAnimation';
 import discordService from './services/DiscordService';
@@ -183,13 +185,13 @@ function App({ discordStatus = 'disconnected', discordParticipants = [] }) {
     // If not in game or confirmed navigation
     setCurrentPage(page);
     
-    // Update background music based on screen
+    // Update background music based on screen without interrupting playback
     if (page === 'game') {
-      musicService.playBackgroundMusic('game');
+      musicService.changeTheme('game');
     } else if (page === 'dashboard') {
-      musicService.playBackgroundMusic('results');
+      musicService.changeTheme('results');
     } else {
-      musicService.playBackgroundMusic('main');
+      musicService.changeTheme('main');
     }
     
     // Set game state when entering or leaving game
@@ -418,7 +420,12 @@ function App({ discordStatus = 'disconnected', discordParticipants = [] }) {
                       <About navigateTo={navigateTo} windowSize={windowSize} isInDiscord={isInDiscord} />
                     )}
                     {currentPage === 'credits' && (
-                      <Credits navigateTo={navigateTo} windowSize={windowSize} isInDiscord={isInDiscord} />
+                      <Credits 
+                        navigateTo={navigateTo} 
+                        windowSize={windowSize} 
+                        isInDiscord={isInDiscord} 
+                        playerData={playerData}
+                      />
                     )}
                     {currentPage === 'howtoplay' && (
                       <HowToPlay navigateTo={navigateTo} windowSize={windowSize} isInDiscord={isInDiscord} />
