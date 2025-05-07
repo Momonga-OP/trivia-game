@@ -24,6 +24,12 @@
   animation: fadeIn 0.5s ease-out forwards;
 }
 
+/* Disable animations in Discord mode */
+.discord-mode .countdown-overlay {
+  animation: none !important;
+  opacity: 1 !important;
+}
+
 .countdown-number {
   font-size: 8rem;
   font-weight: bold;
@@ -38,8 +44,22 @@
   animation-fill-mode: forwards;
 }
 
+/* Disable animations in Discord mode */
+.discord-mode .countdown-number {
+  animation: none !important;
+  transform: none !important;
+  opacity: 1 !important;
+}
+
 .countdown-number.animate-out {
   animation: scaleOut 0.5s ease-in forwards;
+}
+
+/* Disable animations in Discord mode */
+.discord-mode .countdown-number.animate-out {
+  animation: none !important;
+  transform: none !important;
+  opacity: 0 !important;
 }
 
 @keyframes fadeIn {

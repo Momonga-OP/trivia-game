@@ -36,6 +36,10 @@
   background: radial-gradient(circle, rgba(66, 134, 244, 0.1) 0%, transparent 70%);
   z-index: -1;
   animation: pulseGlow 3s infinite;
+  /* Disable animation in Discord mode */
+  .discord-mode & {
+    animation: none !important;
+  }
 }
 
 .close-button {
@@ -69,6 +73,10 @@
   color: #ffd700;
   margin-bottom: 15px;
   animation: trophyGlow 2s infinite alternate;
+  /* Disable animation in Discord mode */
+  .discord-mode & {
+    animation: none !important;
+  }
 }
 
 @keyframes trophyGlow {
@@ -112,6 +120,12 @@
   border: 2px solid rgba(66, 134, 244, 0.4);
   box-shadow: 0 0 20px rgba(66, 134, 244, 0.3);
   animation: scoreAppear 0.8s ease-out;
+  /* Disable animation in Discord mode */
+  .discord-mode & {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }
 
 @keyframes scoreAppear {
@@ -142,6 +156,12 @@
   border-radius: 10px;
   border: 1px solid rgba(66, 134, 244, 0.2);
   animation: messageAppear 1s ease-out;
+  /* Disable animation in Discord mode */
+  .discord-mode & {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }
 
 @keyframes messageAppear {
@@ -154,6 +174,12 @@
   justify-content: space-around;
   margin: 25px 0;
   animation: statsAppear 1.2s ease-out;
+  /* Disable animation in Discord mode */
+  .discord-mode & {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }
 
 @keyframes statsAppear {
@@ -223,6 +249,12 @@
   gap: 15px;
   margin-top: 25px;
   animation: actionsAppear 1.4s ease-out;
+  /* Disable animation in Discord mode */
+  .discord-mode & {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }
 
 @keyframes actionsAppear {

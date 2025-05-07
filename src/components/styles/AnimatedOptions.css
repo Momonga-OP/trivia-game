@@ -8,6 +8,13 @@
   width: 100%;
 }
 
+/* Disable animations in Discord mode */
+.discord-mode .animated-options-container {
+  transition: none !important;
+  transform: none !important;
+  opacity: 1 !important;
+}
+
 /* Slide animations */
 .animated-options-container.slide-out {
   transform: translateX(100%);
@@ -46,10 +53,23 @@
   overflow: hidden;
 }
 
+/* Disable transitions in Discord mode */
+.discord-mode .option-button {
+  transition: none !important;
+  transform: none !important;
+  animation: none !important;
+}
+
 .option-button:hover:not(:disabled) {
   background-color: rgba(52, 152, 219, 0.3);
   border-color: rgba(255, 255, 255, 0.3);
   transform: translateY(-2px);
+}
+
+/* Simplify hover effect in Discord mode */
+.discord-mode .option-button:hover:not(:disabled) {
+  transform: none !important;
+  filter: brightness(1.1);
 }
 
 .option-button.selected {

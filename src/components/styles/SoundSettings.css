@@ -158,13 +158,20 @@
 
 /* Music note animation for music control */
 @keyframes musicPulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
+  0% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.7; }
 }
 
-.sound-control:nth-child(2) .mute-button svg {
+.music-icon {
   animation: musicPulse 2s infinite;
+}
+
+/* Disable animations in Discord mode */
+.in-discord .music-icon {
+  animation: none !important;
+  transform: none !important;
+  opacity: 1 !important;
 }
 
 /* Animation for volume changes */
@@ -180,4 +187,11 @@
 
 .volume-slider:active::-moz-range-thumb {
   animation: pulse 1s infinite;
+}
+
+/* Disable animations in Discord mode */
+.in-discord .volume-slider:active::-webkit-slider-thumb,
+.in-discord .volume-slider:active::-moz-range-thumb {
+  animation: none !important;
+  box-shadow: none !important;
 }
