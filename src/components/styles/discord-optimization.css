@@ -7,20 +7,21 @@
 
 /* Prevent flickering in Discord activity */
 .discord-mode .option-button {
-  /* Force hardware acceleration to prevent flickering */
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  perspective: 1000px;
-  will-change: transform, opacity;
+  /* Simplify rendering to prevent flickering */
+  transform: none !important;
+  backface-visibility: visible !important;
+  perspective: none !important;
+  will-change: auto !important;
+  transition: none !important;
 }
 
-/* Optimize animations for Discord */
+/* Disable animations for Discord to prevent flickering */
 .discord-mode .option-button,
 .discord-mode .timer-bar,
 .discord-mode .question-card {
-  /* Smoother transitions in Discord */
-  transition-duration: 0.3s !important;
-  animation-duration: 0.3s !important;
+  /* Disable transitions and animations in Discord */
+  transition: none !important;
+  animation: none !important;
 }
 
 /* Reduce visual complexity in Discord to improve performance */
@@ -29,11 +30,12 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
 }
 
-/* Optimize hover effects for Discord */
+/* Simplify hover effects for Discord */
 .discord-mode .option-button:hover {
-  /* Use transform instead of box-shadow for better performance */
-  transform: translateY(-2px) translateZ(0);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+  /* Use simpler effects for better performance */
+  transform: none !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+  filter: brightness(1.1) !important;
 }
 
 /* Prevent text rendering issues in Discord */
@@ -82,13 +84,13 @@
 
 /* Prevent flickering in Discord when timer updates */
 .discord-mode .timer-bar {
-  transition: width 0.9s linear !important;
-  will-change: width;
+  transition: none !important;
+  will-change: auto !important;
 }
 
-/* Optimize option button animations */
+/* Disable option button animations */
 .discord-mode .option-button.selected,
 .discord-mode .option-button.correct,
 .discord-mode .option-button.incorrect {
-  transition: background-color 0.3s ease-in-out !important;
+  transition: none !important;
 }

@@ -106,13 +106,16 @@
 
 .timer-container.low-time .timer-text {
   color: #ff5252;
-  animation: pulse 0.5s infinite alternate;
+  /* Removed animation to prevent flickering */
 }
 
+/* Removed animation to prevent flickering */
+/*
 @keyframes pulse {
   from { opacity: 0.7; }
   to { opacity: 1; }
 }
+*/
 
 .question-header {
   display: flex;
@@ -148,8 +151,7 @@
   height: 100%;
   background: linear-gradient(90deg, #8c52ff, #5e17eb);
   transform-origin: left;
-  transform: translateZ(0);
-  will-change: width;
+  /* Remove transform for better performance */
   position: absolute;
   top: 0;
   left: 0;
@@ -160,7 +162,7 @@
 /* Specific optimizations for Discord and mobile */
 @media (max-width: 600px) {
   .timer-bar {
-    will-change: width; /* Simpler animation property for mobile */
+    /* Remove will-change to prevent flickering */
     transform: none; /* Disable transforms on mobile for better performance */
     /* No transition here - it's applied inline */
   }
@@ -317,6 +319,10 @@
   margin-bottom: 10px !important;
   padding: 0 !important;
   z-index: 10 !important;
+  /* Add these properties to prevent flickering */
+  will-change: auto !important;
+  backface-visibility: visible !important;
+  perspective: none !important;
 }
 
 .discord-mode .question-card {

@@ -97,7 +97,7 @@ const QuestionOverlay = memo(function QuestionOverlay({ question, timeLeft, ques
           className="timer-bar"
           style={{
             width: `${percentage}%`,
-            transition: 'width 0.9s linear'
+            transition: isInDiscord ? 'none' : 'width 0.9s linear'
           }}
         ></div>
         <span className="timer-text" ref={timerTextRef}>{timeLeft}s</span>
