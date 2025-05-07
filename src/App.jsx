@@ -15,6 +15,7 @@ import LoadingScreen from './components/LoadingScreen';
 import NoiseTexture from './components/NoiseTexture';
 import ParticipantsList from './components/ParticipantsList';
 import VoiceParticipants from './components/VoiceParticipants';
+import DiscordProfilePicture from './components/DiscordProfilePicture';
 
 // Import components
 import HomePage from './components/HomePage';
@@ -155,6 +156,7 @@ function App({ discordStatus = 'disconnected', discordParticipants = [] }) {
     if (options.questionCount) {
       setQuestionCount(options.questionCount);
     }
+    
     // If player is in game and trying to navigate away
     if (isInGame && page !== 'game') {
       setPendingNavigation(page);
@@ -199,103 +201,45 @@ function App({ discordStatus = 'disconnected', discordParticipants = [] }) {
       setIsInGame(true);
       setScore(0);
       setTotalAnswered(0);
-      // Play game start sound
-      soundService.play('gameStart');
-      
-      // If in Discord, start activity
-      if (isInDiscord) {
-        discordService.startActivity(gameType);
-        
-        // Share initial game state
-        discordService.shareGameState({
-          gameType,
-          state: 'starting',
-          hostId: playerData?.id,
-          timestamp: Date.now()
-        });
-      }
-    } else if (page !== 'game') {
+    } else {
       setIsInGame(false);
-      
-      // If in Discord and was in game, end activity
-      if (isInDiscord && isInGame) {
-        discordService.endActivity({ score });
-        
-        // Share end game state
-        discordService.shareGameState({
-          gameType,
-          state: 'ended',
-          hostId: playerData?.id,
-          finalScore: score,
-          timestamp: Date.now()
-        });
-      }
     }
-    
-    // Scroll to top when changing pages
-    window.scrollTo(0, 0);
-  }, [isInGame, isInDiscord, gameType, score, playerData]);
+  }, [isInGame]);
 
-  // Handle confirmation response - optimized with useCallback
+  // Handle confirmation for exiting game
   const handleConfirmNavigation = useCallback((confirmed) => {
+    soundService.play('buttonClick');
     setShowExitConfirmation(false);
     
-    // Play sound based on user choice
-    if (confirmed) {
-      soundService.play('buttonClick');
-      if (pendingNavigation) {
-        setCurrentPage(pendingNavigation);
-        setIsInGame(false);
-        soundService.play('gameEnd');
-        
-        // If in Discord, end activity
-        if (isInDiscord) {
-          discordService.endActivity({ score });
-          
-          // Share end game state
-          discordService.shareGameState({
-            gameType,
-            state: 'ended',
-            hostId: playerData?.id,
-            finalScore: score,
-            timestamp: Date.now()
-          });
-        }
-      }
-    } else {
-      soundService.play('buttonHover');
+    if (confirmed && pendingNavigation) {
+      setIsInGame(false);
+      navigateTo(pendingNavigation);
     }
     
     setPendingNavigation(null);
-  }, [pendingNavigation, isInDiscord, score, gameType, playerData]);
+  }, [navigateTo, pendingNavigation]);
 
-  // Handle volume change for sound effects - optimized with useCallback
-  const handleVolumeChange = useCallback((type, value) => {
-    if (type === 'volume') {
-      soundService.setVolume(value / 100);
-    } else if (type === 'mute') {
-      soundService.setMuted(value);
-    }
-  }, []);
-
-  // Toggle participants list visibility
+  // Toggle participants list
   const toggleParticipants = useCallback(() => {
+    soundService.play('buttonClick');
     setShowParticipants(prev => !prev);
-    soundService.play('buttonClick');
-  }, []);
-  
-  // Toggle voice participants list visibility
-  const toggleVoiceParticipants = useCallback(() => {
-    setShowVoiceParticipants(prev => !prev);
-    soundService.play('buttonClick');
+    setShowVoiceParticipants(false);
   }, []);
 
-  // Update shared game state
-  const updateSharedGameState = useCallback((newState) => {
+  // Toggle voice participants list
+  const toggleVoiceParticipants = useCallback(() => {
+    soundService.play('buttonClick');
+    setShowVoiceParticipants(prev => !prev);
+    setShowParticipants(false);
+  }, []);
+
+  // Update shared game state for multiplayer
+  const updateSharedGameState = useCallback((gameState) => {
     if (!isInDiscord) return;
     
-    const gameState = {
-      ...newState,
+    // Add host info and timestamp
+    gameState = {
+      ...gameState,
       gameType,
       hostId: playerData?.id,
       timestamp: Date.now()
@@ -435,7 +379,7 @@ function App({ discordStatus = 'disconnected', discordParticipants = [] }) {
                     )}
                   </main>
                   
-                  {/* Discord UI elements container - separate from main content */}
+                  {/* Discord UI elements container */}
                   <div className="discord-ui-container">
                     {/* Discord status indicators */}
                     {isInDiscord && (
@@ -480,6 +424,13 @@ function App({ discordStatus = 'disconnected', discordParticipants = [] }) {
                       </>
                     )}
                   </div>
+                  
+                  {/* Discord Profile Picture Component */}
+                  {isInDiscord && (
+                    <div className="discord-profile-picture-wrapper">
+                      <DiscordProfilePicture />
+                    </div>
+                  )}
                 </>
               } />
             </Routes>
@@ -490,5 +441,4 @@ function App({ discordStatus = 'disconnected', discordParticipants = [] }) {
   );
 }
 
-// Export App component
 export default App;

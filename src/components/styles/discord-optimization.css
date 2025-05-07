@@ -47,14 +47,15 @@
   -webkit-font-smoothing: antialiased;
 }
 
-/* Optimize animations for Discord mobile */
+/* Disable most animations for Discord mobile, but preserve loading animations */
 @media (max-width: 768px) {
-  .discord-mode .option-button,
-  .discord-mode .timer-bar,
-  .discord-mode .question-card {
-    /* Reduce animation complexity on mobile */
+  /* Target only game elements, not loading screen elements */
+  .discord-mode *:not(.dofus-egg, .dofus-egg *, .egg-image, .loading-circle, .loading-circle *, .logo-glow, .dofus-eggs-container, .dofus-eggs-container *) {
+    /* Disable animations and transitions */
     animation: none !important;
-    transition: opacity 0.2s ease-in-out !important;
+    transition: none !important;
+    transform: none !important;
+    will-change: auto !important;
   }
   
   .discord-mode .option-button {
@@ -64,12 +65,12 @@
   }
 }
 
-/* Force GPU acceleration for critical elements */
+/* Remove GPU acceleration that might cause flickering */
 .discord-mode .options-container,
 .discord-mode .timer-container,
 .discord-mode .question-overlay {
-  transform: translateZ(0);
-  will-change: transform;
+  transform: none !important;
+  will-change: auto !important;
 }
 
 /* Prevent layout shifts in Discord */

@@ -84,16 +84,22 @@ body.in-discord .player-avatar {
   height: 32px;
 }
 
-/* Optimize animations for performance */
+/* Disable animations for better performance in Discord */
 body.in-discord .animated {
-  animation-duration: 0.5s !important;
+  animation: none !important;
+  transition: none !important;
 }
 
-/* Reduce motion for better performance */
-@media (prefers-reduced-motion) {
-  body.in-discord .animated {
+/* Disable most animations on mobile for better performance, but keep loading screen animations */
+@media (max-width: 768px) {
+  body.in-discord *:not(.dofus-egg, .dofus-egg *, .egg-image, .loading-circle, .loading-circle *, .logo-glow) {
     animation: none !important;
     transition: none !important;
+  }
+  
+  /* Preserve transform for eggs but disable for other elements */
+  body.in-discord *:not(.dofus-egg, .dofus-egg *, .egg-image, .loading-circle, .loading-circle *, .dofus-eggs-container, .dofus-eggs-container *) {
+    transform: none !important;
   }
 }
 

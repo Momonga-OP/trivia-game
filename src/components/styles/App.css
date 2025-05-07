@@ -419,10 +419,31 @@ input[type="range"]::-webkit-slider-thumb {
 /* Discord UI container - separate from main content */
 .discord-ui-container {
   position: fixed;
-  top: 0;
-  right: 0;
-  z-index: 50;
-  pointer-events: none; /* Allow clicks to pass through the container */
+  top: 10px;
+  right: 10px;
+  z-index: var(--z-discord-ui);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+/* Discord Profile Picture Wrapper */
+.discord-profile-picture-wrapper {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: var(--z-discord-ui);
+  transition: all 0.3s ease;
+}
+
+/* Ensure the Discord profile doesn't interfere with game elements */
+@media (max-width: 768px) {
+  .discord-profile-picture-wrapper {
+    bottom: 70px; /* Move up to avoid bottom navigation on mobile */
+    right: 15px;
+    transform: scale(0.9);
+  }
 }
 
 /* But allow clicks on actual UI elements */
