@@ -5,28 +5,28 @@ import './components/styles/discord-compatibility.css';
 import './components/styles/discord-audio.css';
 import './components/styles/discord-optimization.css';
 import { SoundProvider } from './contexts/SoundContext.jsx';
-import BackgroundAnimation from './components/BackgroundAnimation';
-import discordService from './services/DiscordService';
-import playerDataService from './services/PlayerDataService';
-import soundService from './services/SoundService';
-import musicService from './services/MusicService';
-import richPresenceService from './services/RichPresenceService';
-import LoadingScreen from './components/LoadingScreen';
-import NoiseTexture from './components/NoiseTexture';
-import ParticipantsList from './components/ParticipantsList';
-import VoiceParticipants from './components/VoiceParticipants';
-import DiscordProfilePicture from './components/DiscordProfilePicture';
+import BackgroundAnimation from './components/BackgroundAnimation.jsx';
+import discordService from './services/DiscordService.js';
+import playerDataService from './services/PlayerDataService.js';
+import soundService from './services/SoundService.js';
+import musicService from './services/MusicService.js';
+import richPresenceService from './services/RichPresenceService.js';
+import LoadingScreen from './components/LoadingScreen.jsx';
+import NoiseTexture from './components/NoiseTexture.jsx';
+import ParticipantsList from './components/ParticipantsList.jsx';
+import VoiceParticipants from './components/VoiceParticipants.jsx';
+import DiscordProfilePicture from './components/DiscordProfilePicture.jsx';
 
 // Import components
-import HomePage from './components/HomePage';
-import GameScreen from './components/GameScreen';
-import Dashboard from './components/Dashboard';
-import About from './components/About';
-import Credits from './components/Credits';
-import Header from './components/Header';
-import HowToPlay from './components/HowToPlay';
-import Lore from './components/Lore';
-import DiscordCallback from './components/DiscordCallback';
+import HomePage from './components/HomePage.jsx';
+import GameScreen from './components/GameScreen.jsx';
+import Dashboard from './components/Dashboard.jsx';
+import About from './components/About.jsx';
+import Credits from './components/Credits.jsx';
+import Header from './components/Header.jsx';
+import HowToPlay from './components/HowToPlay.jsx';
+import Lore from './components/Lore.jsx';
+import DiscordCallback from './components/DiscordCallback.jsx';
 
 // Main App component that handles routing and viewport adjustments
 function App({ discordStatus = 'disconnected', discordParticipants = [] }) {
@@ -425,12 +425,10 @@ function App({ discordStatus = 'disconnected', discordParticipants = [] }) {
                     )}
                   </div>
                   
-                  {/* Discord Profile Picture Component */}
-                  {isInDiscord && (
-                    <div className="discord-profile-picture-wrapper">
-                      <DiscordProfilePicture />
-                    </div>
-                  )}
+                  {/* Discord Profile Picture Component - Always render it and let the component decide visibility */}
+                  <div className="discord-profile-picture-wrapper">
+                    <DiscordProfilePicture />
+                  </div>
                 </>
               } />
             </Routes>

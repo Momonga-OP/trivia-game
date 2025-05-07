@@ -3,6 +3,24 @@ import './styles/DiscordProfilePicture.css';
 import discordService from '../services/DiscordService';
 import playerDataService from '../services/PlayerDataService';
 
+// Helper function to detect Discord Activity mode
+const isInDiscordActivity = () => {
+  // Check if we're in a Discord iframe
+  const inDiscordIframe = window.location.href.includes('discord') || 
+    window.location.ancestorOrigins?.contains('discord.com') ||
+    navigator.userAgent.includes('DiscordBot') ||
+    document.referrer.includes('discord.com');
+  
+  // Check for Discord SDK
+  const hasDiscordSDK = typeof window.DiscordSDK !== 'undefined';
+  
+  // Check for Discord-specific URL parameters
+  const urlParams = new URLSearchParams(window.location.search);
+  const hasDiscordParams = urlParams.has('guild_id') || urlParams.has('channel_id');
+  
+  return inDiscordIframe || hasDiscordSDK || hasDiscordParams || discordService.isActivity;
+};
+
 const DiscordProfilePicture = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [playerData, setPlayerData] = useState(null);
@@ -10,20 +28,68 @@ const DiscordProfilePicture = () => {
   const profileRef = useRef(null);
 
   useEffect(() => {
-    // Load player data
-    const currentPlayer = playerDataService.getCurrentPlayer();
-    setPlayerData(currentPlayer);
-
-    // Check if we're in a Discord activity
-    setIsDiscordActivity(discordService.isActivity);
-
-    // Listen for Discord participant changes
-    const handleParticipantsChanged = (event) => {
-      const participants = event.detail.participants;
-      if (participants && participants.length > 0) {
-        // Update player data if needed
+    // Detect if we're in Discord Activity mode
+    const checkDiscordActivity = async () => {
+      const inDiscordActivity = isInDiscordActivity();
+      setIsDiscordActivity(inDiscordActivity);
+      
+      if (inDiscordActivity) {
+        console.log('Discord Activity detected, initializing SDK...');
+        // Try to initialize Discord SDK
+        try {
+          await discordService.initializeActivitySDK();
+        } catch (error) {
+          console.warn('Failed to initialize Discord SDK:', error);
+        }
+      }
+    };
+    
+    checkDiscordActivity();
+    
+    // Load player data with retry mechanism
+    const loadPlayerData = () => {
+      // First try to get data from Discord service
+      const discordUser = discordService.currentUser;
+      
+      if (discordUser) {
+        // We have Discord user data
+        const playerData = {
+          username: discordUser.username,
+          avatarUrl: discordUser.avatar ? 
+            `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.png` : 
+            null,
+          id: discordUser.id,
+          isGuest: false
+        };
+        
+        // Save to player data service and update state
+        playerDataService.savePlayer(playerData);
+        setPlayerData(playerData);
+      } else {
+        // Fallback to stored player data
         const currentPlayer = playerDataService.getCurrentPlayer();
         setPlayerData(currentPlayer);
+      }
+    };
+    
+    // Initial load
+    loadPlayerData();
+    
+    // Set up interval to check for Discord data (in case it loads after component mount)
+    const dataCheckInterval = setInterval(() => {
+      if (discordService.currentUser) {
+        loadPlayerData();
+        clearInterval(dataCheckInterval);
+      }
+    }, 1000);
+    
+    // Listen for Discord participant changes
+    const handleParticipantsChanged = (event) => {
+      console.log('Discord participants changed:', event.detail);
+      const participants = event.detail.participants;
+      if (participants && participants.length > 0) {
+        // Update player data
+        loadPlayerData();
       }
     };
 
@@ -41,6 +107,7 @@ const DiscordProfilePicture = () => {
     return () => {
       window.removeEventListener('discord:participants-changed', handleParticipantsChanged);
       document.removeEventListener('mousedown', handleClickOutside);
+      clearInterval(dataCheckInterval);
     };
   }, []);
 

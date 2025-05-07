@@ -141,11 +141,11 @@
   text-shadow: 0 0 10px rgba(140, 82, 255, 0.8), 0 0 20px rgba(140, 82, 255, 0.5);
   position: relative;
   z-index: 20;
-  background: linear-gradient(to right, #ffffff, #c9a8ff, #ffffff);
+  background: linear-gradient(to right, #ffffff, #c9a8ff);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: shimmer 3s infinite;
+  /* Removed shimmer animation */
   width: 100%;
   max-width: 100%;
 }
@@ -173,7 +173,7 @@
   background: radial-gradient(ellipse at center, rgba(140, 82, 255, 0.4) 0%, rgba(140, 82, 255, 0) 70%);
   filter: blur(20px);
   z-index: 19;
-  animation: pulse 4s infinite alternate;
+  /* Removed pulsing animation */
 }
 
 @keyframes pulse {
