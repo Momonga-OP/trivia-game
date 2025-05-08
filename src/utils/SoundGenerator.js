@@ -36,7 +36,13 @@ export const generateSoundEffects = (isInDiscord) => {
     optionSelect: generateOptionSelectSound(isInDiscord),   // When selecting an option
     correctAnswer: generateCorrectAnswerSound(isInDiscord), // When answer is correct
     wrongAnswer: generateWrongAnswerSound(isInDiscord),     // When answer is wrong
-    nextQuestion: generateNextQuestionSound(isInDiscord)    // When clicking Next Question
+    nextQuestion: generateNextQuestionSound(isInDiscord),   // When clicking Next Question
+    
+    // Book-specific sounds
+    pageFlip: generatePageFlipSound(isInDiscord),           // When turning a page in the book
+    bookOpen: generateBookOpenSound(isInDiscord),           // When opening the book
+    bookClose: generateBookCloseSound(isInDiscord),         // When closing the book
+    pageRustle: generatePageRustleSound(isInDiscord)        // When hovering over a page
   };
 };
 
@@ -421,6 +427,50 @@ const generateNextQuestionSound = (isInDiscord = false) => {
     { frequency: 659.25, duration: isInDiscord ? 0.04 : 0.06, type: 'sine' },
     { frequency: 783.99, duration: isInDiscord ? 0.05 : 0.08, type: 'sine' }
   ], 0.01, isInDiscord ? 0.12 : 0.18);
+};
+
+// Generate a page flip sound for the storybook
+const generatePageFlipSound = (isInDiscord = false) => {
+  // Create a sequence of sounds that mimic a page turning
+  return generateSequence([
+    { frequency: 800, duration: 0.03, type: 'triangle' },
+    { frequency: 600, duration: 0.06, type: 'triangle' }
+  ], 0.02, isInDiscord ? 0.15 : 0.2);
+};
+
+// Generate a book opening sound
+const generateBookOpenSound = (isInDiscord = false) => {
+  // Create a sequence that mimics the sound of a book cover opening
+  return generateSequence([
+    { frequency: 300, duration: 0.05, type: 'triangle' },
+    { frequency: 200, duration: 0.1, type: 'triangle' },
+    { frequency: 400, duration: 0.15, type: 'sine' }
+  ], 0.03, isInDiscord ? 0.15 : 0.25);
+};
+
+// Generate a book closing sound
+const generateBookCloseSound = (isInDiscord = false) => {
+  // Create a sequence that mimics the sound of a book cover closing
+  return generateSequence([
+    { frequency: 400, duration: 0.05, type: 'triangle' },
+    { frequency: 300, duration: 0.1, type: 'triangle' },
+    { frequency: 200, duration: 0.15, type: 'sine' }
+  ], 0.02, isInDiscord ? 0.15 : 0.25);
+};
+
+// Generate a page rustle sound for hovering over pages
+const generatePageRustleSound = (isInDiscord = false) => {
+  // Create a soft noise-based sound for page rustling
+  const duration = isInDiscord ? 0.1 : 0.15;
+  const volume = isInDiscord ? 0.05 : 0.1;
+  
+  return generateNoise({
+    duration: duration,
+    attack: 0.02,
+    decay: duration - 0.02,
+    filter: 3000, // High-pass filter to make it sound like paper
+    volume: volume
+  });
 };
 
 /**

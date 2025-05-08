@@ -17,7 +17,7 @@ function Credits({ navigateTo, windowSize, isInDiscord }) {
         </div>
         
         <div className="credits-content">
-          <div className="credit-card creator">
+          <div className="credit-card creator small">
             <div className="credit-card-header">
               <FontAwesomeIcon icon={faCrown} className="credit-icon" />
               <h2>Creator</h2>
@@ -38,7 +38,7 @@ function Credits({ navigateTo, windowSize, isInDiscord }) {
             </div>
           </div>
 
-          <div className="credit-card ux">
+          <div className="credit-card ux small">
             <div className="credit-card-header">
               <FontAwesomeIcon icon={faPalette} className="credit-icon" />
               <h2>UX Design</h2>
@@ -48,12 +48,12 @@ function Credits({ navigateTo, windowSize, isInDiscord }) {
                 <span>Z</span>
               </div>
               <div className="credit-details">
-                <div className="credit-name">Zubic Vila</div>
+                <div className="credit-name">Momonga</div>
                 <div className="credit-role">
-                  <FontAwesomeIcon icon={faGamepad} /> Zubic Vila
+                  <FontAwesomeIcon icon={faGamepad} /> M
                 </div>
                 <div className="credit-discord">
-                  <FontAwesomeIcon icon={faDiscord} /> Zubic Vila
+                  <FontAwesomeIcon icon={faDiscord} /> M
                 </div>
               </div>
             </div>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="640" viewBox="0 0 512 640" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="paperTexture" x="0%" y="0%" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="5" seed="1" />
+      <feColorMatrix type="matrix" values="0 0 0 0 0.98 0 0 0 0 0.95 0 0 0 0 0.82 0 0 0 1 0" />
+    </filter>
+    <filter id="burnedEdges">
+      <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="3" seed="2" />
+      <feColorMatrix type="matrix" values="0 0 0 0 0.6 0 0 0 0 0.42 0 0 0 0 0.23 0 0 0 1 0" />
+      <feComposite operator="in" in2="SourceGraphic" />
+    </filter>
+  </defs>
+  
+  <!-- Base paper -->
+  <rect width="512" height="640" fill="#f8f4d8" />
+  
+  <!-- Paper texture overlay -->
+  <rect width="512" height="640" filter="url(#paperTexture)" opacity="0.3" />
+  
+  <!-- Burned edges -->
+  <rect x="0" y="0" width="512" height="30" filter="url(#burnedEdges)" opacity="0.15" />
+  <rect x="0" y="610" width="512" height="30" filter="url(#burnedEdges)" opacity="0.15" />
+  <rect x="0" y="0" width="30" height="640" filter="url(#burnedEdges)" opacity="0.15" />
+  <rect x="482" y="0" width="30" height="640" filter="url(#burnedEdges)" opacity="0.15" />
+  
+  <!-- Subtle stains -->
+  <circle cx="120" cy="180" r="60" fill="#d9c7a0" opacity="0.1" />
+  <circle cx="400" cy="500" r="80" fill="#d9c7a0" opacity="0.1" />
+  <circle cx="250" cy="320" r="100" fill="#d9c7a0" opacity="0.05" />
+</svg>

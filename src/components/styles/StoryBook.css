@@ -1,0 +1,649 @@
+/* StoryBook.css - Immersive animated book experience for Dofus Lore */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=IM+Fell+English:ital@0;1&family=Cardo:ital,wght@0,400;0,700;1,400&display=swap');
+
+.storybook-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  perspective: 1200px;
+  background: rgba(35, 39, 46, 0.95);
+  overflow: hidden;
+  /* Ensure the container is visible */
+  opacity: 1;
+  visibility: visible;
+}
+
+/* CSS-based ambient particles (more performant than canvas) */
+.ambient-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+/* Individual particles */
+.particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: rgba(255, 224, 130, 0.6);
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(255, 224, 130, 0.3);
+  animation: float-particle 15s infinite linear;
+}
+
+/* Create 20 particles with different positions and animations */
+.particle:nth-child(1) { top: 10%; left: 20%; animation-duration: 20s; animation-delay: 0s; }
+.particle:nth-child(2) { top: 25%; left: 80%; animation-duration: 18s; animation-delay: 1s; }
+.particle:nth-child(3) { top: 60%; left: 45%; animation-duration: 16s; animation-delay: 2s; }
+.particle:nth-child(4) { top: 90%; left: 10%; animation-duration: 22s; animation-delay: 3s; }
+.particle:nth-child(5) { top: 45%; left: 30%; animation-duration: 19s; animation-delay: 4s; }
+.particle:nth-child(6) { top: 75%; left: 60%; animation-duration: 21s; animation-delay: 5s; }
+.particle:nth-child(7) { top: 15%; left: 70%; animation-duration: 17s; animation-delay: 6s; }
+.particle:nth-child(8) { top: 55%; left: 85%; animation-duration: 23s; animation-delay: 7s; }
+.particle:nth-child(9) { top: 30%; left: 15%; animation-duration: 18s; animation-delay: 8s; }
+.particle:nth-child(10) { top: 85%; left: 50%; animation-duration: 20s; animation-delay: 9s; }
+
+/* Particle floating animation */
+@keyframes float-particle {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate(100px, -100px);
+    opacity: 0;
+  }
+}
+
+/* Book */
+.book {
+  position: relative;
+  width: 80vmin;
+  max-width: 800px;
+  height: 90vmin;
+  max-height: 600px;
+  transform-style: preserve-3d;
+  transition: transform 0.5s cubic-bezier(0.645, 0.045, 0.355, 1);
+  z-index: 10;
+  /* Ensure visibility in Discord Activity */
+  opacity: 1;
+  visibility: visible;
+  display: block;
+}
+
+/* Closed book state */
+.book.closed {
+  transform: rotateX(10deg);
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: rotateX(10deg) translateY(0); }
+  50% { transform: rotateX(10deg) translateY(-10px); }
+}
+
+/* Book cover */
+.book-cover {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  /* CSS-only book cover design that doesn't rely on external assets */
+  background: linear-gradient(135deg, #8b5a2b 0%, #5c3c20 50%, #4a2e1a 100%);
+  background-size: cover;
+  background-position: center;
+  transform-origin: left;
+  transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+  border-radius: 5px 15px 15px 5px;
+  box-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.4),
+    5px 5px 15px rgba(0, 0, 0, 0.3);
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  overflow: hidden;
+}
+
+/* Book cover embellishments */
+.book-cover::before {
+  content: '';
+  position: absolute;
+  top: 25px;
+  left: 25px;
+  right: 25px;
+  bottom: 25px;
+  border: 2px solid rgba(212, 175, 55, 0.7);
+  border-radius: 5px;
+  pointer-events: none;
+}
+
+/* Book cover emblem */
+.book-emblem {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.8) 0%, rgba(212, 175, 55, 0.4) 70%, transparent 100%);
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+  z-index: 1;
+}
+
+/* Book edge shadow */
+.book-edge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 30px;
+  height: 100%;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.3));
+  border-radius: 0 15px 15px 0;
+  z-index: 2;
+}
+
+/* Book spine */
+.book-spine {
+  position: absolute;
+  left: 0;
+  width: 30px;
+  height: 100%;
+  background: #5c3c20;
+  border-radius: 5px 0 0 5px;
+  box-shadow: inset -5px 0 10px rgba(0, 0, 0, 0.3);
+  transform-origin: right;
+  z-index: -1;
+}
+
+/* Book pages container */
+.book-pages {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform-origin: left;
+  transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+  background: #f8f4d8;
+  border-radius: 0 15px 15px 0;
+  overflow: hidden;
+  transform-style: preserve-3d;
+  box-shadow: 
+    0 5px 15px rgba(0, 0, 0, 0.2),
+    inset 0 0 50px rgba(0, 0, 0, 0.1);
+}
+
+/* Book page */
+.book-page {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  /* CSS-only paper texture */
+  background-color: #f8f4d8;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.1) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.1) 2px, transparent 2px),
+    linear-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+  background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+  background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px;
+  padding: 40px;
+  box-sizing: border-box;
+  transform-origin: left;
+  transition: transform 0.6s cubic-bezier(0.645, 0.045, 0.355, 1);
+  backface-visibility: hidden;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(139, 90, 43, 0.5) rgba(248, 244, 216, 0.1);
+}
+
+.book-page::-webkit-scrollbar {
+  width: 8px;
+}
+
+.book-page::-webkit-scrollbar-track {
+  background: rgba(248, 244, 216, 0.1);
+}
+
+.book-page::-webkit-scrollbar-thumb {
+  background-color: rgba(139, 90, 43, 0.5);
+  border-radius: 10px;
+}
+
+/* Index page */
+.index-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 40px;
+}
+
+.index-title {
+  font-family: 'Cinzel', serif;
+  font-size: 2.5rem;
+  color: #5c3c20;
+  margin-bottom: 40px;
+  text-align: center;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.chapter-list {
+  list-style: none;
+  padding: 0;
+  width: 100%;
+  max-width: 500px;
+}
+
+.chapter-item {
+  margin-bottom: 15px;
+  padding: 12px 20px;
+  background: rgba(139, 90, 43, 0.1);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'IM Fell English', serif;
+  font-size: 1.2rem;
+  color: #5c3c20;
+  position: relative;
+  overflow: hidden;
+}
+
+.chapter-item:hover {
+  background: rgba(139, 90, 43, 0.2);
+  transform: translateX(5px);
+}
+
+.chapter-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 5px;
+  background: #8b5a2b;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.chapter-item:hover::before {
+  opacity: 1;
+}
+
+/* Chapter content */
+.chapter-content {
+  font-family: 'IM Fell English', serif;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  text-align: justify;
+  padding: 0 20px;
+  overflow-y: auto;
+  max-height: 100%;
+  color: #333333;
+}
+
+.chapter-content h1 {
+  font-family: 'Cinzel', serif;
+  font-size: 2rem;
+  color: #5c3c20;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.chapter-content p {
+  margin-bottom: 20px;
+  text-align: justify;
+  color: #333333;
+}
+
+/* Navigation controls */
+.book-controls {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 40px;
+  box-sizing: border-box;
+  z-index: 20;
+}
+
+.nav-button {
+  background: rgba(139, 90, 43, 0.2);
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #5c3c20;
+  font-size: 1.2rem;
+}
+
+.nav-button:hover {
+  background: rgba(139, 90, 43, 0.3);
+  transform: scale(1.1);
+}
+
+.nav-button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  transform: scale(1);
+}
+
+.close-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #fff;
+  font-size: 1rem;
+  z-index: 30;
+}
+
+.close-button:hover {
+  background: rgba(0, 0, 0, 0.7);
+  transform: scale(1.1);
+}
+
+/* Opening prompt */
+.opening-prompt {
+  position: absolute;
+  bottom: 40px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  color: #ffe082;
+  font-family: 'IM Fell English', serif;
+  font-size: 1.5rem;
+  opacity: 0;
+  animation: fadeInOut 2s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 20;
+  text-shadow: 0 0 10px rgba(255, 224, 130, 0.5);
+}
+
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+/* Book open state - simplified for better compatibility */
+.book.open .book-cover {
+  transform: rotateY(-180deg);
+  opacity: 0; /* Hide cover when open for better performance */
+}
+
+.book.open .book-pages {
+  transform: rotateY(0deg);
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Page turn animation */
+.page-turn {
+  transform: rotateY(-180deg);
+}
+
+/* Fallback UI for Discord and mobile */
+.fallback-book-container {
+  width: 100%;
+  max-width: 800px;
+  height: 80vh;
+  max-height: 600px;
+  background-color: #f8f4d8;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.fallback-book-header {
+  background: linear-gradient(135deg, #8b5a2b 0%, #5c3c20 50%, #4a2e1a 100%);
+  color: #ffe082;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid rgba(212, 175, 55, 0.7);
+}
+
+.fallback-book-header h1 {
+  font-family: 'Cinzel', serif;
+  font-size: 1.8rem;
+  margin: 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.fallback-book-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.fallback-index-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0;
+}
+
+.fallback-chapter-list {
+  list-style: none;
+  padding: 0;
+  width: 100%;
+  max-width: 600px;
+}
+
+.fallback-chapter-item {
+  margin-bottom: 10px;
+  padding: 12px 15px;
+  background: rgba(139, 90, 43, 0.1);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'IM Fell English', serif;
+  font-size: 1.1rem;
+  color: #5c3c20;
+  position: relative;
+}
+
+.fallback-chapter-item:hover {
+  background: rgba(139, 90, 43, 0.2);
+  transform: translateX(5px);
+}
+
+.fallback-chapter-content {
+  padding: 10px 0;
+  color: #333333;
+}
+
+.fallback-chapter-content p {
+  margin-bottom: 1rem;
+  color: #333333;
+}
+
+.fallback-chapter-content h2 {
+  font-family: 'Cinzel', serif;
+  font-size: 1.6rem;
+  color: #5c3c20;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.fallback-nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(139, 90, 43, 0.2);
+}
+
+.fallback-nav-button {
+  background: rgba(139, 90, 43, 0.2);
+  border: none;
+  border-radius: 6px;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #5c3c20;
+  font-family: 'IM Fell English', serif;
+  font-size: 1rem;
+}
+
+.fallback-nav-button:hover {
+  background: rgba(139, 90, 43, 0.3);
+}
+
+.fallback-nav-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .book {
+    width: 90vw;
+    height: 80vh;
+  }
+  
+  .book-page {
+    padding: 30px 20px;
+  }
+  
+  .index-title {
+    font-size: 1.8rem;
+  }
+  
+  .chapter-item {
+    font-size: 1rem;
+  }
+  
+  .chapter-content h1 {
+    font-size: 1.5rem;
+  }
+  
+  .chapter-content {
+    font-size: 1rem;
+  }
+  
+  .fallback-book-container {
+    width: 95vw;
+    height: 85vh;
+  }
+  
+  .fallback-book-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .fallback-nav-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+/* Sound effects */
+.sound-toggle {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #fff;
+  font-size: 1rem;
+  z-index: 30;
+}
+
+.sound-toggle:hover {
+  background: rgba(0, 0, 0, 0.7);
+  transform: scale(1.1);
+}
+
+/* Optimizations for Discord Activity */
+@media (max-width: 500px) {
+  .book {
+    width: 95vw;
+    height: 75vh;
+  }
+  
+  .book-page {
+    padding: 20px 15px;
+  }
+  
+  .index-title {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+  
+  .chapter-item {
+    padding: 10px 15px;
+    margin-bottom: 10px;
+  }
+  
+  .nav-button {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .book-controls {
+    bottom: 10px;
+    padding: 0 20px;
+  }
+}
+
+/* Magical particle effects */
+.magical-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0.6;
+}
+
+/* GPU acceleration optimizations */
+.book, 
+.book-cover, 
+.book-pages, 
+.book-page {
+  will-change: transform;
+  transform: translateZ(0);
+}

@@ -66,8 +66,9 @@
 .credits-content {
   padding: 2rem;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2rem;
+  justify-items: center;
 }
 
 .credit-card {
@@ -77,6 +78,11 @@
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
   transition: var(--credits-transition);
   border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.credit-card.small {
+  max-width: 280px;
+  margin: 0 auto;
 }
 
 .credit-card:hover {
@@ -98,6 +104,10 @@
   align-items: center;
   gap: 1rem;
   background: rgba(0, 0, 0, 0.2);
+}
+
+.small .credit-card-header {
+  padding: 1rem;
 }
 
 .credit-card-header h2 {
@@ -126,6 +136,11 @@
   gap: 1.5rem;
 }
 
+.small .credit-card-body {
+  padding: 1rem;
+  gap: 1rem;
+}
+
 .credit-avatar {
   width: 80px;
   height: 80px;
@@ -138,6 +153,12 @@
   color: white;
   text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.small .credit-avatar {
+  width: 60px;
+  height: 60px;
+  font-size: 1.8rem;
 }
 
 .creator-avatar {
@@ -161,6 +182,11 @@
   color: white;
 }
 
+.small .credit-name {
+  font-size: 1.2rem;
+  margin-bottom: 0.3rem;
+}
+
 .credit-role, .credit-discord {
   display: flex;
   align-items: center;
@@ -168,6 +194,11 @@
   margin-bottom: 0.5rem;
   color: var(--credits-text-muted);
   font-size: 0.95rem;
+}
+
+.small .credit-role, .small .credit-discord {
+  font-size: 0.85rem;
+  margin-bottom: 0.3rem;
 }
 
 .credit-discord {
