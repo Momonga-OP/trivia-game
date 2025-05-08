@@ -259,5 +259,85 @@ export const questionsDofusTouch = [
       "80"
     ],
     correctAnswer: "80"
+  },
+  {
+    text: "In the Moon Island boss Mucane fight, what action removes Mucane's invulnerable state?",
+    options: ["Killing all of her summoned mobs", "Applying a poison effect to Mucane", "Pushing Mucane against an obstacle", "Dealing ranged damage to Mucane"],
+    correctAnswer: "Pushing Mucane against an obstacle"
+  },
+  {
+    text: "Which item is guaranteed (100% chance) to drop from Dark Vlad in the Dark Vlad raid?",
+    options: ["Emerald Dofus", "Dark Vlad's Medal", "Ebony Dofus", "Nothing special"],
+    correctAnswer: "Dark Vlad's Medal"
+  },
+  {
+    text: "What is unique about monsters in the Missiz Frizz dungeon compared to other Frigost 3 bosses?",
+    options: ["They start the fight in Invulnerable state", "They are immune to Water spells", "They resurrect once after death", "They drop double loot"],
+    correctAnswer: "They start the fight in Invulnerable state"
+  },
+  {
+    text: "Which tentacle is summoned when the Giant Kralamoure is hit by a Fire element attack?",
+    options: ["Primary Tentacle", "Secondary Tentacle", "Tertiary Tentacle", "Quaternary Tentacle"],
+    correctAnswer: "Tertiary Tentacle"
+  },
+  {
+    text: "During the Tengu Givrefoux fight, which combination of actions triggers the boss's vulnerability?",
+    options: ["Hitting the Yomi with a weapon on the same line and moving the Yokai to a diagonal position relative to the Tengu", "Freeing the Kami from a trap and using all five players' attacks", "Killing the Yokai with a spell and sacrificing an ally", "Using a full-team heal and dealing damage in the same turn"],
+    correctAnswer: "Hitting the Yomi with a weapon on the same line and moving the Yokai to a diagonal position relative to the Tengu"
+  },
+  {
+    text: "Which elements are most effective against the Minotoror boss due to his negative resistances?",
+    options: ["Air and Water", "Earth and Fire", "Neutral and Earth", "Water and Air"],
+    correctAnswer: "Earth and Fire"
+  },
+  {
+    text: "What does the Mineroc boss do at the start of the fight?",
+    options: ["He casts a shield of 600 points on himself", "He summons two crystal totems", "He becomes invisible for 3 turns", "He restores himself to full health"],
+    correctAnswer: "He casts a shield of 600 points on himself"
+  },
+  {
+    text: "Which two states does the boss Katamashii alternate between in the Sanctuaire des Âmes Égarées?",
+    options: ["Chaos and Order", "Resonance and Dissonance", "Peace and Fury", "Fire and Ice"],
+    correctAnswer: "Resonance and Dissonance"
+  },
+  {
+    text: "In the Ochre Dofus quest \"An Eternal Harvest\" in Dofus Touch, which monster's soul is captured in the final step?",
+    options: ["Giant Kralove", "Lord Crow", "Count Harebourg", "Simone the Embry"],
+    correctAnswer: "Giant Kralove"
+  },
+  {
+    text: "In Dofus Touch's Alliance vs Alliance mode, how is victory achieved?",
+    options: ["By accumulating 30 minutes of supremacy over the enemy alliance", "By capturing and holding all Alliance Prisms", "By achieving the highest number of PvP kills", "By being the last alliance standing"],
+    correctAnswer: "By accumulating 30 minutes of supremacy over the enemy alliance"
+  },
+  {
+    text: "During the Eternal Harvest quest for the Ochre Dofus in Dofus Touch, how many Archmonsters must be captured?",
+    options: ["227", "257", "301", "351"],
+    correctAnswer: "257"
+  },
+  {
+    text: "How many Legendary Weapons exist in Dofus Touch?",
+    options: ["4", "6", "8", "12"],
+    correctAnswer: "12"
+  },
+  {
+    text: "In the Royal Pingwin boss fight in Dofus Touch, what must players do to make the boss vulnerable?",
+    options: ["Heal an ally positioned adjacent to the boss", "Kill all of its minions first", "Attack it with a strong ice spell to shatter its shield", "Use a specialized teleport spell to move it out of its shield"],
+    correctAnswer: "Heal an ally positioned adjacent to the boss"
+  },
+  {
+    text: "How can players remove Royal Mastogob's immunity to damage in its Greenhouse boss fight in Dofus Touch?",
+    options: ["Use a pushback spell", "Use a critical-hit buff and strike normally", "Release a summoned beast to taunt it", "Deal 10,000 damage in one hit"],
+    correctAnswer: "Use a pushback spell"
+  },
+  {
+    text: "Which dungeon must be cleared to learn the Soul Capture spell",
+    options: ["The Kwakwa's Nest", "Moon Island Dungeon", "Wabbit Dungeon", "Royal Gobbalger's Stadium"],
+    correctAnswer: "The Kwakwa's Nest"
+  },
+  {
+    text: "Defeating which boss is the final step to obtain the Ocre Dofus in Dofus Touch?",
+    options: ["Krala", "Korriander", "Dragoss", "Rajal Mok"],
+    correctAnswer: "Krala"
   }
 ];
