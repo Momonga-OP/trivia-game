@@ -339,5 +339,105 @@ export const questionsDofusTouch = [
     text: "Defeating which boss is the final step to obtain the Ocre Dofus in Dofus Touch?",
     options: ["Krala", "Korriander", "Dragoss", "Rajal Mok"],
     correctAnswer: "Krala"
+  },
+  {
+    text: "In Kolosso Caverns, how is the Kolosso made vulnerable so it can be damaged?",
+    options: [
+      "By destroying professor Xa first",
+      "By pushing him out of his invulnerability glyph",
+      "By hitting Kolosso with one of your summoned creatures",
+      "By casting a dispel on his invulnerability buff"
+    ],
+    correctAnswer: "By hitting Kolosso with one of your summoned creatures"
+  },
+  {
+    text: "What happens when Fuji Givrefoux lands her melee attack on a player in snowfoux den?",
+    options: [
+      "The player is teleported to Fuji's position",
+      "Fuji heals herself for 1000 HP",
+      "The player is oneshot and replaced by a random Givrefoux summon",
+      "The player loses 3 PA for the next 3 turns"
+    ],
+    correctAnswer: "The player is oneshot and replaced by a random Givrefoux summon"
+  },
+  {
+    text: "How can you make Celestial Bearbarian in the Bearbarian Antichambre vulnerable?",
+    options: [
+      "Remove all of his resistance buffs",
+      "Hit him in melee range",
+      "Kill one of his minions",
+      "Use a dispel on his invulnerability"
+    ],
+    correctAnswer: "Hit him in melee range"
+  },
+  {
+    text: "In Fouxwork Factory, what effect does a lantern bomb explosion have on nearby Firefoux enemies?",
+    options: [
+      "It grants them +1000 heal power for 2 turns",
+      "It removes their invulnerability and gives them +400 damage for 1 turn",
+      "It stuns them for 1 turn",
+      "It teleports them to a random cell"
+    ],
+    correctAnswer: "It removes their invulnerability and gives them +400 damage for 1 turn"
+  },
+  {
+    text: "In Wind Dojo, how do you make Shihan vulnerable?",
+    options: [
+      "Bring Hanshi's Wukin meter up to 10",
+      "Lower Shihan's HP below 50%",
+      "Kill Hanshi first",
+      "Cast a silence on Hanshi"
+    ],
+    correctAnswer: "Bring Hanshi's Wukin meter up to 10"
+  },
+  {
+    text: "What happens if either Shihan or Hanshi is killed before the other in Wind Dojo fight?",
+    options: [
+      "The fight ends immediately in a victory",
+      "The other boss instantly respawns with full health",
+      "The remaining boss becomes permanently invulnerable",
+      "All allies are stunned for one turn"
+    ],
+    correctAnswer: "The remaining boss becomes permanently invulnerable"
+  },
+  {
+    text: "In Sakaï Mine, what happens to Grohlum's resistances if you attempt to remove his movement points (PM)?",
+    options: [
+      "They drop by half",
+      "They increase by +50%",
+      "He gains 8000 fixed resistances in all elements",
+      "He becomes immune to all damage"
+    ],
+    correctAnswer: "He gains 8000 fixed resistances in all elements"
+  },
+  {
+    text: "How do you make Sylargh himself vulnerable to damage in Sylarghs Carrier fight?",
+    options: [
+      "Kill an early invoked resurrected monster between 5 and 10 PO from Sylargh",
+      "Use 6 different elemental attacks on Sylargh",
+      "Trap Sylargh in a corner with all summons dead",
+      "Remove all of his Earth resistance"
+    ],
+    correctAnswer: "Kill an early invoked resurrected monster between 5 and 10 PO from Sylargh"
+  },
+  {
+    text: "How are the confusion effects determined each turn in Harebourg's fight?",
+    options: [
+      "By a random roll each turn",
+      "By the number of times Harebourg has been hit",
+      "By the percentage of HP the player has remaining",
+      "By the position of the moon in the sky"
+    ],
+    correctAnswer: "By the percentage of HP the player has remaining"
+  },
+  {
+    text: "In Sakaï Mine, what does a Gobshell do on its second turn?",
+    options: [
+      "It becomes invulnerable for 3 turns",
+      "It regenerates to full health",
+      "It self destructs, killing all foes in its line",
+      "It casts a heal on all allies"
+    ],
+    correctAnswer: "It self destructs, killing all foes in its line"
   }
 ];
